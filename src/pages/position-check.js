@@ -20,42 +20,8 @@ const TRADE_RECORDS = [
   { id: 't3', name: '立讯精密 / 002475', date: '2026-06-28', status: '合规/持仓中' }
 ]
 
-const HOLDINGS = [
-  {
-    name: '宁德时代', code: '300750', status: '持有中', statusBg: 'var(--state-info-bg)', statusColor: 'var(--state-info)',
-    quantity: 20, buyPrice: '198.50', currentPrice: '215.30', pnl: '+16.80', pnlPct: '+8.47%', pnlColor: 'var(--price-up)', days: '5天',
-    history: [
-      { date: '07-22', close: '215.30', diff: '+16.80', diffPct: '+8.47%', color: 'var(--price-up)' },
-      { date: '07-21', close: '210.50', diff: '+12.00', diffPct: '+6.05%', color: 'var(--price-up)' },
-      { date: '07-20', close: '208.00', diff: '+9.50', diffPct: '+4.79%', color: 'var(--price-up)' },
-      { date: '07-19', close: '205.80', diff: '+7.30', diffPct: '+3.68%', color: 'var(--price-up)' },
-      { date: '07-18', close: '198.50', diff: '+0.00', diffPct: '+0.00%', color: 'var(--ink-3)' }
-    ]
-  },
-  {
-    name: '比亚迪', code: '002594', status: '持有中', statusBg: 'var(--state-info-bg)', statusColor: 'var(--state-info)',
-    quantity: 15, buyPrice: '268.00', currentPrice: '255.40', pnl: '-12.60', pnlPct: '-4.70%', pnlColor: 'var(--price-down)', days: '3天',
-    history: [
-      { date: '07-22', close: '255.40', diff: '-12.60', diffPct: '-4.70%', color: 'var(--price-down)' },
-      { date: '07-21', close: '261.80', diff: '-6.20', diffPct: '-2.31%', color: 'var(--price-down)' },
-      { date: '07-20', close: '268.00', diff: '+0.00', diffPct: '+0.00%', color: 'var(--ink-3)' }
-    ]
-  },
-  {
-    name: '中芯国际', code: '688981', status: '止盈', statusBg: 'var(--state-success-bg)', statusColor: 'var(--state-success)',
-    quantity: 0, buyPrice: '52.30', currentPrice: '58.60', pnl: '+6.30', pnlPct: '+12.05%', pnlColor: 'var(--price-up)', days: '8天',
-    history: [
-      { date: '07-22', close: '58.60', diff: '+6.30', diffPct: '+12.05%', color: 'var(--price-up)' },
-      { date: '07-21', close: '57.20', diff: '+4.90', diffPct: '+9.37%', color: 'var(--price-up)' },
-      { date: '07-20', close: '56.10', diff: '+3.80', diffPct: '+7.27%', color: 'var(--price-up)' },
-      { date: '07-19', close: '54.80', diff: '+2.50', diffPct: '+4.78%', color: 'var(--price-up)' },
-      { date: '07-18', close: '53.90', diff: '+1.60', diffPct: '+3.06%', color: 'var(--price-up)' },
-      { date: '07-17', close: '52.80', diff: '+0.50', diffPct: '+0.96%', color: 'var(--price-up)' },
-      { date: '07-16', close: '51.70', diff: '-0.60', diffPct: '-1.15%', color: 'var(--price-down)' },
-      { date: '07-15', close: '52.30', diff: '+0.00', diffPct: '+0.00%', color: 'var(--ink-3)' }
-    ]
-  }
-]
+// 持仓数据 — 默认为空，由用户自行录入
+const HOLDINGS = []
 
 const HISTORY = [
   { date: '2026-07-22', label: '纪律良好', score: '6/7', bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
@@ -120,7 +86,13 @@ export function createPositionCheckPage(root) {
           <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">持仓分析</h2>
         </div>
         <div id="stock-cards" class="flex flex-col gap-4">
-          ${HOLDINGS.map((h) => holdingCardHTML(h)).join('')}
+          ${HOLDINGS.length === 0 ? `
+            <div style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
+              <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+              <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无持仓数据</p>
+              <p style="font-size:var(--text-caption); color:var(--ink-3);">可在「下单计划」中提交计划，或在「交易记录」中录入成交后自动同步</p>
+            </div>
+          ` : HOLDINGS.map((h) => holdingCardHTML(h)).join('')}
         </div>
       </section>
 
