@@ -14,24 +14,12 @@ const QA_QUESTIONS = [
   '买入前是否已完成逻辑判断记录？'
 ]
 
-const TRADE_RECORDS = [
-  { id: 't1', name: '兴森科技 / 002436', date: '2026-07-15', status: '违规' },
-  { id: 't2', name: '中科创达 / 300496', date: '2026-07-08', status: '合规' },
-  { id: 't3', name: '立讯精密 / 002475', date: '2026-06-28', status: '合规/持仓中' }
-]
+const TRADE_RECORDS = []
 
 // 持仓数据 — 默认为空，由用户自行录入
 const HOLDINGS = []
 
-const HISTORY = [
-  { date: '2026-07-22', label: '纪律良好', score: '6/7', bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
-  { date: '2026-07-21', label: '有待改善', score: '4/7', bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
-  { date: '2026-07-18', label: '纪律优秀', score: '7/7', bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
-  { date: '2026-07-17', label: '有待改善', score: '5/7', bg: 'var(--state-warning-bg)', color: 'var(--state-warning)' },
-  { date: '2026-07-16', label: '纪律良好', score: '6/7', bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
-  { date: '2026-07-15', label: '纪律优秀', score: '7/7', bg: 'var(--state-success-bg)', color: 'var(--state-success)' },
-  { date: '2026-07-14', label: '需要警惕', score: '3/7', bg: 'var(--state-error-bg)', color: 'var(--state-error)' }
-]
+const HISTORY = []
 
 export function createPositionCheckPage(root) {
   let qaAnswers = [null, null, null, null, null, null, null] // null | true | false
@@ -60,7 +48,7 @@ export function createPositionCheckPage(root) {
                   <div style="margin-bottom:var(--s-2);">
                     <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">关联操作记录</label>
                     <select id="qa-trade-${i}" class="field-select" style="width:100%;">
-                      <option value="">请选择操作记录</option>
+                      <option value="">${TRADE_RECORDS.length === 0 ? '暂无可关联记录' : '请选择操作记录'}</option>
                       ${TRADE_RECORDS.map((r) => `<option value="${r.id}">${r.date} - ${r.name}</option>`).join('')}
                     </select>
                   </div>
@@ -114,8 +102,12 @@ export function createPositionCheckPage(root) {
           <i data-lucide="history" style="width:20px; height:20px; color:var(--brand); flex-shrink:0;"></i>
           <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">历史复盘</h2>
         </div>
-        <div id="history-list" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-2) 0;">
-          ${HISTORY.map((h, i) => `
+        <div id="history-list" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:${HISTORY.length === 0 ? 'var(--s-7) var(--s-5)' : 'var(--s-2) 0'}; text-align:${HISTORY.length === 0 ? 'center' : 'left'};">
+          ${HISTORY.length === 0 ? `
+            <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+            <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无历史复盘</p>
+            <p style="font-size:var(--text-caption); color:var(--ink-3);">完成今日检查后将自动归档</p>
+          ` : HISTORY.map((h, i) => `
             <div class="flex items-center justify-between px-5 py-3" style="${i < HISTORY.length - 1 ? 'border-bottom:1px solid var(--line);' : ''}">
               <span style="font-size:var(--text-body); color:var(--ink-2);">${h.date}</span>
               <div class="flex items-center gap-3">

@@ -4,30 +4,12 @@ import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 
-const STOCK_POOL = [
-  { name: '中科创达', code: '300496', price: '68.30', change: '-0.58%', changeColor: 'var(--price-down)', holding: '0股' },
-  { name: '宁德时代', code: '300750', price: '215.40', change: '+0.82%', changeColor: 'var(--price-up)', holding: '0股' },
-  { name: '比亚迪', code: '002594', price: '286.50', change: '+1.05%', changeColor: 'var(--price-up)', holding: '0股' },
-  { name: '中际旭创', code: '300308', price: '98.70', change: '-0.31%', changeColor: 'var(--price-down)', holding: '0股' }
-]
+// 股票搜索池 — 用于添加收藏时的本地搜索（用户可自行扩展）
+const STOCK_POOL = []
 
-const SAMPLE_GOAL = {
-  id: 'sample-1',
-  name: '降低兴森科技持仓成本',
-  type: '降低成本',
-  startValue: 48.50,
-  targetValue: 43.00,
-  currentValue: 47.20,
-  deadline: '2026-08-31',
-  note: '分批减仓降低平均成本',
-  archived: false,
-  createdAt: '2026-07-20'
-}
+const SAMPLE_GOAL = null
 
-const INITIAL_FAVORITES = [
-  { name: '兴森科技', code: '002436', price: '47.09', change: '-1.23%', changeColor: 'var(--price-down)', holding: '3,600股' },
-  { name: '立讯精密', code: '002475', price: '36.85', change: '+2.15%', changeColor: 'var(--price-up)', holding: '800股' }
-]
+const INITIAL_FAVORITES = []
 
 export function createOverviewPage(root) {
   let state = {
@@ -38,7 +20,7 @@ export function createOverviewPage(root) {
   function loadFavorites() {
     const saved = lsGetJSON(STORAGE_KEYS.favorites, null)
     if (saved && Array.isArray(saved)) return saved
-    return [...INITIAL_FAVORITES]
+    return []
   }
   function saveFavorites() {
     lsSetJSON(STORAGE_KEYS.favorites, state.favorites)
@@ -50,7 +32,7 @@ export function createOverviewPage(root) {
     lsSetJSON(STORAGE_KEYS.stageGoals, state.goals)
   }
   function ensureGoals(goals) {
-    if (!goals || goals.length === 0) return [SAMPLE_GOAL]
+    if (!goals || goals.length === 0) return []
     return goals
   }
 
@@ -75,6 +57,42 @@ export function createOverviewPage(root) {
   }
 
   function render() {
+    // 动态计算所有数据
+    const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    const riskData = lsGetJSON(STORAGE_KEYS.riskCtrl + 'total_fund', '12000')
+    const totalFund = parseFloat(riskData) || 0
+    const stockValue = holdings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
+    const totalAsset = totalFund // 总资产 = 账户总金额（与风控页一致）
+    const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
+
+    // 本月盈亏：累加交易记录里的 actualPnl
+    const now = new Date()
+    const monthPrefix = now.toISOString().slice(0, 7)
+    let monthlyPnl = 0
+    trades.forEach((t) => {
+      if (t.date && t.date.startsWith(monthPrefix) && t.actualPnl) {
+        const num = parseFloat(String(t.actualPnl).replace(/[^-\d.]/g, ''))
+        if (!isNaN(num)) monthlyPnl += num
+      }
+    })
+
+    // 合规率
+    const completed = trades.filter((t) => t.actualPnl && !String(t.actualPnl).includes('待结算') && t.actualPnl !== '--')
+    const compliant = completed.filter((t) => t.status === '合规').length
+    const rate = completed.length > 0 ? Math.round(compliant / completed.length * 100) : 0
+
+    // 连续合规笔数（从最新往前数连续合规的笔数）
+    let streak = 0
+    for (const t of completed) {
+      if (t.status === '合规') streak++
+      else break
+    }
+
+    // 仓位上限 30%、个股上限 20%
+    const totalCap = 30
+    const stockCap = 20
+
     root.innerHTML = `
       <!-- Filter Bar -->
       <div id="filter-bar" class="mb-6" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) var(--s-5);">
@@ -82,9 +100,9 @@ export function createOverviewPage(root) {
           <div class="flex items-center gap-2">
             <i data-lucide="calendar-range" style="width:16px; height:16px; color:var(--ink-3);"></i>
             <label class="filter-label" style="font-size:var(--text-caption); color:var(--ink-3); white-space:nowrap;">时间段</label>
-            <input type="date" id="filter-date-start" value="2026-07-01" class="filter-input">
+            <input type="date" id="filter-date-start" class="filter-input">
             <span style="color:var(--ink-3);">—</span>
-            <input type="date" id="filter-date-end" value="2026-07-21" class="filter-input">
+            <input type="date" id="filter-date-end" class="filter-input">
           </div>
           <div class="hidden sm:block" style="width:1px; height:24px; background:var(--line);"></div>
           <div class="flex items-center gap-2">
@@ -92,10 +110,7 @@ export function createOverviewPage(root) {
             <label class="filter-label" style="font-size:var(--text-caption); color:var(--ink-3); white-space:nowrap;">股票</label>
             <select id="filter-stock" class="filter-select">
               <option value="all">全部股票</option>
-              <option value="002436">兴森科技</option>
-              <option value="300496">中科创达</option>
-              <option value="002475">立讯精密</option>
-              <option value="300750">宁德时代</option>
+              ${holdings.map((h) => `<option value="${escHtml(h.code)}">${escHtml(h.name)}</option>`).join('')}
             </select>
           </div>
           <div class="flex items-center gap-2 ml-auto">
@@ -110,21 +125,21 @@ export function createOverviewPage(root) {
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
             <span style="font-size:var(--text-caption); color:var(--ink-3);">本月盈亏</span>
-            <i data-lucide="trending-up" style="width:14px; height:14px; color:var(--state-success);"></i>
+            <i data-lucide="trending-up" style="width:14px; height:14px; color:${monthlyPnl >= 0 ? 'var(--state-success)' : 'var(--state-error)'};"></i>
           </div>
-          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--price-up); white-space:nowrap; font-variant-numeric:tabular-nums;">+2,340元</div>
-          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">较上月 +1.2%</div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:${monthlyPnl > 0 ? 'var(--price-up)' : monthlyPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'}; white-space:nowrap; font-variant-numeric:tabular-nums;">${trades.length === 0 ? '--' : (monthlyPnl >= 0 ? '+' : '') + monthlyPnl.toLocaleString('zh-CN') + '元'}</div>
+          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">${monthPrefix} 累计</div>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
             <span style="font-size:var(--text-caption); color:var(--ink-3);">规则合规率</span>
-            <i data-lucide="check-circle" style="width:14px; height:14px; color:var(--state-success);"></i>
+            <i data-lucide="check-circle" style="width:14px; height:14px; color:${rate >= 80 ? 'var(--state-success)' : rate >= 60 ? 'var(--state-warning)' : 'var(--state-error)'};"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">87%</span>
+            <span style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${completed.length === 0 ? '--' : rate + '%'}</span>
           </div>
           <div class="mt-2" style="height:4px; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden;">
-            <div style="width:87%; height:100%; border-radius:var(--r-pill); background:var(--state-success);"></div>
+            <div style="width:${rate}%; height:100%; border-radius:var(--r-pill); background:${rate >= 80 ? 'var(--state-success)' : rate >= 60 ? 'var(--state-warning)' : 'var(--state-error)'};"></div>
           </div>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
@@ -132,7 +147,7 @@ export function createOverviewPage(root) {
             <span style="font-size:var(--text-caption); color:var(--ink-3);">连续合规笔数</span>
             <i data-lucide="flame" style="width:14px; height:14px; color:var(--state-warning);"></i>
           </div>
-          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">5笔</div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${completed.length === 0 ? '--' : streak + '笔'}</div>
           <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">目标 20笔</div>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
@@ -156,34 +171,44 @@ export function createOverviewPage(root) {
               <i data-lucide="pie-chart" style="width:14px; height:14px;"></i>
               总仓位
             </span>
-            <span style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:var(--state-success); font-variant-numeric:tabular-nums;">18%</span>
+            <span style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:${positionPct > 30 ? 'var(--state-error)' : positionPct > 20 ? 'var(--state-warning)' : 'var(--state-success)'}; font-variant-numeric:tabular-nums;">${totalAsset > 0 ? positionPct.toFixed(1) + '%' : '--'}</span>
           </div>
           <div class="mb-1" style="height:10px; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden;">
-            <div style="width:60%; height:100%; border-radius:var(--r-pill); background:var(--state-success); transition:width 300ms;"></div>
+            <div style="width:${Math.min(positionPct, 100)}%; height:100%; border-radius:var(--r-pill); background:${positionPct > 30 ? 'var(--state-error)' : positionPct > 20 ? 'var(--state-warning)' : 'var(--state-success)'}; transition:width 300ms;"></div>
           </div>
           <div class="flex justify-between" style="font-size:var(--text-caption); color:var(--ink-3);">
-            <span>当前 18%</span>
-            <span>总仓位上限 30%</span>
+            <span>当前 ${totalAsset > 0 ? positionPct.toFixed(1) + '%' : '--'}</span>
+            <span>总仓位上限 ${totalCap}%</span>
           </div>
           <div class="my-4" style="border-top:1px solid var(--line);"></div>
           <div class="flex flex-col gap-3">
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <span style="font-size:var(--text-body); color:var(--ink-2);">兴森科技</span>
-                <span style="font-size:var(--text-caption); font-weight:var(--weight-medium); color:var(--state-warning); font-variant-numeric:tabular-nums;">11.4%</span>
+            ${holdings.filter((h) => parseFloat(h.quantity) > 0).length === 0 ? `
+              <div class="flex items-center gap-2 py-2" style="font-size:var(--text-caption); color:var(--ink-3);">
+                <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
+                <span>暂无持仓，可在「持仓检查」中录入</span>
               </div>
-              <div class="mb-1" style="height:6px; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden;">
-                <div style="width:57%; height:100%; border-radius:var(--r-pill); background:var(--state-success);"></div>
-              </div>
-              <div class="flex justify-between" style="font-size:var(--text-caption); color:var(--ink-3);">
-                <span>3,600股 / 112,000元</span>
-                <span>个股上限 20%</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-2 py-2" style="font-size:var(--text-caption); color:var(--ink-3);">
-              <i data-lucide="plus-circle" style="width:14px; height:14px;"></i>
-              <span>暂无其他持仓</span>
-            </div>
+            ` : holdings.filter((h) => parseFloat(h.quantity) > 0).map((h) => {
+              const qty = parseFloat(h.quantity) || 0
+              const price = parseFloat(h.currentPrice) || 0
+              const value = qty * price
+              const pct = totalAsset > 0 ? (value / totalAsset * 100) : 0
+              const barW = Math.min(pct / stockCap * 100, 100)
+              return `
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span style="font-size:var(--text-body); color:var(--ink-2);">${escHtml(h.name)}</span>
+                    <span style="font-size:var(--text-caption); font-weight:var(--weight-medium); color:${pct > stockCap ? 'var(--state-error)' : pct > stockCap * 0.8 ? 'var(--state-warning)' : 'var(--state-success)'}; font-variant-numeric:tabular-nums;">${pct.toFixed(1)}%</span>
+                  </div>
+                  <div class="mb-1" style="height:6px; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden;">
+                    <div style="width:${barW}%; height:100%; border-radius:var(--r-pill); background:${pct > stockCap ? 'var(--state-error)' : pct > stockCap * 0.8 ? 'var(--state-warning)' : 'var(--state-success)'};"></div>
+                  </div>
+                  <div class="flex justify-between" style="font-size:var(--text-caption); color:var(--ink-3);">
+                    <span>${qty.toLocaleString('zh-CN')}股 / ${value.toLocaleString('zh-CN')}元</span>
+                    <span>个股上限 ${stockCap}%</span>
+                  </div>
+                </div>
+              `
+            }).join('')}
           </div>
         </div>
       </div>
@@ -214,11 +239,28 @@ export function createOverviewPage(root) {
       <div class="mb-8">
         <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); margin-bottom:var(--s-4);">近期交易纪律</h3>
         <div class="flex flex-col gap-3" id="recent-trades">
-          ${recentTradeHTML({date:'07.18', name:'兴森科技', pnl:'+580元', pnlColor:'var(--price-up)', status:'合规', statusBg:'var(--state-success-bg)', statusColor:'var(--state-success)', icon:'check'})}
-          ${recentTradeHTML({date:'07.15', name:'宁德时代', pnl:'-320元', pnlColor:'var(--price-down)', status:'合规', statusBg:'var(--state-success-bg)', statusColor:'var(--state-success)', icon:'check'})}
-          ${recentTradeHTML({date:'07.11', name:'中际旭创', pnl:'+1,240元', pnlColor:'var(--price-up)', status:'合规', statusBg:'var(--state-success-bg)', statusColor:'var(--state-success)', icon:'check'})}
-          ${recentTradeHTML({date:'07.08', name:'比亚迪', pnl:'-180元', pnlColor:'var(--price-down)', status:'违规', statusBg:'var(--state-error-bg)', statusColor:'var(--state-error)', icon:'x'})}
-          ${recentTradeHTML({date:'07.03', name:'立讯精密', pnl:'+1,020元', pnlColor:'var(--price-up)', status:'合规', statusBg:'var(--state-success-bg)', statusColor:'var(--state-success)', icon:'check'})}
+          ${trades.length === 0 ? `
+            <div style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
+              <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+              <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无交易记录</p>
+              <p style="font-size:var(--text-caption); color:var(--ink-3);">可在「交易记录」页面新增</p>
+            </div>
+          ` : trades.slice(0, 5).map((t) => {
+            const pnl = String(t.actualPnl || '--')
+            const pnlColor = pnl.startsWith('+') ? 'var(--price-up)' : pnl.startsWith('-') ? 'var(--price-down)' : 'var(--ink-3)'
+            const isCompliant = t.status === '合规'
+            const date = t.date ? t.date.slice(5).replace('-', '.') : '--'
+            return recentTradeHTML({
+              date,
+              name: t.name + ' / ' + t.code,
+              pnl,
+              pnlColor,
+              status: t.status || '--',
+              statusBg: isCompliant ? 'var(--state-success-bg)' : 'var(--state-error-bg)',
+              statusColor: isCompliant ? 'var(--state-success)' : 'var(--state-error)',
+              icon: isCompliant ? 'check' : 'x'
+            })
+          }).join('')}
         </div>
       </div>
 
@@ -236,7 +278,13 @@ export function createOverviewPage(root) {
           </button>
         </div>
         <div id="fav-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          ${state.favorites.map((s, idx) => favCardHTML(s, idx)).join('')}
+          ${state.favorites.length === 0 ? `
+            <div class="sm:col-span-2" style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
+              <i data-lucide="star" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+              <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无收藏</p>
+              <p style="font-size:var(--text-caption); color:var(--ink-3);">点击右上方「添加收藏」录入股票</p>
+            </div>
+          ` : state.favorites.map((s, idx) => favCardHTML(s, idx)).join('')}
         </div>
       </div>
 
@@ -270,7 +318,7 @@ export function createOverviewPage(root) {
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">目标名称 *</label>
-                  <input type="text" id="goal-name-input" placeholder="例如：降低兴森科技持仓成本" class="field-input" style="width:100%;">
+                  <input type="text" id="goal-name-input" placeholder="例如：降低某股票持仓成本" class="field-input" style="width:100%;">
                 </div>
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">目标类型 *</label>
@@ -450,9 +498,12 @@ export function createOverviewPage(root) {
     const resetBtn = root.querySelector('#filter-reset')
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        root.querySelector('#filter-date-start').value = '2026-07-01'
-        root.querySelector('#filter-date-end').value = '2026-07-21'
-        root.querySelector('#filter-stock').value = 'all'
+        const startEl = root.querySelector('#filter-date-start')
+        const endEl = root.querySelector('#filter-date-end')
+        const stockEl = root.querySelector('#filter-stock')
+        if (startEl) startEl.value = ''
+        if (endEl) endEl.value = ''
+        if (stockEl) stockEl.value = 'all'
         showToast('筛选已重置')
       })
     }

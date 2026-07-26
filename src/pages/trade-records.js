@@ -4,93 +4,16 @@ import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 
-const INITIAL_TRADES = [
-  {
-    id: 't1',
-    date: '2026-07-15',
-    name: '兴森科技',
-    code: '002436',
-    wave: '波段20-60天',
-    status: '违规',
-    statusColor: 'var(--state-error)',
-    statusBg: 'var(--state-error-bg)',
-    holdingStatus: '',
-    buyLogic: 'PCB行业景气回升，公司产能扩张释放业绩',
-    planBuyPrice: '45.00',
-    actualBuyPrice: '45.20',
-    planExitPrice: '52.00',
-    actualExitPrice: '47.50',
-    planPosition: '1000 股',
-    actualPosition: '1000 股',
-    planRisk: '7,000 元',
-    actualPnl: '-2,700 元',
-    pnlColor: 'var(--price-down)',
-    violation: '未按计划止损 -- 计划退出价为52.00元（止盈目标），但未设定明确止损价位。实际在47.50元因恐慌卖出，偏离原定交易计划。',
-    violationBg: 'var(--state-error-bg)',
-    violationColor: 'var(--state-error)',
-    experience: '必须在买入前同时设定止盈和止损价位。恐慌性卖出是情绪化操作，应在计划阶段就写明止损条件并严格执行。'
-  },
-  {
-    id: 't2',
-    date: '2026-07-08',
-    name: '中科创达',
-    code: '300496',
-    wave: '波段10-20天',
-    status: '合规',
-    statusColor: 'var(--state-success)',
-    statusBg: 'var(--state-success-bg)',
-    holdingStatus: '',
-    buyLogic: '智能驾驶系统供应商，与主流车企合作落地',
-    planBuyPrice: '78.00',
-    actualBuyPrice: '78.50',
-    planExitPrice: '85.00',
-    actualExitPrice: '84.20',
-    planPosition: '500 股',
-    actualPosition: '500 股',
-    planRisk: '3,500 元',
-    actualPnl: '+2,850 元',
-    pnlColor: 'var(--price-up)',
-    violation: '无违规。按计划买入和卖出，仓位和价格均在计划范围内。',
-    violationBg: 'var(--state-success-bg)',
-    violationColor: 'var(--state-success)',
-    experience: '严格遵守计划的交易更容易执行。虽然未达到目标退出价85.00，但在接近目标时按纪律离场是正确决策。'
-  },
-  {
-    id: 't3',
-    date: '2026-06-28',
-    name: '立讯精密',
-    code: '002475',
-    wave: '波段20-60天',
-    status: '合规',
-    statusColor: 'var(--state-success)',
-    statusBg: 'var(--state-success-bg)',
-    holdingStatus: '持仓中',
-    holdingStatusColor: 'var(--state-info)',
-    holdingStatusBg: 'var(--state-info-bg)',
-    buyLogic: '消费电子连接器龙头，AI硬件放量带动业绩增长',
-    planBuyPrice: '35.00',
-    actualBuyPrice: '34.80',
-    planExitPrice: '40.00',
-    actualExitPrice: '--',
-    planPosition: '800 股',
-    actualPosition: '800 股',
-    planRisk: '4,000 元',
-    actualPnl: '待结算',
-    pnlColor: 'var(--state-warning)',
-    violation: '无违规。买入价格优于计划价，仓位严格执行。',
-    violationBg: 'var(--state-success-bg)',
-    violationColor: 'var(--state-success)',
-    experience: '耐心等待计划触发价买入，以更优价格成交。继续持有中，每日检查买入逻辑是否仍然成立。'
-  }
-]
+// 交易记录 — 默认为空，由用户自行录入
+const INITIAL_TRADES = []
 
 export function createTradeRecordsPage(root) {
   let trades = loadTrades()
 
   function loadTrades() {
     const saved = lsGetJSON(STORAGE_KEYS.tradeRecords, null)
-    if (saved && Array.isArray(saved) && saved.length) return saved
-    return JSON.parse(JSON.stringify(INITIAL_TRADES))
+    if (saved && Array.isArray(saved)) return saved
+    return []
   }
   function saveTrades() {
     lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
@@ -134,7 +57,13 @@ export function createTradeRecordsPage(root) {
       </div>
 
       <div id="trade-cards" class="flex flex-col gap-6">
-        ${trades.map((t, idx) => tradeCardHTML(t, idx)).join('')}
+        ${trades.length === 0 ? `
+          <div style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
+            <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+            <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无交易记录</p>
+            <p style="font-size:var(--text-caption); color:var(--ink-3);">点击右上方「新增记录」开始录入</p>
+          </div>
+        ` : trades.map((t, idx) => tradeCardHTML(t, idx)).join('')}
       </div>
 
       <div class="mt-8" style="background:var(--surface-2); border-left:3px solid var(--brand); border-radius:0 var(--r-md) var(--r-md) 0; padding:var(--s-4) var(--s-5);">

@@ -10,7 +10,12 @@ const ALL_FIELDS = [
   'plan-amount','plan-shares','trigger-detail','invalidate-condition','exec-notes-ta','invalidation-reason'
 ]
 
-const TOTAL_FUND = 112000 // for position % calculation
+// 仓位上限基数：从风控页读取（默认 12000），用于仓位占比计算
+function getTotalFund() {
+  const v = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '12000')
+  const n = parseFloat(v)
+  return isNaN(n) || n <= 0 ? 12000 : n
+}
 
 export function createOrderPlanPage(root) {
   let logicStatus = null // 'valid' | 'invalid' | null
@@ -289,7 +294,7 @@ export function createOrderPlanPage(root) {
 
     // Position percentage
     if (currentPrice > 0 && planShares > 0) {
-      const pct = (currentPrice * planShares) / TOTAL_FUND * 100
+      const pct = (currentPrice * planShares) / getTotalFund() * 100
       posEl.textContent = pct.toFixed(1) + '%'
     } else {
       posEl.textContent = '-'
@@ -324,7 +329,7 @@ export function createOrderPlanPage(root) {
     const emotion = getVal('emotion-state')
     const allFilled = stockName !== '' && stockCode !== '' && currentPrice > 0 && motive !== '' && emotion !== '' && stopLoss !== '' && takeProfit !== '' && maxLoss > 0 && expGain > 0 && planShares > 0
     const ratioVal = (maxLoss > 0 && expGain > 0) ? expGain / maxLoss : 0
-    const posPct = (currentPrice > 0 && planShares > 0) ? (currentPrice * planShares) / TOTAL_FUND * 100 : 0
+    const posPct = (currentPrice > 0 && planShares > 0) ? (currentPrice * planShares) / getTotalFund() * 100 : 0
     const reasons = []
     if (!allFilled) reasons.push('字段未填完')
     if (ratioVal < 2 && allFilled) reasons.push('风险收益比不足2')
