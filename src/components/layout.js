@@ -3,19 +3,45 @@
 import { refreshIcons, bindFocusStyles } from '../utils/icons.js'
 import { lsGet, lsSet, STORAGE_KEYS } from '../utils/storage.js'
 
-export const TABS = [
-  { id: 'overview', label: '统计概览', icon: 'bar-chart-3' },
-  { id: 'position', label: '持仓检查', icon: 'clipboard-check' },
-  { id: 'logic', label: '逻辑库', icon: 'brain' },
-  { id: 'plan', label: '下单计划', icon: 'target' },
-  { id: 'execution', label: '执行情况', icon: 'list-checks' },
-  { id: 'records', label: '交易记录', icon: 'book-open' },
-  { id: 'risk', label: '账户风控', icon: 'activity' }
+// Top-level menu groups — each group contains sub-tabs
+export const TAB_GROUPS = [
+  {
+    id: 'overview',
+    label: '总览',
+    icon: 'bar-chart-3',
+    tabs: [
+      { id: 'overview', label: '统计概览', icon: 'bar-chart-3' },
+      { id: 'risk', label: '账户风控', icon: 'activity' }
+    ]
+  },
+  {
+    id: 'operation',
+    label: '实际操作',
+    icon: 'clipboard-check',
+    tabs: [
+      { id: 'position', label: '持仓检查', icon: 'clipboard-check' },
+      { id: 'plan', label: '下单计划', icon: 'target' },
+      { id: 'execution', label: '执行情况', icon: 'list-checks' },
+      { id: 'records', label: '交易记录', icon: 'book-open' }
+    ]
+  },
+  {
+    id: 'logic',
+    label: '逻辑库',
+    icon: 'brain',
+    tabs: [
+      { id: 'logic', label: '逻辑库', icon: 'brain' }
+    ]
+  }
 ]
+
+// Flatten all sub-tabs for lookup
+export const ALL_TABS = TAB_GROUPS.flatMap((g) => g.tabs)
 
 let currentTab = 'overview'
 let pageRenderers = {} // id -> { mount(root), unmount() }
 let contentRoot = null
+let subTabBarEl = null
 let activeModule = null
 
 export function registerPage(id, factory) {
@@ -26,27 +52,49 @@ export function getCurrentTab() {
   return currentTab
 }
 
+// Find which group a sub-tab belongs to
+function findGroupByTab(tabId) {
+  return TAB_GROUPS.find((g) => g.tabs.some((t) => t.id === tabId))
+}
+
 export function navigateTo(tabId, opts = {}) {
-  if (!TABS.some((t) => t.id === tabId)) tabId = 'overview'
+  if (!ALL_TABS.some((t) => t.id === tabId)) tabId = 'overview'
   if (tabId === currentTab && !opts.force) return
   currentTab = tabId
 
-  // Update URL hash
   if (location.hash !== '#' + tabId) {
     history.replaceState(null, '', '#' + tabId)
   }
 
-  // Update tab visual state
-  document.querySelectorAll('.tab-btn').forEach((b) => {
-    b.classList.toggle('active', b.getAttribute('data-tab') === tabId)
+  updateTabVisuals()
+  renderContent()
+}
+
+function updateTabVisuals() {
+  // Update top-level group buttons
+  const activeGroup = findGroupByTab(currentTab)
+  document.querySelectorAll('.group-btn').forEach((b) => {
+    b.classList.toggle('active', b.getAttribute('data-group') === (activeGroup ? activeGroup.id : ''))
   })
 
-  renderContent()
+  // Update / render sub-tab bar
+  if (subTabBarEl && activeGroup) {
+    subTabBarEl.innerHTML = activeGroup.tabs.map((t) => `
+      <button class="subtab-btn shrink-0 px-3 sm:px-4 h-8 flex items-center gap-2 whitespace-nowrap ${t.id === currentTab ? 'active' : ''}" data-tab="${t.id}">
+        <i data-lucide="${t.icon}" style="width:14px; height:14px;"></i>
+        <span style="font-size:var(--text-body);">${t.label}</span>
+      </button>
+    `).join('')
+    subTabBarEl.querySelectorAll('.subtab-btn').forEach((btn) => {
+      btn.addEventListener('click', () => navigateTo(btn.getAttribute('data-tab')))
+    })
+    subTabBarEl.style.display = activeGroup.tabs.length > 1 ? 'flex' : 'none'
+    refreshIcons()
+  }
 }
 
 function renderContent() {
   if (!contentRoot) return
-  // Unmount previous
   if (activeModule && typeof activeModule.unmount === 'function') {
     activeModule.unmount()
   }
@@ -65,7 +113,6 @@ function renderContent() {
     activeModule.mount()
   }
   refreshIcons()
-  // scroll content to top on tab change
   const scroll = document.querySelector('[data-scroll-region]')
   if (scroll) scroll.scrollTop = 0
 }
@@ -76,10 +123,8 @@ function applyTheme(theme) {
   html.classList.add(theme)
   html.setAttribute('data-theme', theme)
   lsSet(STORAGE_KEYS.theme, theme)
-  // update theme-color meta
   const meta = document.querySelector('meta[name="theme-color"]')
   if (meta) meta.setAttribute('content', theme === 'dark' ? '#171717' : '#FFFFFF')
-  // swap toggle icon: show "sun" in dark mode (click to go light), "moon" in light mode
   const toggleBtn = document.getElementById('theme-toggle')
   if (toggleBtn) {
     const icon = toggleBtn.querySelector('[data-lucide]')
@@ -117,15 +162,18 @@ export function renderShell(root) {
         </div>
       </header>
 
-      <!-- Tab bar -->
+      <!-- Top-level group tab bar -->
       <nav class="shrink-0 flex items-center gap-1 px-3 sm:px-6 md:px-8 h-12 overflow-x-auto no-scrollbar flex-nowrap" style="border-bottom:1px solid var(--line); background:var(--bg);">
-        ${TABS.map((t) => `
-          <button class="tab-btn shrink-0 px-3 sm:px-4 h-8 flex items-center gap-2 whitespace-nowrap" data-tab="${t.id}">
-            <i data-lucide="${t.icon}" style="width:16px; height:16px;"></i>
-            <span>${t.label}</span>
+        ${TAB_GROUPS.map((g) => `
+          <button class="group-btn shrink-0 px-3 sm:px-4 h-8 flex items-center gap-2 whitespace-nowrap" data-group="${g.id}">
+            <i data-lucide="${g.icon}" style="width:16px; height:16px;"></i>
+            <span>${g.label}</span>
           </button>
         `).join('')}
       </nav>
+
+      <!-- Sub-tab bar (hidden for single-tab groups) -->
+      <nav id="subtab-bar" class="shrink-0 flex items-center gap-1 px-3 sm:px-6 md:px-8 h-10 overflow-x-auto no-scrollbar flex-nowrap" style="border-bottom:1px solid var(--line); background:var(--surface);"></nav>
 
       <!-- Scrollable content region -->
       <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto safe-bottom">
@@ -135,10 +183,20 @@ export function renderShell(root) {
   `
 
   contentRoot = document.getElementById('content-root')
+  subTabBarEl = document.getElementById('subtab-bar')
 
-  // Tab clicks
-  root.querySelectorAll('.tab-btn').forEach((btn) => {
-    btn.addEventListener('click', () => navigateTo(btn.getAttribute('data-tab')))
+  // Top-level group clicks — navigate to first tab in group
+  root.querySelectorAll('.group-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const groupId = btn.getAttribute('data-group')
+      const group = TAB_GROUPS.find((g) => g.id === groupId)
+      if (group && group.tabs.length > 0) {
+        // If already in this group, don't jump to first tab
+        const currentGroup = findGroupByTab(currentTab)
+        if (currentGroup && currentGroup.id === groupId) return
+        navigateTo(group.tabs[0].id)
+      }
+    })
   })
 
   // Theme toggle
@@ -155,7 +213,7 @@ export function renderShell(root) {
     applyTheme('light')
   }
 
-  // Listen to system theme changes if user hasn't set a preference
+  // Listen to system theme changes
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       const userPref = lsGet(STORAGE_KEYS.theme, null)
@@ -168,17 +226,15 @@ export function renderShell(root) {
 
   // Initial route from hash
   const hash = location.hash.replace('#', '')
-  const initialTab = TABS.some((t) => t.id === hash) ? hash : 'overview'
+  const initialTab = ALL_TABS.some((t) => t.id === hash) ? hash : 'overview'
   currentTab = initialTab
-  root.querySelectorAll('.tab-btn').forEach((b) => {
-    b.classList.toggle('active', b.getAttribute('data-tab') === initialTab)
-  })
+  updateTabVisuals()
   renderContent()
 
-  // Hash change navigation (back/forward)
+  // Hash change navigation
   window.addEventListener('hashchange', () => {
     const h = location.hash.replace('#', '')
-    if (TABS.some((t) => t.id === h) && h !== currentTab) {
+    if (ALL_TABS.some((t) => t.id === h) && h !== currentTab) {
       navigateTo(h)
     }
   })

@@ -57,7 +57,9 @@
 }
 
 /* ── Tab button states ── */
-.tab-btn {
+.tab-btn,
+.group-btn,
+.subtab-btn {
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
   border-radius: var(--r-sm);
@@ -67,13 +69,34 @@
   color: var(--ink-3);
   transition: background var(--duration-hover) var(--ease-hover), color var(--duration-hover) var(--ease-hover);
 }
-.tab-btn:hover {
+.tab-btn:hover,
+.group-btn:hover,
+.subtab-btn:hover {
   background: var(--surface);
   color: var(--ink);
 }
-.tab-btn.active {
+.tab-btn.active,
+.group-btn.active {
   background: var(--surface);
   color: var(--ink);
+}
+.subtab-btn.active {
+  color: var(--brand);
+  font-weight: var(--weight-semibold);
+}
+.subtab-btn.active::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: -1px;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: var(--brand);
+  border-radius: 1px;
+}
+.subtab-btn {
+  position: relative;
 }
 
 /* ── Form controls ── */

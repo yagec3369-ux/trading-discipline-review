@@ -520,7 +520,11 @@ export function createOrderPlanPage(root) {
         showToast('请先填写股票名称')
         return
       }
-      // Collect form data with camelCase keys for execution page
+      const compEl = root.querySelector('#compliance-badge')
+      const complianceText = compEl ? compEl.textContent : ''
+      const isCompliant = complianceText === '合规'
+      const needsAttention = !isCompliant && complianceText !== '待填写'
+
       const plan = {
         id: 'plan_' + Date.now(),
         createdAt: new Date().toISOString(),
@@ -544,13 +548,15 @@ export function createOrderPlanPage(root) {
         invalidateCondition: getVal('invalidate-condition'),
         execNotes: getVal('exec-notes-ta'),
         invalidationReason: getVal('invalidation-reason'),
-        logicStatus: logicStatus
+        logicStatus: logicStatus,
+        compliance: isCompliant ? 'compliant' : (needsAttention ? 'attention' : 'pending'),
+        complianceNote: needsAttention ? complianceText : ''
       }
       const plans = lsGetJSON(STORAGE_KEYS.plans, []) || []
       plans.push(plan)
       lsSetJSON(STORAGE_KEYS.plans, plans)
       autoSave()
-      showToast('计划已提交到「执行情况」')
+      showToast(needsAttention ? '计划已提交（重点关注）' : '计划已提交到「执行情况」')
     })
 
     // Listen for risk control changes (totalFund) to recalc position pct
