@@ -3,6 +3,7 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { on, DATA_EVENTS } from '../utils/events.js'
 
 // 股票搜索池 — 用于添加收藏时的本地搜索（用户可自行扩展）
 const STOCK_POOL = []
@@ -718,12 +719,23 @@ export function createOverviewPage(root) {
         refreshIcons()
       })
     }
+
+    on(DATA_EVENTS.HOLDINGS_CHANGED, () => {
+      render()
+    })
+    on(DATA_EVENTS.TRADE_RECORDS_CHANGED, () => {
+      render()
+    })
+    on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
+      render()
+    })
   }
 
   return {
     mount() {
       render()
       bindGoalEvents()
+      bindEvents()
     },
     unmount() {
       closeFavPopover()

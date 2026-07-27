@@ -3,6 +3,7 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 // 交易记录 — 默认为空，由用户自行录入
 const INITIAL_TRADES = []
@@ -17,6 +18,7 @@ export function createTradeRecordsPage(root) {
   }
   function saveTrades() {
     lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
+    notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
   }
   function updateHoldingsOnTrade(name, code, shares) {
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
@@ -38,6 +40,7 @@ export function createTradeRecordsPage(root) {
       })
     }
     lsSetJSON(STORAGE_KEYS.holdings, holdings)
+    notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
   }
 
   function render() {

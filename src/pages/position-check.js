@@ -3,6 +3,7 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsSet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 const QA_QUESTIONS = [
   '今天的交易是否在计划内？',
@@ -30,6 +31,7 @@ export function createPositionCheckPage(root) {
   }
   function saveHoldings() {
     lsSetJSON(STORAGE_KEYS.holdings, holdings)
+    notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
   }
 
   function calcPnl(buyPrice, currentPrice, quantity) {
@@ -144,8 +146,7 @@ export function createPositionCheckPage(root) {
         </div>
       </section>
     `
-    // Persist holdings for cross-page access (account risk control reads this)
-    lsSetJSON(STORAGE_KEYS.holdings, HOLDINGS)
+    lsSetJSON(STORAGE_KEYS.holdings, holdings)
     refreshIcons()
     bindEvents()
     loadSaved()

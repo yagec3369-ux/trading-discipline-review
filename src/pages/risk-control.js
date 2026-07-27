@@ -8,6 +8,7 @@ import {
   lsGetJSON,
   STORAGE_KEYS
 } from '../utils/storage.js'
+import { on, off, emit, DATA_EVENTS } from '../utils/events.js'
 
 // Field keys persisted under STORAGE_KEYS.riskCtrl prefix
 const FIELD_KEYS = {
@@ -97,6 +98,25 @@ export function createRiskControlPage(root) {
           ${overviewCard('当前总资产', 'coins', '元', 'rc-total-asset', false)}
           ${positionCard()}
           ${overviewCard('本月累计盈亏', 'arrow-down-up', '元', 'rc-monthly-pnl', true, state.monthlyPnl, '正数盈/负数亏')}
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5); margin-top:var(--s-4);">
+          <h4 style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); margin-bottom:var(--s-4);">资金转入/转出</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">转入金额（元）</label>
+              <div class="flex items-center gap-2">
+                <input type="number" id="rc-transfer-in" class="field-input" placeholder="0" min="0" step="0.01" style="flex:1;">
+                <button id="btn-transfer-in" class="btn-primary">转入</button>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">转出金额（元）</label>
+              <div class="flex items-center gap-2">
+                <input type="number" id="rc-transfer-out" class="field-input" placeholder="0" min="0" step="0.01" style="flex:1;">
+                <button id="btn-transfer-out" class="btn-secondary">转出</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -228,6 +248,7 @@ export function createRiskControlPage(root) {
     bindField('rc-total-fund', FIELD_KEYS.totalFund, () => {
       recalcDerived()
       runAllChecks()
+      emit(DATA_EVENTS.RISK_CTRL_CHANGED)
     })
     bindField('rc-monthly-pnl', FIELD_KEYS.monthlyPnl, () => {
       updatePnlColor()
@@ -264,6 +285,56 @@ export function createRiskControlPage(root) {
         lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.recoveryStatus, r.value)
         showSaveStatus()
       })
+    })
+
+    // Transfer in
+    root.querySelector('#btn-transfer-in')?.addEventListener('click', () => {
+      const input = root.querySelector('#rc-transfer-in')
+      const amount = parseFloat(input.value) || 0
+      if (amount <= 0) {
+        showSaveStatus('请输入有效金额', 'error')
+        return
+      }
+      const newTotal = (parseFloat(state.totalFund) || 0) + amount
+      state.totalFund = String(newTotal)
+      lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(newTotal))
+      const inputEl = root.querySelector('#rc-total-fund')
+      if (inputEl) inputEl.value = String(newTotal)
+      input.value = ''
+      recalcDerived()
+      emit(DATA_EVENTS.RISK_CTRL_CHANGED)
+      showSaveStatus('资金转入成功')
+    })
+
+    // Transfer out
+    root.querySelector('#btn-transfer-out')?.addEventListener('click', () => {
+      const input = root.querySelector('#rc-transfer-out')
+      const amount = parseFloat(input.value) || 0
+      if (amount <= 0) {
+        showSaveStatus('请输入有效金额', 'error')
+        return
+      }
+      const currentTotal = parseFloat(state.totalFund) || 0
+      const stockValue = getHoldingsValue()
+      const available = currentTotal - stockValue
+      if (amount > available) {
+        showSaveStatus(`转出金额不能超过可用资金（${available.toFixed(2)}元）`, 'error')
+        return
+      }
+      const newTotal = currentTotal - amount
+      state.totalFund = String(newTotal)
+      lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(newTotal))
+      const inputEl = root.querySelector('#rc-total-fund')
+      if (inputEl) inputEl.value = String(newTotal)
+      input.value = ''
+      recalcDerived()
+      emit(DATA_EVENTS.RISK_CTRL_CHANGED)
+      showSaveStatus('资金转出成功')
+    })
+
+    // Listen for holdings changes from other pages
+    on(DATA_EVENTS.HOLDINGS_CHANGED, () => {
+      recalcDerived()
     })
   }
 

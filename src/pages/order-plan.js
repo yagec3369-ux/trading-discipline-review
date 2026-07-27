@@ -3,6 +3,7 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { on, DATA_EVENTS } from '../utils/events.js'
 
 const ALL_FIELDS = [
   'stock-name','stock-code','current-price','motive-type','emotion-state','wave-mode',
@@ -549,6 +550,11 @@ export function createOrderPlanPage(root) {
       lsSetJSON(STORAGE_KEYS.plans, plans)
       autoSave()
       showToast('计划已提交到「执行情况」')
+    })
+
+    // Listen for risk control changes (totalFund) to recalc position pct
+    on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
+      calcMetrics()
     })
   }
 
