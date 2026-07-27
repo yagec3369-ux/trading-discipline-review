@@ -144,40 +144,57 @@ function toggleTheme() {
 
 export function renderShell(root) {
   root.innerHTML = `
-    <div class="h-screen overflow-hidden flex flex-col" style="background:var(--bg); color:var(--ink); font-family:var(--font-primary);">
-      <!-- Top bar -->
-      <header class="shrink-0 flex items-center justify-between px-4 sm:px-6 md:px-8 h-14 sm:h-16 safe-top" style="border-bottom:1px solid var(--line);">
-        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+    <div class="h-screen overflow-hidden flex" style="background:var(--bg); color:var(--ink); font-family:var(--font-primary);">
+      <!-- Mobile overlay -->
+      <div id="sidebar-overlay" class="fixed inset-0 z-40 hidden" style="background:rgba(0,0,0,0.4);"></div>
+
+      <!-- Left sidebar -->
+      <aside id="sidebar" class="shrink-0 flex flex-col z-50 safe-top safe-bottom" style="width:220px; background:var(--surface); border-right:1px solid var(--line); transition:transform 0.2s ease;">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 px-5 h-14 sm:h-16 shrink-0" style="border-bottom:1px solid var(--line);">
           <i data-lucide="shield-check" style="color:var(--brand); width:20px; height:20px; flex-shrink:0;"></i>
-          <h1 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); letter-spacing:-0.015em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">交易纪律复盘</h1>
+          <h1 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); letter-spacing:-0.015em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">交易纪律复盘</h1>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 whitespace-nowrap" style="font-size:var(--text-caption); color:var(--ink-3); border-radius:var(--r-md); background:var(--surface);">
+
+        <!-- Menu groups -->
+        <nav class="flex-1 overflow-y-auto py-3 px-2 flex flex-col gap-1">
+          ${TAB_GROUPS.map((g) => `
+            <button class="group-btn flex items-center gap-3 px-3 py-2.5 rounded-md w-full text-left" data-group="${g.id}">
+              <i data-lucide="${g.icon}" style="width:18px; height:18px; flex-shrink:0;"></i>
+              <span>${g.label}</span>
+            </button>
+          `).join('')}
+        </nav>
+
+        <!-- Bottom controls -->
+        <div class="shrink-0 flex items-center justify-between px-4 py-3" style="border-top:1px solid var(--line);">
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 whitespace-nowrap" style="font-size:var(--text-caption); color:var(--ink-3); border-radius:var(--r-md); background:var(--bg);">
             <span style="width:6px;height:6px;border-radius:50%;background:var(--state-success);display:inline-block;"></span>
             <span id="auto-save-status">已保存</span>
           </span>
-          <button id="theme-toggle" aria-label="切换主题" class="inline-flex items-center justify-center" style="width:32px; height:32px; border-radius:var(--r-md); background:var(--surface); border:1px solid var(--line); color:var(--ink-2); cursor:pointer;">
+          <button id="theme-toggle" aria-label="切换主题" class="inline-flex items-center justify-center" style="width:32px; height:32px; border-radius:var(--r-md); background:var(--bg); border:1px solid var(--line); color:var(--ink-2); cursor:pointer;">
             <i data-lucide="sun-moon" style="width:16px; height:16px;"></i>
           </button>
         </div>
-      </header>
+      </aside>
 
-      <!-- Top-level group tab bar -->
-      <nav class="shrink-0 flex items-center gap-1 px-3 sm:px-6 md:px-8 h-12 overflow-x-auto no-scrollbar flex-nowrap" style="border-bottom:1px solid var(--line); background:var(--bg);">
-        ${TAB_GROUPS.map((g) => `
-          <button class="group-btn shrink-0 px-3 sm:px-4 h-8 flex items-center gap-2 whitespace-nowrap" data-group="${g.id}">
-            <i data-lucide="${g.icon}" style="width:16px; height:16px;"></i>
-            <span>${g.label}</span>
+      <!-- Main area -->
+      <div class="flex-1 flex flex-col min-w-0">
+        <!-- Mobile top bar with menu toggle -->
+        <header class="shrink-0 flex items-center gap-3 px-4 h-14 md:hidden safe-top" style="border-bottom:1px solid var(--line);">
+          <button id="menu-toggle" aria-label="菜单" class="inline-flex items-center justify-center" style="width:32px; height:32px; border-radius:var(--r-md); background:var(--surface); border:1px solid var(--line); color:var(--ink-2); cursor:pointer;">
+            <i data-lucide="menu" style="width:18px; height:18px;"></i>
           </button>
-        `).join('')}
-      </nav>
+          <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);">交易纪律复盘</span>
+        </header>
 
-      <!-- Sub-tab bar (hidden for single-tab groups) -->
-      <nav id="subtab-bar" class="shrink-0 flex items-center gap-1 px-3 sm:px-6 md:px-8 h-10 overflow-x-auto no-scrollbar flex-nowrap" style="border-bottom:1px solid var(--line); background:var(--surface);"></nav>
+        <!-- Sub-tab bar (hidden for single-tab groups) -->
+        <nav id="subtab-bar" class="shrink-0 flex items-center gap-1 px-4 sm:px-6 md:px-8 h-11 overflow-x-auto no-scrollbar flex-nowrap" style="border-bottom:1px solid var(--line); background:var(--bg);"></nav>
 
-      <!-- Scrollable content region -->
-      <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto safe-bottom">
-        <div id="content-root" class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8"></div>
+        <!-- Scrollable content region -->
+        <div data-scroll-region="primary" class="flex-1 min-h-0 overflow-y-auto safe-bottom">
+          <div id="content-root" class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8"></div>
+        </div>
       </div>
     </div>
   `
@@ -185,16 +202,33 @@ export function renderShell(root) {
   contentRoot = document.getElementById('content-root')
   subTabBarEl = document.getElementById('subtab-bar')
 
-  // Top-level group clicks — navigate to first tab in group
+  const sidebar = document.getElementById('sidebar')
+  const overlay = document.getElementById('sidebar-overlay')
+  const menuToggle = document.getElementById('menu-toggle')
+
+  function openSidebar() {
+    sidebar.classList.add('sidebar-open')
+    overlay.classList.remove('hidden')
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('sidebar-open')
+    overlay.classList.add('hidden')
+  }
+
+  // Mobile menu toggle
+  if (menuToggle) menuToggle.addEventListener('click', openSidebar)
+  if (overlay) overlay.addEventListener('click', closeSidebar)
+
+  // Top-level group clicks
   root.querySelectorAll('.group-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const groupId = btn.getAttribute('data-group')
       const group = TAB_GROUPS.find((g) => g.id === groupId)
       if (group && group.tabs.length > 0) {
-        // If already in this group, don't jump to first tab
         const currentGroup = findGroupByTab(currentTab)
         if (currentGroup && currentGroup.id === groupId) return
         navigateTo(group.tabs[0].id)
+        closeSidebar()
       }
     })
   })

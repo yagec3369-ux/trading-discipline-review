@@ -58,7 +58,6 @@
 
 /* ── Tab button states ── */
 .tab-btn,
-.group-btn,
 .subtab-btn {
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
@@ -70,16 +69,36 @@
   transition: background var(--duration-hover) var(--ease-hover), color var(--duration-hover) var(--ease-hover);
 }
 .tab-btn:hover,
-.group-btn:hover,
 .subtab-btn:hover {
   background: var(--surface);
   color: var(--ink);
 }
-.tab-btn.active,
-.group-btn.active {
+.tab-btn.active {
   background: var(--surface);
   color: var(--ink);
 }
+
+/* Sidebar group buttons */
+.group-btn {
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  transition: background var(--duration-hover) var(--ease-hover), color var(--duration-hover) var(--ease-hover);
+}
+.group-btn:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+.group-btn.active {
+  background: var(--brand-bg);
+  color: var(--brand);
+  font-weight: var(--weight-semibold);
+}
+
 .subtab-btn.active {
   color: var(--brand);
   font-weight: var(--weight-semibold);
@@ -97,6 +116,27 @@
 }
 .subtab-btn {
   position: relative;
+}
+
+/* ── Sidebar responsive ── */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+}
+#sidebar.sidebar-open {
+  transform: translateX(0);
+}
+@media (min-width: 768px) {
+  #sidebar {
+    position: static;
+    transform: translateX(0);
+  }
+  #sidebar-overlay {
+    display: none !important;
+  }
 }
 
 /* ── Form controls ── */

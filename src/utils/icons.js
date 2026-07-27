@@ -53,7 +53,8 @@ import {
   Edit3,
   Brain,
   Bot,
-  Rss
+  Rss,
+  Menu
 } from 'lucide'
 
 const icons = {
@@ -108,7 +109,8 @@ const icons = {
   Edit3,
   Brain,
   Bot,
-  Rss
+  Rss,
+  Menu
 }
 
 let pending = false
