@@ -3,41 +3,57 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
-import { notifyDataChange, DATA_EVENTS } from '../utils/events.js'
+import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
-// 交易记录 — 默认为空，由用户自行录入
-const INITIAL_TRADES = []
+const EMOTION_OPTIONS = ['平静', '焦虑', '兴奋', '沮丧', '自信', '贪婪', '恐慌']
 
 export function createTradeRecordsPage(root) {
   let trades = loadTrades()
+  let _selfNotifying = false
 
   function loadTrades() {
     const saved = lsGetJSON(STORAGE_KEYS.tradeRecords, null)
     if (saved && Array.isArray(saved)) return saved
     return []
   }
+
   function saveTrades() {
     lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
-    notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
   }
-  function updateHoldingsOnTrade(name, code, shares) {
+
+  function saveTradesAndNotify() {
+    saveTrades()
+    _selfNotifying = true
+    notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
+    _selfNotifying = false
+  }
+
+  function updateHoldingsOnTrade(name, code, type, shares, price) {
+    if (!code) return
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     const qty = parseInt(shares, 10) || 0
     if (qty <= 0) return
 
     const existing = holdings.find((h) => h.code === code)
-    if (existing) {
-      existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
-    } else {
-      holdings.push({
-        id: 'h_' + Date.now(),
-        name,
-        code,
-        buyPrice: '--',
-        currentPrice: '--',
-        quantity: qty,
-        createdAt: new Date().toISOString()
-      })
+    if (type === 'buy') {
+      if (existing) {
+        existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
+        if (price) existing.buyPrice = price
+      } else {
+        holdings.push({
+          id: 'h_' + Date.now(),
+          name, code,
+          buyPrice: price || '--',
+          currentPrice: price || '--',
+          quantity: qty,
+          createdAt: new Date().toISOString()
+        })
+      }
+    } else if (type === 'sell') {
+      if (existing) {
+        existing.quantity = Math.max(0, (parseInt(existing.quantity, 10) || 0) - qty)
+        if (price) existing.currentPrice = price
+      }
     }
     lsSetJSON(STORAGE_KEYS.holdings, holdings)
     notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
@@ -52,7 +68,7 @@ export function createTradeRecordsPage(root) {
     root.innerHTML = `
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">交易记录</h2>
-        <button id="new-trade-btn" class="flex items-center gap-2 px-4 h-9 whitespace-nowrap" style="background:var(--brand); color:var(--brand-ink); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); transition:background var(--duration-hover) var(--ease-hover); border:none; cursor:pointer;">
+        <button id="new-trade-btn" class="flex items-center gap-2 px-4 h-9 whitespace-nowrap" style="background:var(--brand); color:var(--brand-ink); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); border:none; cursor:pointer;">
           <i data-lucide="plus" style="width:16px; height:16px;"></i>
           新增记录
         </button>
@@ -80,19 +96,14 @@ export function createTradeRecordsPage(root) {
         </div>
       </div>
 
-      <div id="trade-cards" class="flex flex-col gap-6">
+      <div id="trade-cards" class="flex flex-col gap-4">
         ${trades.length === 0 ? `
           <div style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
             <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
             <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无交易记录</p>
-            <p style="font-size:var(--text-caption); color:var(--ink-3);">点击右上方「新增记录」开始录入</p>
+            <p style="font-size:var(--text-caption); color:var(--ink-3);">点击右上方「新增记录」开始录入，或在「下单计划」页面执行计划后自动生成</p>
           </div>
         ` : trades.map((t, idx) => tradeCardHTML(t, idx)).join('')}
-      </div>
-
-      <div class="mt-8" style="background:var(--surface-2); border-left:3px solid var(--brand); border-radius:0 var(--r-md) var(--r-md) 0; padding:var(--s-4) var(--s-5);">
-        <p style="font-size:var(--text-caption); font-weight:var(--weight-semibold); color:var(--brand); margin-bottom:var(--s-2); letter-spacing:0.02em;">核验启发</p>
-        <p style="font-size:var(--text-body); line-height:var(--leading-body); color:var(--ink-2);">评价顺序 -- 先看是否遵守规则，再看策略是否有效，最后才看盈亏金额。遵守规则但亏损=合格交易。违反规则但赚钱=不合格交易。你的违规记录中是否有重复出现的模式？</p>
       </div>
     `
     refreshIcons()
@@ -100,136 +111,59 @@ export function createTradeRecordsPage(root) {
   }
 
   function tradeCardHTML(t, idx) {
+    const isBuy = t.type === 'buy'
+    const typeLabel = isBuy ? '买入' : '卖出'
+    const typeColor = isBuy ? 'var(--state-error)' : 'var(--state-success)'
+    const typeBg = isBuy ? 'var(--state-error-bg)' : 'var(--state-success-bg)'
+    const statusColor = t.status === '违规' ? 'var(--state-error)' : 'var(--state-success)'
+    const statusBg = t.status === '违规' ? 'var(--state-error-bg)' : 'var(--state-success-bg)'
+    const priceLabel = isBuy ? '买入价' : '卖出价'
+    const amountLabel = isBuy ? '买入金额' : '卖出金额'
+
     return `
-      <div class="trade-card" data-trade-idx="${idx}" style="background:var(--bg); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow-card);">
-        <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-3" style="border-bottom:1px solid var(--line);">
+      <div class="trade-card" data-trade-idx="${idx}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow-card); overflow:hidden;">
+        <div class="flex items-center justify-between px-4 sm:px-5 py-3 gap-3" style="border-bottom:1px solid var(--line);">
           <div class="flex items-center gap-3 min-w-0 flex-wrap">
             <span style="font-size:var(--text-caption); color:var(--ink-3); white-space:nowrap;">${escHtml(t.date)}</span>
             <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);" class="truncate">${escHtml(t.name)} / ${escHtml(t.code)}</span>
-            <span class="hidden sm:inline" style="font-size:var(--text-caption); color:var(--ink-3); white-space:nowrap;">${escHtml(t.wave)}</span>
+            <span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; font-weight:var(--weight-medium); color:${typeColor}; border-radius:var(--r-sm); background:${typeBg};">${typeLabel}</span>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <span class="inline-flex items-center px-2.5 py-0.5" style="font-size:var(--text-caption); font-weight:var(--weight-medium); color:${t.statusColor}; border-radius:var(--r-sm); background:${t.statusBg};">${escHtml(t.status)}</span>
-            ${t.holdingStatus ? `<span class="inline-flex items-center px-2 py-0.5" style="font-size:var(--text-caption); font-weight:var(--weight-medium); color:${t.holdingStatusColor}; border-radius:var(--r-sm); background:${t.holdingStatusBg};">${escHtml(t.holdingStatus)}</span>` : ''}
-            <button class="delete-trade-btn" data-trade-idx="${idx}" aria-label="删除" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px; display:flex;">
-              <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
-            </button>
+            <span class="inline-flex items-center px-2.5 py-0.5" style="font-size:var(--text-caption); font-weight:var(--weight-medium); color:${statusColor}; border-radius:var(--r-sm); background:${statusBg};">${escHtml(t.status)}</span>
+            ${t.fromPlanId ? '<span style="font-size:11px; color:var(--brand); display:inline-flex; align-items:center; gap:2px;"><i data-lucide="link" style="width:11px; height:11px;"></i>计划内</span>' : ''}
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 sm:px-6 py-5">
-          <div class="flex flex-col gap-4">
-            <div>
-              <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">买入逻辑</span>
-              <span style="font-size:var(--text-body); color:var(--ink); line-height:var(--leading-body);">${escHtml(t.buyLogic)}</span>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">计划买入价</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium); font-variant-numeric:tabular-nums;">${escHtml(t.planBuyPrice)}</span>
-              </div>
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">实际买入价</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium); font-variant-numeric:tabular-nums;">${escHtml(t.actualBuyPrice)}</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">计划退出价</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium); font-variant-numeric:tabular-nums;">${escHtml(t.planExitPrice)}</span>
-              </div>
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">实际退出价</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium); font-variant-numeric:tabular-nums;">${escHtml(t.actualExitPrice)}</span>
-              </div>
-            </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4 sm:px-5 py-3">
+          <div>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${priceLabel}</span>
+            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${escHtml(t.actualPrice || t.planPrice || '--')}</span>
           </div>
-          <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">计划仓位</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium);">${escHtml(t.planPosition)}</span>
-              </div>
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">实际仓位</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium);">${escHtml(t.actualPosition)}</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">计划风险</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium);">${escHtml(t.planRisk)}</span>
-              </div>
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">买入股数</span>
-                <span style="font-size:var(--text-body-l); color:${t.pnlColor}; font-weight:var(--weight-semibold); font-variant-numeric:tabular-nums;">${escHtml(t.actualPnl)}</span>
-              </div>
-            </div>
+          <div>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">股数</span>
+            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${escHtml(t.actualShares || t.planShares || '--')}</span>
+          </div>
+          <div>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${amountLabel}</span>
+            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${t.actualAmount ? Number(t.actualAmount).toLocaleString() : (t.actualShares && t.actualPrice ? (Number(t.actualShares) * Number(t.actualPrice)).toLocaleString() : '--')}</span>
+          </div>
+          <div>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入情绪</span>
+            <span style="font-size:var(--text-body); color:var(--ink);">${escHtml(t.emotion || '--')}</span>
           </div>
         </div>
-        <div style="border-top:1px solid var(--line);">
-          <button class="collapse-toggle flex items-center gap-2 w-full px-4 sm:px-6 py-3" data-target="trade-${idx}-detail" style="cursor:pointer; border:none; background:transparent; color:var(--brand); font-size:var(--text-caption); font-weight:var(--weight-medium); font-family:var(--font-primary); text-align:left;">
-            <i data-lucide="chevron-right" class="collapse-chevron" style="width:14px; height:14px; transition:transform 280ms cubic-bezier(0.32,0.72,0,1);"></i>
-            <span class="collapse-label">展开详情</span>
-          </button>
-          <div id="trade-${idx}-detail" class="hidden px-4 sm:px-6 pb-5">
-            <div class="flex flex-col gap-4">
-              <div>
-                <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">违规记录</label>
-                <div class="p-3" style="background:${t.violationBg}; border-radius:var(--r-sm); font-size:var(--text-body); color:${t.violationColor}; line-height:var(--leading-body);">${escHtml(t.violation)}</div>
-              </div>
-              <div>
-                <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">本次经验</label>
-                <div class="p-3" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(t.experience)}</div>
-              </div>
-            </div>
+        ${t.note ? `
+          <div style="border-top:1px solid var(--line); padding:var(--s-2) var(--s-5);">
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">备注：</span>
+            <span style="font-size:var(--text-caption); color:var(--ink-2);">${escHtml(t.note)}</span>
           </div>
-        </div>
+        ` : ''}
       </div>
     `
   }
 
   function bindEvents() {
-    // Collapse toggles
-    root.querySelectorAll('.collapse-toggle').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target')
-        const target = root.querySelector('#' + targetId)
-        const icon = btn.querySelector('.collapse-chevron')
-        const label = btn.querySelector('.collapse-label')
-        const isOpen = !target.classList.contains('hidden')
-        if (isOpen) {
-          target.classList.add('hidden')
-          if (icon) icon.style.transform = 'rotate(0deg)'
-          if (label) label.textContent = '展开详情'
-        } else {
-          target.classList.remove('hidden')
-          if (icon) icon.style.transform = 'rotate(90deg)'
-          if (label) label.textContent = '收起详情'
-        }
-      })
-    })
-
-    // New trade button
     const newBtn = root.querySelector('#new-trade-btn')
-    if (newBtn) {
-      newBtn.addEventListener('click', () => openAddDialog())
-    }
-
-    // Delete trade
-    root.querySelectorAll('.delete-trade-btn').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation()
-        const idx = parseInt(btn.getAttribute('data-trade-idx'), 10)
-        const t = trades[idx]
-        if (!t) return
-        if (confirm(`确认删除 ${t.name} / ${t.code} 的交易记录？`)) {
-          trades.splice(idx, 1)
-          saveTrades()
-          render()
-          showToast('记录已删除')
-        }
-      })
-    })
+    if (newBtn) newBtn.addEventListener('click', () => openAddDialog())
   }
 
   let dialogEl = null
@@ -262,33 +196,40 @@ export function createTradeRecordsPage(root) {
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">交易日期</label>
-            <input type="date" id="new-date" class="field-input" style="width:100%;" value="${new Date().toISOString().slice(0,10)}">
+            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">交易类型 *</label>
+            <select id="new-type" class="field-select" style="width:100%;">
+              <option value="buy">买入</option>
+              <option value="sell">卖出</option>
+            </select>
           </div>
           <div>
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">波段模式</label>
-            <select id="new-wave" class="field-select" style="width:100%;">
-              <option value="波段10-20天">波段10-20天</option>
-              <option value="波段20-60天">波段20-60天</option>
-            </select>
+            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">交易日期</label>
+            <input type="date" id="new-date" class="field-input" style="width:100%;" value="${new Date().toISOString().slice(0,10)}">
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">状态</label>
-            <select id="new-status" class="field-select" style="width:100%;">
-              <option value="合规">合规</option>
-              <option value="违规">违规</option>
-            </select>
+            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">价格（元）*</label>
+            <input type="number" id="new-price" class="field-input" style="width:100%;" placeholder="47.09" step="0.01" min="0">
           </div>
           <div>
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">买入股数</label>
-            <input type="number" id="new-pnl" class="field-input" style="width:100%;" placeholder="例如：1000" min="1">
+            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">股数 *</label>
+            <input type="number" id="new-shares" class="field-input" style="width:100%;" placeholder="1000" min="1" step="100">
           </div>
         </div>
         <div>
-          <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">买入逻辑</label>
-          <textarea id="new-logic" rows="2" class="field-input" style="width:100%; resize:vertical;" placeholder="简要描述买入逻辑"></textarea>
+          <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">买入情绪</label>
+          <select id="new-emotion" class="field-select" style="width:100%;">
+            ${EMOTION_OPTIONS.map((e) => `<option value="${e}">${e}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">备注</label>
+          <textarea id="new-note" rows="2" class="field-input" style="width:100%; resize:vertical;" placeholder="补充说明（可选）"></textarea>
+        </div>
+        <div style="background:var(--state-error-bg); border-radius:var(--r-sm); padding:var(--s-2) var(--s-3); font-size:var(--text-caption); color:var(--state-error); display:flex; align-items:center; gap:6px;">
+          <i data-lucide="info" style="width:12px; height:12px;"></i>
+          直接新增的交易记录标记为「违规」，从下单计划执行生成的记录为「合规」
         </div>
         <div class="flex items-center gap-2 justify-end pt-2">
           <button id="cancel-dialog" class="btn-secondary">取消</button>
@@ -305,33 +246,36 @@ export function createTradeRecordsPage(root) {
     overlayEl.querySelector('#confirm-dialog').addEventListener('click', () => {
       const name = overlayEl.querySelector('#new-name').value.trim()
       const code = overlayEl.querySelector('#new-code').value.trim()
+      const type = overlayEl.querySelector('#new-type').value
+      const date = overlayEl.querySelector('#new-date').value
+      const price = overlayEl.querySelector('#new-price').value.trim()
+      const shares = overlayEl.querySelector('#new-shares').value.trim()
+      const emotion = overlayEl.querySelector('#new-emotion').value
+      const note = overlayEl.querySelector('#new-note').value.trim()
+
       if (!name || !code) { showToast('请填写股票名称和代码'); return }
-      const status = overlayEl.querySelector('#new-status').value
-      const shares = overlayEl.querySelector('#new-pnl').value.trim() || '--'
+      if (!price || !shares) { showToast('请填写价格和股数'); return }
+
+      const amount = (parseFloat(price) * parseInt(shares, 10)).toFixed(2)
       const newTrade = {
-        id: 't' + Date.now(),
-        date: overlayEl.querySelector('#new-date').value,
+        id: 't_' + Date.now(),
+        date,
+        type,
         name, code,
-        wave: overlayEl.querySelector('#new-wave').value,
-        status,
-        statusColor: status === '违规' ? 'var(--state-error)' : 'var(--state-success)',
-        statusBg: status === '违规' ? 'var(--state-error-bg)' : 'var(--state-success-bg)',
-        holdingStatus: '',
-        buyLogic: overlayEl.querySelector('#new-logic').value.trim() || '—',
-        planBuyPrice: '--', actualBuyPrice: '--',
-        planExitPrice: '--', actualExitPrice: '--',
-        planPosition: '--', actualPosition: '--',
-        planRisk: '--',
-        actualPnl: shares,
-        pnlColor: 'var(--ink)',
-        violation: status === '违规' ? '请补充违规说明' : '无违规。',
-        violationBg: status === '违规' ? 'var(--state-error-bg)' : 'var(--state-success-bg)',
-        violationColor: status === '违规' ? 'var(--state-error)' : 'var(--state-success)',
-        experience: '请补充本次经验'
+        planPrice: price,
+        actualPrice: price,
+        planShares: shares,
+        actualShares: shares,
+        planAmount: amount,
+        actualAmount: amount,
+        emotion,
+        note,
+        status: '违规',
+        fromPlanId: null
       }
       trades.unshift(newTrade)
-      saveTrades()
-      updateHoldingsOnTrade(name, code, shares)
+      saveTradesAndNotify()
+      updateHoldingsOnTrade(name, code, type, shares, price)
       closeAddDialog()
       render()
       showToast('已新增记录，持仓已同步更新')
@@ -343,8 +287,26 @@ export function createTradeRecordsPage(root) {
     dialogEl = null
   }
 
+  let _listener = null
+
   return {
-    mount() { render() },
-    unmount() { closeAddDialog() }
+    mount() {
+      _listener = () => {
+        if (_selfNotifying) return
+        trades = loadTrades()
+        render()
+      }
+      on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _listener)
+      on(DATA_EVENTS.HOLDINGS_CHANGED, _listener)
+      render()
+    },
+    unmount() {
+      closeAddDialog()
+      if (_listener) {
+        off(DATA_EVENTS.TRADE_RECORDS_CHANGED, _listener)
+        off(DATA_EVENTS.HOLDINGS_CHANGED, _listener)
+        _listener = null
+      }
+    }
   }
 }

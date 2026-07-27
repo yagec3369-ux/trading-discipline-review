@@ -9,8 +9,7 @@ const LEG_STATUS = {
   pending: { label: '待执行', color: 'var(--state-warning)', bg: 'var(--state-warning-bg)', icon: 'clock' },
   executed: { label: '已操作', color: 'var(--state-success)', bg: 'var(--state-success-bg)', icon: 'check-circle-2' },
   cancelled: { label: '已取消', color: 'var(--state-info)', bg: 'var(--state-info-bg)', icon: 'x-circle' },
-  discarded: { label: '已弃用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'archive' },
-  skip: { label: '不适用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'minus' }
+  discarded: { label: '已弃用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'archive' }
 }
 
 const FILTER_TABS = [
@@ -18,12 +17,15 @@ const FILTER_TABS = [
   { id: 'buy', label: '买入执行' },
   { id: 'sell', label: '卖出执行' },
   { id: 'pending', label: '待执行' },
-  { id: 'executed', label: '已操作' }
+  { id: 'executed', label: '已操作' },
+  { id: 'cancelled', label: '已取消' }
 ]
 
 export function createExecutionPage(root) {
   let plans = loadPlans()
   let currentFilter = 'all'
+  let currentStockFilter = 'all'
+  let _selfNotifying = false
 
   function loadPlans() {
     const saved = lsGetJSON(STORAGE_KEYS.plans, null)
@@ -33,7 +35,13 @@ export function createExecutionPage(root) {
 
   function savePlans() {
     lsSetJSON(STORAGE_KEYS.plans, plans)
-    showSaveStatus()
+  }
+
+  function savePlansAndNotify() {
+    savePlans()
+    _selfNotifying = true
+    notifyDataChange(DATA_EVENTS.PLANS_CHANGED)
+    _selfNotifying = false
   }
 
   function listLegs() {
@@ -58,7 +66,8 @@ export function createExecutionPage(root) {
           amount: p.buyAmount || ((parseFloat(p.buyPrice) || 0) * (parseFloat(p.buyShares) || 0)),
           operable: op === 'buy' || op === 't0',
           operatedAt: p.buyOperatedAt || null,
-          note: p.buyNote || ''
+          note: p.buyNote || '',
+          cancelReason: p.buyCancelReason || ''
         })
       }
       if (hasSell) {
@@ -76,16 +85,30 @@ export function createExecutionPage(root) {
           amount: p.sellAmount || ((parseFloat(p.sellPrice) || 0) * (parseFloat(p.sellShares) || 0)),
           operable: op === 'sell' || op === 't0',
           operatedAt: p.sellOperatedAt || null,
-          note: p.sellNote || ''
+          note: p.sellNote || '',
+          cancelReason: p.sellCancelReason || ''
         })
       }
     })
     return legs
   }
 
+  function getStockOptions(legs) {
+    const map = {}
+    legs.forEach((l) => {
+      const p = l.plan
+      const key = p.code || p.name
+      if (key && !map[key]) {
+        map[key] = p.name + ' / ' + p.code
+      }
+    })
+    return Object.keys(map).map((k) => ({ code: k, label: map[k] }))
+  }
+
   function render() {
     const legs = listLegs()
     const counts = countLegsByStatus(legs)
+    const stockOptions = getStockOptions(legs)
 
     root.innerHTML = `
       <section class="mb-6">
@@ -103,13 +126,19 @@ export function createExecutionPage(root) {
             <i data-lucide="list-checks" style="width:20px; height:20px; color:var(--brand); flex-shrink:0;"></i>
             <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">计划执行情况</h2>
           </div>
-          <div class="flex items-center gap-1 flex-wrap">
-            ${FILTER_TABS.map((t) => `
-              <button class="filter-btn px-3 py-1" data-filter="${t.id}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); border-radius:var(--r-pill); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; transition:all var(--duration-hover) var(--ease-hover);">
-                ${t.label}${t.id !== 'all' ? ` <span class="filter-count">(${counts[t.id] || 0})</span>` : ''}
-              </button>
-            `).join('')}
+          <div class="flex items-center gap-2">
+            <select id="stock-filter" class="field-select" style="font-size:var(--text-caption); padding:4px 8px; height:32px;">
+              <option value="all">全部股票</option>
+              ${stockOptions.map((s) => `<option value="${escHtml(s.code)}" ${currentStockFilter === s.code ? 'selected' : ''}>${escHtml(s.label)}</option>`).join('')}
+            </select>
           </div>
+        </div>
+        <div class="flex items-center gap-1 flex-wrap mb-4">
+          ${FILTER_TABS.map((t) => `
+            <button class="filter-btn px-3 py-1" data-filter="${t.id}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); border-radius:var(--r-pill); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; transition:all var(--duration-hover) var(--ease-hover);">
+              ${t.label}${t.id !== 'all' ? ` <span class="filter-count">(${counts[t.id] || 0})</span>` : ''}
+            </button>
+          `).join('')}
         </div>
 
         <div id="legs-list" class="flex flex-col gap-3">
@@ -146,12 +175,15 @@ export function createExecutionPage(root) {
 
   function renderLegCards(legs) {
     let filtered = legs
+    if (currentStockFilter !== 'all') {
+      filtered = filtered.filter((l) => (l.plan.code || l.plan.name) === currentStockFilter)
+    }
     if (currentFilter === 'buy') {
-      filtered = legs.filter((l) => l.legType === 'buy')
+      filtered = filtered.filter((l) => l.legType === 'buy')
     } else if (currentFilter === 'sell') {
-      filtered = legs.filter((l) => l.legType === 'sell')
-    } else if (currentFilter === 'pending' || currentFilter === 'executed') {
-      filtered = legs.filter((l) => l.status === currentFilter)
+      filtered = filtered.filter((l) => l.legType === 'sell')
+    } else if (currentFilter === 'pending' || currentFilter === 'executed' || currentFilter === 'cancelled') {
+      filtered = filtered.filter((l) => l.status === currentFilter)
     }
 
     if (filtered.length === 0) {
@@ -186,8 +218,16 @@ export function createExecutionPage(root) {
     const rr = lossAmount > 0 && expAmount > 0 ? (expAmount / lossAmount).toFixed(1) : '--'
     const canAct = l.status === 'pending'
 
+    // 状态颜色根据legType区分
+    let statusColor = sd.color
+    let statusBg = sd.bg
+    if (l.status === 'executed') {
+      statusColor = l.legType === 'buy' ? 'var(--state-error)' : 'var(--state-success)'
+      statusBg = l.legType === 'buy' ? 'var(--state-error-bg)' : 'var(--state-success-bg)'
+    }
+
     return `
-      <div class="leg-card" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;">
+      <div class="leg-card" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="background:var(--surface); border:1px solid var(--line); border-left:3px solid ${l.status === 'executed' ? statusColor : 'var(--line)'}; border-radius:var(--r-md); overflow:hidden;">
         <div class="flex items-center justify-between px-4 sm:px-5 py-3" style="border-bottom:1px solid var(--line);">
           <div class="flex items-center gap-3 min-w-0 flex-wrap">
             <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(p.name || '未命名')}</span>
@@ -197,11 +237,10 @@ export function createExecutionPage(root) {
               ${l.actionLabel}执行
             </span>
             ${p.operationType === 't0' ? `<span style="font-size:11px; padding:2px 8px; border-radius:var(--r-pill); background:var(--state-warning-bg); color:var(--state-warning); font-weight:var(--weight-medium);">${opTypeLabel}</span>` : ''}
-            <span style="font-size:var(--text-caption); color:var(--ink-3);">操作类型: ${opTypeLabel}</span>
           </div>
-          <span style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:2px 10px; border-radius:var(--r-pill); background:${sd.bg}; color:${sd.color}; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
+          <span style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:2px 10px; border-radius:var(--r-pill); background:${statusBg}; color:${statusColor}; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="${sd.icon}" style="width:12px; height:12px;"></i>
-            ${escHtml(sd.label)}
+            ${l.status === 'executed' ? (l.legType === 'buy' ? '已买入' : '已卖出') : escHtml(sd.label)}
           </span>
         </div>
 
@@ -214,12 +253,13 @@ export function createExecutionPage(root) {
             ${metricCell('预期收益', (p.expectedGainNR || 0) + 'R')}
             ${metricCell('风险收益比', rr === '--' ? '--' : '1:' + rr)}
           </div>
-          ${l.note ? `<div style="font-size:var(--text-caption); color:var(--ink-3); padding:var(--s-2) var(--s-3); background:var(--bg); border-radius:var(--r-sm); border-left:3px solid ${l.actionColor};"><strong style="color:var(--ink-2);">操作备注：</strong>${escHtml(l.note)}</div>` : ''}
+          ${l.cancelReason ? `<div style="font-size:var(--text-caption); color:var(--state-info); padding:var(--s-2) var(--s-3); background:var(--state-info-bg); border-radius:var(--r-sm); border-left:3px solid var(--state-info);"><strong>取消原因：</strong>${escHtml(l.cancelReason)}</div>` : ''}
+          ${l.note && !l.cancelReason ? `<div style="font-size:var(--text-caption); color:var(--ink-3); padding:var(--s-2) var(--s-3); background:var(--bg); border-radius:var(--r-sm); border-left:3px solid ${l.actionColor};"><strong style="color:var(--ink-2);">操作备注：</strong>${escHtml(l.note)}</div>` : ''}
         </div>
 
         ${canAct ? `
           <div class="flex items-center gap-2 px-4 sm:px-5 py-3 flex-wrap">
-            <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:var(--state-success); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:${l.legType === 'buy' ? 'var(--state-error)' : 'var(--state-success)'}; color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="check" style="width:12px; height:12px;"></i>
               已${l.actionLabel}
             </button>
@@ -247,7 +287,7 @@ export function createExecutionPage(root) {
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                 ${detailItem('操作类型', opTypeLabel)}
                 ${detailItem('执行类型', l.actionLabel)}
-                ${detailItem('状态', sd.label)}
+                ${detailItem('状态', l.status === 'executed' ? (l.legType === 'buy' ? '已买入' : '已卖出') : sd.label)}
                 ${detailItem('创建时间', formatDate(p.createdAt))}
               </div>
               ${p.reviewNotes ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">复盘总结</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.reviewNotes)}</p></div>` : ''}
@@ -305,6 +345,19 @@ export function createExecutionPage(root) {
       })
     })
 
+    const stockFilter = root.querySelector('#stock-filter')
+    if (stockFilter) {
+      stockFilter.addEventListener('change', () => {
+        currentStockFilter = stockFilter.value
+        const list = root.querySelector('#legs-list')
+        if (list) {
+          list.innerHTML = renderLegCards(listLegs())
+          refreshIcons()
+          bindCardEvents()
+        }
+      })
+    }
+
     bindCardEvents()
   }
 
@@ -357,22 +410,32 @@ export function createExecutionPage(root) {
     const plan = plans.find((p) => p.id === planId)
     if (!plan) return
 
+    // 取消需要填写原因
+    if (action === 'cancelled') {
+      openCancelDialog(plan, legType)
+      return
+    }
+
+    applyLegAction(plan, legType, action)
+  }
+
+  function applyLegAction(plan, legType, action, cancelReason) {
     if (legType === 'buy') {
       plan.buyStatus = action
       plan.buyOperatedAt = new Date().toISOString()
+      if (cancelReason) plan.buyCancelReason = cancelReason
     } else if (legType === 'sell') {
       plan.sellStatus = action
       plan.sellOperatedAt = new Date().toISOString()
+      if (cancelReason) plan.sellCancelReason = cancelReason
     }
 
-    // update overall status based on legs
     const opType = plan.operationType || 'buy'
     if (opType === 'buy') {
       plan.status = plan.buyStatus
     } else if (opType === 'sell') {
       plan.status = plan.sellStatus
     } else {
-      // t0: if both legs are executed => executed; if any cancelled => cancelled; etc.
       const bs = plan.buyStatus || 'pending'
       const ss = plan.sellStatus || 'pending'
       if (bs === 'executed' && ss === 'executed') plan.status = 'executed'
@@ -387,14 +450,64 @@ export function createExecutionPage(root) {
       createTradeRecordFromPlan(plan, legType)
     }
 
-    savePlans()
+    savePlansAndNotify()
     showToast(legType === 'buy' ? '买入记录已标记为「' + actionLabels[action] + '」' : '卖出记录已标记为「' + actionLabels[action] + '」')
     render()
   }
 
+  let cancelOverlayEl = null
+  let cancelDialogEl = null
+
+  function openCancelDialog(plan, legType) {
+    closeCancelDialog()
+    cancelOverlayEl = document.createElement('div')
+    cancelOverlayEl.style.cssText = 'position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; padding:16px;'
+    cancelOverlayEl.addEventListener('click', (e) => { if (e.target === cancelOverlayEl) closeCancelDialog() })
+
+    cancelDialogEl = document.createElement('div')
+    cancelDialogEl.style.cssText = `background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-float); padding:var(--s-5) var(--s-6); width:min(420px, 100%);`
+    cancelDialogEl.innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink);">取消${legType === 'buy' ? '买入' : '卖出'}计划</h3>
+        <button id="close-cancel-dialog" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px;">
+          <i data-lucide="x" style="width:16px; height:16px;"></i>
+        </button>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); padding:var(--s-3); margin-bottom:var(--s-3);">
+        <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink);">${escHtml(plan.name)}</span>
+        <span style="font-size:var(--text-caption); color:var(--ink-3); margin-left:8px;">${escHtml(plan.code)}</span>
+      </div>
+      <div class="mb-4">
+        <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">取消原因 *</label>
+        <textarea id="cancel-reason" rows="3" class="field-input" style="width:100%; resize:vertical;" placeholder="请说明取消原因..."></textarea>
+      </div>
+      <div class="flex items-center gap-2 justify-end">
+        <button id="cancel-cancel-dialog" class="btn-secondary">返回</button>
+        <button id="confirm-cancel" class="btn-primary" style="background:var(--state-info);">确认取消</button>
+      </div>
+    `
+    cancelOverlayEl.appendChild(cancelDialogEl)
+    document.body.appendChild(cancelOverlayEl)
+    refreshIcons()
+
+    cancelDialogEl.querySelector('#close-cancel-dialog').addEventListener('click', closeCancelDialog)
+    cancelDialogEl.querySelector('#cancel-cancel-dialog').addEventListener('click', closeCancelDialog)
+    cancelDialogEl.querySelector('#confirm-cancel').addEventListener('click', () => {
+      const reason = cancelDialogEl.querySelector('#cancel-reason').value.trim()
+      if (!reason) { showToast('请填写取消原因'); return }
+      closeCancelDialog()
+      applyLegAction(plan, legType, 'cancelled', reason)
+    })
+  }
+
+  function closeCancelDialog() {
+    if (cancelOverlayEl && cancelOverlayEl.parentNode) cancelOverlayEl.parentNode.removeChild(cancelOverlayEl)
+    cancelOverlayEl = null
+    cancelDialogEl = null
+  }
+
   function createTradeRecordFromPlan(plan, legType) {
     const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
-    const operationType = plan.operationType || 'buy'
     const records = []
 
     const pushLeg = (type) => {
@@ -411,9 +524,10 @@ export function createExecutionPage(root) {
           actualShares: plan.buyShares,
           planAmount: plan.buyAmount || (plan.buyPrice * plan.buyShares),
           actualAmount: plan.buyAmount || (plan.buyPrice * plan.buyShares),
+          emotion: '',
+          note: plan.reviewNotes || '',
           status: '合规',
-          fromPlanId: plan.id,
-          note: plan.reviewNotes || ''
+          fromPlanId: plan.id
         })
       } else if (type === 'sell' && plan.sellPrice && plan.sellShares) {
         records.push({
@@ -428,14 +542,14 @@ export function createExecutionPage(root) {
           actualShares: plan.sellShares,
           planAmount: plan.sellAmount || (plan.sellPrice * plan.sellShares),
           actualAmount: plan.sellAmount || (plan.sellPrice * plan.sellShares),
+          emotion: '',
+          note: plan.reviewNotes || '',
           status: '合规',
-          fromPlanId: plan.id,
-          note: plan.reviewNotes || ''
+          fromPlanId: plan.id
         })
       }
     }
 
-    // Only create record for the specific leg being executed
     if (legType === 'buy') {
       pushLeg('buy')
     } else if (legType === 'sell') {
@@ -491,25 +605,27 @@ export function createExecutionPage(root) {
     notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
   }
 
-  let _plansListener = null
+  let _listener = null
 
   return {
     mount() {
-      _plansListener = () => {
+      _listener = () => {
+        if (_selfNotifying) return
         plans = loadPlans()
         render()
       }
-      on(DATA_EVENTS.PLANS_CHANGED, _plansListener)
-      on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _plansListener)
-      on(DATA_EVENTS.HOLDINGS_CHANGED, _plansListener)
+      on(DATA_EVENTS.PLANS_CHANGED, _listener)
+      on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _listener)
+      on(DATA_EVENTS.HOLDINGS_CHANGED, _listener)
       render()
     },
     unmount() {
-      if (_plansListener) {
-        off(DATA_EVENTS.PLANS_CHANGED, _plansListener)
-        off(DATA_EVENTS.TRADE_RECORDS_CHANGED, _plansListener)
-        off(DATA_EVENTS.HOLDINGS_CHANGED, _plansListener)
-        _plansListener = null
+      closeCancelDialog()
+      if (_listener) {
+        off(DATA_EVENTS.PLANS_CHANGED, _listener)
+        off(DATA_EVENTS.TRADE_RECORDS_CHANGED, _listener)
+        off(DATA_EVENTS.HOLDINGS_CHANGED, _listener)
+        _listener = null
       }
     }
   }

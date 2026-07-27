@@ -55,9 +55,17 @@ export function createPositionCheckPage(root) {
     return []
   }
 
+  let _selfNotifying = false
+
   function saveHoldings() {
     lsSetJSON(STORAGE_KEYS.holdings, holdings)
+  }
+
+  function saveHoldingsAndNotify() {
+    saveHoldings()
+    _selfNotifying = true
     notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
+    _selfNotifying = false
   }
 
   function calcPnl(buyPrice, currentPrice, quantity) {
@@ -324,7 +332,7 @@ export function createPositionCheckPage(root) {
         if (h && confirm(`确认归档 ${h.name}？归档后不会在主列表显示。`)) {
           h.archived = true
           h.archivedAt = new Date().toISOString()
-          saveHoldings()
+          saveHoldingsAndNotify()
           render()
           showToast('已归档')
         }
@@ -338,7 +346,7 @@ export function createPositionCheckPage(root) {
         if (h) {
           h.archived = false
           h.archivedAt = null
-          saveHoldings()
+          saveHoldingsAndNotify()
           render()
           showToast('已恢复')
         }
@@ -395,7 +403,7 @@ export function createPositionCheckPage(root) {
         const h = holdings.find((item) => item.id === id)
         if (h) {
           h.logicStatus = h.logicStatus === 'valid' ? null : 'valid'
-          saveHoldings()
+          saveHoldingsAndNotify()
           render()
         }
       })
@@ -406,7 +414,7 @@ export function createPositionCheckPage(root) {
         const h = holdings.find((item) => item.id === id)
         if (h) {
           h.logicStatus = h.logicStatus === 'invalid' ? null : 'invalid'
-          saveHoldings()
+          saveHoldingsAndNotify()
           render()
         }
       })
@@ -432,7 +440,7 @@ export function createPositionCheckPage(root) {
           notes: h.reviewNotes || '',
           submittedAt: h.checks.submittedAt
         })
-        saveHoldings()
+        saveHoldingsAndNotify()
         showToast('检查已提交')
         render()
       })
@@ -576,7 +584,7 @@ export function createPositionCheckPage(root) {
           expanded: true
         })
       }
-      saveHoldings()
+      saveHoldingsAndNotify()
       closeHoldingDialog()
       render()
       showToast(editItem ? '持仓已更新' : '持仓已添加')
@@ -648,6 +656,7 @@ export function createPositionCheckPage(root) {
     mount() {
       holdings = loadHoldings()
       _holdingsListener = () => {
+        if (_selfNotifying) return
         holdings = loadHoldings()
         render()
       }
