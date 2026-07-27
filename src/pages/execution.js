@@ -3,6 +3,7 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 const STATUS_DEFS = {
   pending: { label: '待执行', color: 'var(--state-warning)', bg: 'var(--state-warning-bg)', icon: 'clock' },
@@ -333,11 +334,72 @@ export function createExecutionPage(root) {
     plan.operatedAt = new Date().toISOString()
 
     const actionLabels = { executed: '按计划操作', cancelled: '取消', discarded: '弃用' }
-    savePlans()
-    showToast('计划已标记为「' + actionLabels[action] + '」')
 
-    // 重新渲染
+    // 标记为已操作时，自动创建交易记录并同步持仓
+    if (action === 'executed') {
+      createTradeRecordFromPlan(plan)
+    }
+
+    savePlans()
+    showToast('计划已标记为「' + actionLabels[action] + '」' + (action === 'executed' ? '，交易记录已自动生成' : ''))
+
     render()
+  }
+
+  function createTradeRecordFromPlan(plan) {
+    const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
+    const shares = plan.planShares || '--'
+    const newTrade = {
+      id: 't' + Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      name: plan.stockName || '',
+      code: plan.stockCode || '',
+      wave: plan.waveMode || '',
+      status: '合规',
+      statusColor: 'var(--state-success)',
+      statusBg: 'var(--state-success-bg)',
+      holdingStatus: '',
+      buyLogic: plan.buyLogic || '—',
+      planBuyPrice: plan.currentPrice || '--',
+      actualBuyPrice: plan.currentPrice || '--',
+      planExitPrice: plan.takeProfit || '--',
+      actualExitPrice: '--',
+      planPosition: shares,
+      actualPosition: shares,
+      planRisk: plan.maxLoss || '--',
+      actualPnl: shares,
+      pnlColor: 'var(--ink)',
+      violation: '无违规。',
+      violationBg: 'var(--state-success-bg)',
+      violationColor: 'var(--state-success)',
+      experience: '请补充本次经验',
+      fromPlanId: plan.id
+    }
+    trades.unshift(newTrade)
+    lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
+
+    // 同步持仓
+    const qty = parseInt(shares, 10) || 0
+    if (qty > 0 && plan.stockCode) {
+      const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+      const existing = holdings.find((h) => h.code === plan.stockCode)
+      if (existing) {
+        existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
+      } else {
+        holdings.push({
+          id: 'h_' + Date.now(),
+          name: plan.stockName || '',
+          code: plan.stockCode,
+          buyPrice: plan.currentPrice || '--',
+          currentPrice: plan.currentPrice || '--',
+          quantity: qty,
+          createdAt: new Date().toISOString()
+        })
+      }
+      lsSetJSON(STORAGE_KEYS.holdings, holdings)
+      notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
+    }
+    notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
   }
 
   return {
