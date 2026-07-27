@@ -10,6 +10,7 @@ import { createExecutionPage } from './pages/execution.js'
 import { createTradeRecordsPage } from './pages/trade-records.js'
 import { createRiskControlPage } from './pages/risk-control.js'
 import { createLogicLibraryPage } from './pages/logic-library.js'
+import { createMarketHotPage } from './pages/market-hot.js'
 
 const app = document.getElementById('app')
 
@@ -20,5 +21,6 @@ registerPage('plan', createOrderPlanPage)
 registerPage('execution', createExecutionPage)
 registerPage('records', createTradeRecordsPage)
 registerPage('risk', createRiskControlPage)
+registerPage('market', createMarketHotPage)
 
 renderShell(app)

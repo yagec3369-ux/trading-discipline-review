@@ -32,6 +32,14 @@ export const TAB_GROUPS = [
     tabs: [
       { id: 'logic', label: '逻辑库', icon: 'brain' }
     ]
+  },
+  {
+    id: 'market',
+    label: '大盘热点',
+    icon: 'flame',
+    tabs: [
+      { id: 'market', label: '大盘热点', icon: 'flame' }
+    ]
   }
 ]
 
