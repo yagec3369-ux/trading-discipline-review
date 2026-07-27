@@ -61,7 +61,7 @@ export function createOverviewPage(root) {
     // 动态计算所有数据
     const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
-    const riskData = lsGetJSON(STORAGE_KEYS.riskCtrl + 'total_fund', '12000')
+    const riskData = lsGetJSON(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
     const totalFund = parseFloat(riskData) || 0
     const stockValue = holdings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
     const totalAsset = totalFund // 总资产 = 账户总金额（与风控页一致）
