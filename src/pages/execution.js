@@ -17,8 +17,7 @@ const FILTER_TABS = [
   { id: 'buy', label: '买入执行' },
   { id: 'sell', label: '卖出执行' },
   { id: 'pending', label: '待执行' },
-  { id: 'executed', label: '已操作' },
-  { id: 'cancelled', label: '已取消' }
+  { id: 'executed', label: '已操作' }
 ]
 
 export function createExecutionPage(root) {
@@ -114,9 +113,9 @@ export function createExecutionPage(root) {
       <section class="mb-6">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           ${statCard('待执行', counts.pending, 'clock', 'var(--state-warning)', 'var(--state-warning-bg)')}
-          ${statCard('已操作', counts.executed, 'check-circle-2', 'var(--state-success)', 'var(--state-success-bg)')}
-          ${statCard('已取消', counts.cancelled, 'x-circle', 'var(--state-info)', 'var(--state-info-bg)')}
-          ${statCard('已弃用', counts.discarded, 'archive', 'var(--ink-3)', 'var(--surface-2)')}
+          ${statCard('已操作', counts.executed + counts.cancelled, 'check-circle-2', 'var(--state-success)', 'var(--state-success-bg)')}
+          ${statCard('已买入', legs.filter(l => l.status === 'executed' && l.legType === 'buy').length, 'trending-up', 'var(--state-error)', 'var(--state-error-bg)')}
+          ${statCard('已卖出', legs.filter(l => l.status === 'executed' && l.legType === 'sell').length, 'trending-down', 'var(--state-success)', 'var(--state-success-bg)')}
         </div>
       </section>
 
@@ -134,11 +133,20 @@ export function createExecutionPage(root) {
           </div>
         </div>
         <div class="flex items-center gap-1 flex-wrap mb-4">
-          ${FILTER_TABS.map((t) => `
+          ${FILTER_TABS.map((t) => {
+            let cnt
+            if (t.id === 'all') cnt = ''
+            else if (t.id === 'buy') cnt = legs.filter(l => l.legType === 'buy' && l.status === 'pending').length
+            else if (t.id === 'sell') cnt = legs.filter(l => l.legType === 'sell' && l.status === 'pending').length
+            else if (t.id === 'pending') cnt = counts.pending
+            else if (t.id === 'executed') cnt = counts.executed + counts.cancelled
+            else cnt = counts[t.id] || 0
+            return `
             <button class="filter-btn px-3 py-1" data-filter="${t.id}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); border-radius:var(--r-pill); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; transition:all var(--duration-hover) var(--ease-hover);">
-              ${t.label}${t.id !== 'all' ? ` <span class="filter-count">(${counts[t.id] || 0})</span>` : ''}
+              ${t.label}${cnt !== '' ? ` <span class="filter-count">(${cnt})</span>` : ''}
             </button>
-          `).join('')}
+            `
+          }).join('')}
         </div>
 
         <div id="legs-list" class="flex flex-col gap-3">
@@ -179,11 +187,15 @@ export function createExecutionPage(root) {
       filtered = filtered.filter((l) => (l.plan.code || l.plan.name) === currentStockFilter)
     }
     if (currentFilter === 'buy') {
-      filtered = filtered.filter((l) => l.legType === 'buy')
+      filtered = filtered.filter((l) => l.legType === 'buy' && l.status === 'pending')
     } else if (currentFilter === 'sell') {
-      filtered = filtered.filter((l) => l.legType === 'sell')
-    } else if (currentFilter === 'pending' || currentFilter === 'executed' || currentFilter === 'cancelled') {
-      filtered = filtered.filter((l) => l.status === currentFilter)
+      filtered = filtered.filter((l) => l.legType === 'sell' && l.status === 'pending')
+    } else if (currentFilter === 'pending') {
+      filtered = filtered.filter((l) => l.status === 'pending')
+    } else if (currentFilter === 'executed') {
+      filtered = filtered.filter((l) => l.status === 'executed' || l.status === 'cancelled')
+    } else if (currentFilter === 'cancelled') {
+      filtered = filtered.filter((l) => l.status === 'cancelled')
     }
 
     if (filtered.length === 0) {
@@ -257,31 +269,30 @@ export function createExecutionPage(root) {
           ${l.note && !l.cancelReason ? `<div style="font-size:var(--text-caption); color:var(--ink-3); padding:var(--s-2) var(--s-3); background:var(--bg); border-radius:var(--r-sm); border-left:3px solid ${l.actionColor};"><strong style="color:var(--ink-2);">操作备注：</strong>${escHtml(l.note)}</div>` : ''}
         </div>
 
-        ${canAct ? `
-          <div class="flex items-center gap-2 px-4 sm:px-5 py-3 flex-wrap">
-            <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:${l.legType === 'buy' ? 'var(--state-error)' : 'var(--state-success)'}; color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-              <i data-lucide="check" style="width:12px; height:12px;"></i>
-              已${l.actionLabel}
-            </button>
-            <button class="exec-leg-btn" data-action="cancelled" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:var(--state-info); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-              <i data-lucide="x" style="width:12px; height:12px;"></i>
-              取消
-            </button>
-            <button class="exec-leg-btn" data-action="discarded" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-              <i data-lucide="archive" style="width:12px; height:12px;"></i>
-              弃用
-            </button>
-          </div>
-        ` : `
-          <div class="flex items-center justify-between px-4 sm:px-5 py-3 flex-wrap gap-2">
-            <span style="font-size:var(--text-caption); color:var(--ink-3);">
-              ${operated ? '操作时间：' + escHtml(operated) : '未操作'}
+        <div class="flex items-center gap-2 px-4 sm:px-5 py-3 flex-wrap">
+          <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; ${canAct ? `background:${l.legType === 'buy' ? 'var(--state-error)' : 'var(--state-success)'}; color:#fff; cursor:pointer;` : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; opacity:0.5;'} display:inline-flex; align-items:center; gap:4px;">
+            <i data-lucide="check" style="width:12px; height:12px;"></i>
+            已${l.actionLabel}
+          </button>
+          <button class="exec-leg-btn" data-action="cancelled" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; ${canAct ? 'background:var(--state-info); color:#fff; cursor:pointer;' : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; opacity:0.5;'} display:inline-flex; align-items:center; gap:4px;">
+            <i data-lucide="x" style="width:12px; height:12px;"></i>
+            取消
+          </button>
+          <button class="exec-leg-btn" data-action="discarded" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:1px solid var(--line); ${canAct ? 'background:transparent; color:var(--ink-3); cursor:pointer;' : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; opacity:0.5;'} display:inline-flex; align-items:center; gap:4px;">
+            <i data-lucide="archive" style="width:12px; height:12px;"></i>
+            弃用
+          </button>
+          ${!canAct ? `
+            <span style="font-size:var(--text-caption); color:var(--ink-3); margin-left:auto;">
+              ${operated ? '操作时间：' + escHtml(operated) : ''}
             </span>
             <button class="plan-toggle-detail" data-leg-id="${escHtml(l.id)}" style="font-size:var(--text-caption); color:var(--brand); background:none; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="chevron-down" class="detail-chevron" style="width:14px; height:14px; transition:transform 0.2s ease;"></i>
               详情
             </button>
-          </div>
+          ` : ''}
+        </div>
+        ${!canAct ? `
           <div class="plan-detail" style="max-height:0; overflow:hidden; transition:max-height 0.3s ease;">
             <div class="px-4 sm:px-5 pb-4" style="border-top:1px solid var(--line); padding-top:var(--s-4);">
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
@@ -294,7 +305,7 @@ export function createExecutionPage(root) {
               ${totalAmount > 0 ? `<div class="mt-2" style="font-size:var(--text-caption); color:var(--ink-3);">计划总金额: ${totalAmount.toLocaleString()} 元</div>` : ''}
             </div>
           </div>
-        `}
+        ` : ''}
       </div>
     `
   }
@@ -379,6 +390,7 @@ export function createExecutionPage(root) {
   function bindCardEvents() {
     root.querySelectorAll('.exec-leg-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
+        if (btn.disabled) return
         const action = btn.getAttribute('data-action')
         const planId = btn.getAttribute('data-plan-id')
         const legType = btn.getAttribute('data-leg-type')
