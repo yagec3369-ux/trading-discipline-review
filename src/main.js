@@ -9,11 +9,13 @@ import { createOrderPlanPage } from './pages/order-plan.js'
 import { createExecutionPage } from './pages/execution.js'
 import { createTradeRecordsPage } from './pages/trade-records.js'
 import { createRiskControlPage } from './pages/risk-control.js'
+import { createLogicLibraryPage } from './pages/logic-library.js'
 
 const app = document.getElementById('app')
 
 registerPage('overview', createOverviewPage)
 registerPage('position', createPositionCheckPage)
+registerPage('logic', createLogicLibraryPage)
 registerPage('plan', createOrderPlanPage)
 registerPage('execution', createExecutionPage)
 registerPage('records', createTradeRecordsPage)

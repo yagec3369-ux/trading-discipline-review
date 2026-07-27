@@ -50,7 +50,10 @@ import {
   Inbox,
   ChevronDown,
   Send,
-  Edit3
+  Edit3,
+  Brain,
+  Bot,
+  Rss
 } from 'lucide'
 
 const icons = {
@@ -102,7 +105,10 @@ const icons = {
   Inbox,
   ChevronDown,
   Send,
-  Edit3
+  Edit3,
+  Brain,
+  Bot,
+  Rss
 }
 
 let pending = false

@@ -426,7 +426,8 @@ export function createOrderPlanPage(root) {
     const pickBtn = root.querySelector('#pick-logic-btn')
 
     function renderLogicEntries() {
-      const entries = lsGetJSON(STORAGE_KEYS.logicLibrary, []) || []
+      const saved = lsGetJSON(STORAGE_KEYS.logicLibrary, null) || {}
+      const entries = saved.subjective || []
       entriesContainer.innerHTML = ''
       if (!entries.length) {
         popoverEmpty.style.display = 'block'

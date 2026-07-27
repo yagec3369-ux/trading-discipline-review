@@ -6,6 +6,7 @@ import { lsGet, lsSet, STORAGE_KEYS } from '../utils/storage.js'
 export const TABS = [
   { id: 'overview', label: '统计概览', icon: 'bar-chart-3' },
   { id: 'position', label: '持仓检查', icon: 'clipboard-check' },
+  { id: 'logic', label: '逻辑库', icon: 'brain' },
   { id: 'plan', label: '下单计划', icon: 'target' },
   { id: 'execution', label: '执行情况', icon: 'list-checks' },
   { id: 'records', label: '交易记录', icon: 'book-open' },
