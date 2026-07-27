@@ -175,6 +175,22 @@ export function createRiskControlPage(root) {
         <p style="font-size:var(--text-caption); font-weight:var(--weight-semibold); color:var(--brand); margin-bottom:var(--s-2); letter-spacing:0.02em;">风控提醒</p>
         <p style="font-size:var(--text-body); line-height:var(--leading-body); color:var(--ink-2);">以上数据基于操作计划和每日复盘自动生成。请确保及时填写操作计划和每日复盘，以保证风控数据准确性。</p>
       </div>
+
+      <!-- Section 5: 数据管理 -->
+      <section class="mt-8">
+        <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); margin-bottom:var(--s-4);">数据管理</h3>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5);">
+          <div class="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium);">清除所有数据</p>
+              <p style="font-size:var(--text-caption); color:var(--ink-3); margin-top:2px;">删除所有本地存储的交易记录、持仓、计划等数据，恢复初始状态</p>
+            </div>
+            <button id="clear-data-btn" class="shrink-0 px-4 h-9" style="background:var(--state-error); color:white; border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); border:none; cursor:pointer;">
+              清除数据
+            </button>
+          </div>
+        </div>
+      </section>
     `
     refreshIcons()
     bindEvents()
@@ -335,6 +351,14 @@ export function createRiskControlPage(root) {
     // Listen for holdings changes from other pages
     on(DATA_EVENTS.HOLDINGS_CHANGED, () => {
       recalcDerived()
+    })
+
+    // Clear all data
+    root.querySelector('#clear-data-btn')?.addEventListener('click', () => {
+      if (!confirm('确认清除所有数据？此操作不可撤销。')) return
+      if (!confirm('再次确认：将删除所有交易记录、持仓、计划、逻辑库等数据。')) return
+      localStorage.clear()
+      location.reload()
     })
   }
 
