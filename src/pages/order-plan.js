@@ -11,11 +11,11 @@ const ALL_FIELDS = [
   'plan-amount','plan-shares','trigger-detail','invalidate-condition','exec-notes-ta','invalidation-reason'
 ]
 
-// 仓位上限基数：从风控页读取（默认 12000），用于仓位占比计算
+// 仓位上限基数：从风控页读取（默认 120000），用于仓位占比计算
 function getTotalFund() {
-  const v = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '12000')
+  const v = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
   const n = parseFloat(v)
-  return isNaN(n) || n <= 0 ? 12000 : n
+  return isNaN(n) || n <= 0 ? 120000 : n
 }
 
 export function createOrderPlanPage(root) {
