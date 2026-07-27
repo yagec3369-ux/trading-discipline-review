@@ -123,14 +123,31 @@ export function createOrderPlanPage(root) {
           <div class="px-4 sm:px-5 py-4">
             <!-- Basic info row -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 pb-4" style="border-bottom:1px solid var(--line);">
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">当前价格</span>
-                <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono);">${p.price || '--'}</span>
-              </div>
-              <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">操作类型</span>
-                <span style="font-size:var(--text-body); color:${opColor}; font-weight:var(--weight-medium);">${opLabel}</span>
-              </div>
+              ${p.operationType === 't0' ? `
+                <div>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入价格</span>
+                  <span style="font-size:var(--text-body); color:var(--state-error); font-family:var(--font-mono);">${p.buyPrice || p.price || '--'}</span>
+                </div>
+                <div>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">卖出价格</span>
+                  <span style="font-size:var(--text-body); color:var(--state-success); font-family:var(--font-mono);">${p.sellPrice || '--'}</span>
+                </div>
+              ` : `
+                <div>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${p.operationType === 'sell' ? '卖出价格' : '买入价格'}</span>
+                  <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono);">${p.operationType === 'sell' ? (p.sellPrice || p.price || '--') : (p.buyPrice || p.price || '--')}</span>
+                </div>
+                <div>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">操作类型</span>
+                  <span style="font-size:var(--text-body); color:${opColor}; font-weight:var(--weight-medium);">${opLabel}</span>
+                </div>
+              `}
+              ${p.operationType === 't0' ? `
+                <div>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">操作类型</span>
+                  <span style="font-size:var(--text-body); color:${opColor}; font-weight:var(--weight-medium);">${opLabel}</span>
+                </div>
+              ` : ''}
               <div>
                 <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">预期收益</span>
                 <span style="font-size:var(--text-body); color:var(--state-error); font-weight:var(--weight-semibold);">${p.expectedGainNR || 0}R = ${(p.expectedGainNR || 0) * R_UNIT}元</span>
@@ -496,9 +513,13 @@ export function createOrderPlanPage(root) {
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">当前价格（元）</label>
-            <input type="number" id="plan-price" class="field-input" style="width:100%;" placeholder="47.09" step="0.01" value="${editItem ? editItem.price : ''}">
+          <div id="price-buy-wrapper">
+            <label style="font-size:var(--text-caption); color:var(--state-error); display:block; margin-bottom:4px;">买入价格（元）</label>
+            <input type="number" id="plan-buy-price" class="field-input" style="width:100%;" placeholder="47.09" step="0.01" value="${editItem ? (editItem.buyPrice || editItem.price || '') : ''}">
+          </div>
+          <div id="price-sell-wrapper" style="${editItem && editItem.operationType !== 't0' && editItem.operationType !== 'sell' ? 'display:none;' : ''}">
+            <label style="font-size:var(--text-caption); color:var(--state-success); display:block; margin-bottom:4px;">卖出价格（元）</label>
+            <input type="number" id="plan-sell-price" class="field-input" style="width:100%;" placeholder="50.00" step="0.01" value="${editItem ? (editItem.sellPrice || '') : ''}">
           </div>
           <div>
             <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">操作类型 *</label>
@@ -542,6 +563,26 @@ export function createOrderPlanPage(root) {
     const rrDisplay = dialogEl.querySelector('#rr-display')
     const expVal = dialogEl.querySelector('#expected-nr-value')
     const lossVal = dialogEl.querySelector('#maxloss-nr-value')
+    const operationSelect = dialogEl.querySelector('#plan-operation')
+    const buyPriceWrapper = dialogEl.querySelector('#price-buy-wrapper')
+    const sellPriceWrapper = dialogEl.querySelector('#price-sell-wrapper')
+    const buyPriceInput = dialogEl.querySelector('#plan-buy-price')
+    const sellPriceInput = dialogEl.querySelector('#plan-sell-price')
+
+    function updatePriceFields() {
+      const op = operationSelect.value
+      if (op === 'buy') {
+        buyPriceWrapper.style.display = ''
+        sellPriceWrapper.style.display = 'none'
+      } else if (op === 'sell') {
+        buyPriceWrapper.style.display = 'none'
+        sellPriceWrapper.style.display = ''
+      } else {
+        buyPriceWrapper.style.display = ''
+        sellPriceWrapper.style.display = ''
+      }
+    }
+    operationSelect.addEventListener('change', updatePriceFields)
 
     function updateNrMetrics() {
       const expNr = parseFloat(nrExpInput.value) || 0
@@ -559,6 +600,7 @@ export function createOrderPlanPage(root) {
     }
     nrExpInput.addEventListener('input', updateNrMetrics)
     nrLossInput.addEventListener('input', updateNrMetrics)
+    updatePriceFields()
     updateNrMetrics()
 
     dialogEl.querySelector('#close-plan-dialog').addEventListener('click', closeDialog)
@@ -566,26 +608,38 @@ export function createOrderPlanPage(root) {
     dialogEl.querySelector('#confirm-plan-dialog').addEventListener('click', () => {
       const name = dialogEl.querySelector('#plan-name').value.trim()
       const code = dialogEl.querySelector('#plan-code').value.trim()
-      const price = dialogEl.querySelector('#plan-price').value.trim()
       const operationType = dialogEl.querySelector('#plan-operation').value
+      const buyPrice = buyPriceInput.value.trim()
+      const sellPrice = sellPriceInput.value.trim()
       const expectedGainNR = parseInt(dialogEl.querySelector('#plan-expected-nr').value) || 0
       const maxLossNR = parseInt(dialogEl.querySelector('#plan-maxloss-nr').value) || 0
 
       if (!name || !code) { showToast('请填写股票名称和代码'); return }
+      if (operationType === 'buy' && !buyPrice) { showToast('请填写买入价格'); return }
+      if (operationType === 'sell' && !sellPrice) { showToast('请填写卖出价格'); return }
+      if (operationType === 't0' && (!buyPrice || !sellPrice)) { showToast('请填写买入价格和卖出价格'); return }
+
+      const priceData = {
+        buyPrice: operationType === 'sell' ? '' : buyPrice,
+        sellPrice: operationType === 'buy' ? '' : sellPrice,
+        price: operationType === 'sell' ? sellPrice : buyPrice
+      }
 
       if (editItem) {
         const idx = plans.findIndex((pl) => pl.id === editItem.id)
         if (idx !== -1) {
           plans[idx] = {
             ...plans[idx],
-            name, code, price, operationType,
+            name, code, operationType,
+            ...priceData,
             expectedGainNR, maxLossNR
           }
         }
       } else {
         const newPlan = {
           id: 'plan_' + Date.now(),
-          name, code, price, operationType,
+          name, code, operationType,
+          ...priceData,
           expectedGainNR, maxLossNR,
           logicStatus: null,
           reviewNotes: '',
