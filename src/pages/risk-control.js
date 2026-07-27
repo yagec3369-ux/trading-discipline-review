@@ -9,6 +9,11 @@ import {
   STORAGE_KEYS
 } from '../utils/storage.js'
 import { on, off, emit, DATA_EVENTS } from '../utils/events.js'
+import { getGistToken, setGistToken, syncToGist, pullFromGist } from '../utils/sync.js'
+
+function getSyncToken() {
+  return getGistToken()
+}
 
 // Field keys persisted under STORAGE_KEYS.riskCtrl prefix
 const FIELD_KEYS = {
@@ -190,6 +195,28 @@ export function createRiskControlPage(root) {
             </button>
           </div>
         </div>
+
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5); margin-top:var(--s-4);">
+          <p style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium); margin-bottom:var(--s-3);">云同步 (GitHub Gist)</p>
+          <p style="font-size:var(--text-caption); color:var(--ink-3); margin-bottom:var(--s-4);">配置 Token 后可多设备同步数据。需 <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--brand);">创建 Token</a> 并勾选 gist 权限</p>
+          <div class="flex items-center gap-2 mb-4">
+            <input type="text" id="sync-token-input" placeholder="ghp_xxx..." value="${escHtml(getSyncToken())}" style="flex:1; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm); padding:var(--s-2) var(--s-3); font-size:var(--text-body); font-family:var(--font-mono);">
+            <button id="save-token-btn" class="shrink-0 px-4 h-9" style="background:var(--surface-2); color:var(--ink); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-medium); cursor:pointer;">
+              保存
+            </button>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap">
+            <button id="sync-upload-btn" class="flex items-center gap-2 px-4 h-9" style="background:var(--brand); color:var(--brand-ink); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); border:none; cursor:pointer;">
+              <i data-lucide="upload-cloud" style="width:16px; height:16px;"></i>
+              上传
+            </button>
+            <button id="sync-download-btn" class="flex items-center gap-2 px-4 h-9" style="background:var(--surface-2); color:var(--ink); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-medium); cursor:pointer;">
+              <i data-lucide="download-cloud" style="width:16px; height:16px;"></i>
+              拉取
+            </button>
+            <span id="sync-status" style="font-size:var(--text-caption); color:var(--ink-3);"></span>
+          </div>
+        </div>
       </section>
     `
     refreshIcons()
@@ -359,6 +386,47 @@ export function createRiskControlPage(root) {
       if (!confirm('再次确认：将删除所有交易记录、持仓、计划、逻辑库等数据。')) return
       localStorage.clear()
       location.reload()
+    })
+
+    // Sync: save token
+    root.querySelector('#save-token-btn')?.addEventListener('click', () => {
+      const input = root.querySelector('#sync-token-input')
+      const token = input?.value?.trim() || ''
+      if (!token) {
+        showSaveStatus('请输入Token', 'error')
+        return
+      }
+      setGistToken(token)
+      showSaveStatus('Token已保存')
+    })
+
+    // Sync: upload
+    root.querySelector('#sync-upload-btn')?.addEventListener('click', async () => {
+      const statusEl = root.querySelector('#sync-status')
+      statusEl.textContent = '上传中...'
+      try {
+        await syncToGist()
+        statusEl.textContent = '上传成功 ✓'
+        statusEl.style.color = 'var(--state-success)'
+      } catch (err) {
+        statusEl.textContent = '上传失败: ' + err.message
+        statusEl.style.color = 'var(--state-error)'
+      }
+    })
+
+    // Sync: download
+    root.querySelector('#sync-download-btn')?.addEventListener('click', async () => {
+      const statusEl = root.querySelector('#sync-status')
+      statusEl.textContent = '拉取中...'
+      try {
+        await pullFromGist()
+        statusEl.textContent = '拉取成功 ✓'
+        statusEl.style.color = 'var(--state-success)'
+        setTimeout(() => location.reload(), 500)
+      } catch (err) {
+        statusEl.textContent = '拉取失败: ' + err.message
+        statusEl.style.color = 'var(--state-error)'
+      }
     })
   }
 

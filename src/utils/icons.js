@@ -54,7 +54,9 @@ import {
   Brain,
   Bot,
   Rss,
-  Menu
+  Menu,
+  UploadCloud,
+  DownloadCloud
 } from 'lucide'
 
 const icons = {
@@ -110,7 +112,9 @@ const icons = {
   Brain,
   Bot,
   Rss,
-  Menu
+  Menu,
+  UploadCloud,
+  DownloadCloud
 }
 
 let pending = false
