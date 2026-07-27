@@ -66,14 +66,14 @@ export function createOverviewPage(root) {
     const totalAsset = totalFund // 总资产 = 账户总金额（与风控页一致）
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
 
-    // 本月盈亏：累加交易记录里的 actualPnl
+    // 本月买入股数：累加交易记录里的 actualPnl（已改为买入股数）
     const now = new Date()
     const monthPrefix = now.toISOString().slice(0, 7)
-    let monthlyPnl = 0
+    let monthlyShares = 0
     trades.forEach((t) => {
       if (t.date && t.date.startsWith(monthPrefix) && t.actualPnl) {
-        const num = parseFloat(String(t.actualPnl).replace(/[^-\d.]/g, ''))
-        if (!isNaN(num)) monthlyPnl += num
+        const num = parseFloat(String(t.actualPnl))
+        if (!isNaN(num)) monthlyShares += num
       }
     })
 
@@ -124,10 +124,10 @@ export function createOverviewPage(root) {
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
-            <span style="font-size:var(--text-caption); color:var(--ink-3);">本月盈亏</span>
-            <i data-lucide="trending-up" style="width:14px; height:14px; color:${monthlyPnl >= 0 ? 'var(--state-success)' : 'var(--state-error)'};"></i>
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">本月买入股数</span>
+            <i data-lucide="trending-up" style="width:14px; height:14px; color:var(--state-success);"></i>
           </div>
-          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:${monthlyPnl > 0 ? 'var(--price-up)' : monthlyPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'}; white-space:nowrap; font-variant-numeric:tabular-nums;">${trades.length === 0 ? '--' : (monthlyPnl >= 0 ? '+' : '') + monthlyPnl.toLocaleString('zh-CN') + '元'}</div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${trades.length === 0 ? '--' : monthlyShares.toLocaleString('zh-CN') + '股'}</div>
           <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">${monthPrefix} 累计</div>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">

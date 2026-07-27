@@ -49,7 +49,8 @@ import {
   Archive,
   Inbox,
   ChevronDown,
-  Send
+  Send,
+  Edit3
 } from 'lucide'
 
 const icons = {
@@ -100,7 +101,8 @@ const icons = {
   Archive,
   Inbox,
   ChevronDown,
-  Send
+  Send,
+  Edit3
 }
 
 let pending = false

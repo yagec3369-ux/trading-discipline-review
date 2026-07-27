@@ -18,6 +18,27 @@ export function createTradeRecordsPage(root) {
   function saveTrades() {
     lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
   }
+  function updateHoldingsOnTrade(name, code, shares) {
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    const qty = parseInt(shares, 10) || 0
+    if (qty <= 0) return
+
+    const existing = holdings.find((h) => h.code === code)
+    if (existing) {
+      existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
+    } else {
+      holdings.push({
+        id: 'h_' + Date.now(),
+        name,
+        code,
+        buyPrice: '--',
+        currentPrice: '--',
+        quantity: qty,
+        createdAt: new Date().toISOString()
+      })
+    }
+    lsSetJSON(STORAGE_KEYS.holdings, holdings)
+  }
 
   function render() {
     const total = trades.length
@@ -136,7 +157,7 @@ export function createTradeRecordsPage(root) {
                 <span style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium);">${escHtml(t.planRisk)}</span>
               </div>
               <div>
-                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">实际盈亏</span>
+                <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-1);">买入股数</span>
                 <span style="font-size:var(--text-body-l); color:${t.pnlColor}; font-weight:var(--weight-semibold); font-variant-numeric:tabular-nums;">${escHtml(t.actualPnl)}</span>
               </div>
             </div>
@@ -258,8 +279,8 @@ export function createTradeRecordsPage(root) {
             </select>
           </div>
           <div>
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">实际盈亏（元）</label>
-            <input type="text" id="new-pnl" class="field-input" style="width:100%;" placeholder="+1000 或 -500">
+            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">买入股数</label>
+            <input type="number" id="new-pnl" class="field-input" style="width:100%;" placeholder="例如：1000" min="1">
           </div>
         </div>
         <div>
@@ -283,8 +304,7 @@ export function createTradeRecordsPage(root) {
       const code = overlayEl.querySelector('#new-code').value.trim()
       if (!name || !code) { showToast('请填写股票名称和代码'); return }
       const status = overlayEl.querySelector('#new-status').value
-      const pnl = overlayEl.querySelector('#new-pnl').value.trim() || '待结算'
-      const pnlColor = pnl.startsWith('+') ? 'var(--price-up)' : pnl.startsWith('-') ? 'var(--price-down)' : 'var(--state-warning)'
+      const shares = overlayEl.querySelector('#new-pnl').value.trim() || '--'
       const newTrade = {
         id: 't' + Date.now(),
         date: overlayEl.querySelector('#new-date').value,
@@ -299,8 +319,8 @@ export function createTradeRecordsPage(root) {
         planExitPrice: '--', actualExitPrice: '--',
         planPosition: '--', actualPosition: '--',
         planRisk: '--',
-        actualPnl: pnl,
-        pnlColor,
+        actualPnl: shares,
+        pnlColor: 'var(--ink)',
         violation: status === '违规' ? '请补充违规说明' : '无违规。',
         violationBg: status === '违规' ? 'var(--state-error-bg)' : 'var(--state-success-bg)',
         violationColor: status === '违规' ? 'var(--state-error)' : 'var(--state-success)',
@@ -308,9 +328,10 @@ export function createTradeRecordsPage(root) {
       }
       trades.unshift(newTrade)
       saveTrades()
+      updateHoldingsOnTrade(name, code, shares)
       closeAddDialog()
       render()
-      showToast('已新增记录')
+      showToast('已新增记录，持仓已同步更新')
     })
   }
   function closeAddDialog() {
