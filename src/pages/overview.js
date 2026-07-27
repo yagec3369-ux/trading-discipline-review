@@ -5,9 +5,6 @@ import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, DATA_EVENTS } from '../utils/events.js'
 
-// 股票搜索池 — 用于添加收藏时的本地搜索（用户可自行扩展）
-const STOCK_POOL = []
-
 const SAMPLE_GOAL = null
 
 const INITIAL_FAVORITES = []
@@ -273,17 +270,17 @@ export function createOverviewPage(root) {
             <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink);">我的收藏</h3>
             <span id="fav-count" style="font-size:var(--text-caption); color:var(--ink-3); background:var(--surface); padding:2px 8px; border-radius:var(--r-pill);">${state.favorites.length}只</span>
           </div>
-          <button id="add-favorite-btn" style="font-size:var(--text-caption); color:var(--brand); background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px;">
-            <i data-lucide="plus" style="width:14px; height:14px;"></i>
-            添加收藏
-          </button>
+          <div class="flex items-center gap-2">
+            <i data-lucide="search" style="width:14px; height:14px; color:var(--ink-3);"></i>
+            <input type="text" id="fav-search-input" placeholder="搜索股票或时间段" style="font-size:var(--text-caption); padding:4px 8px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg); color:var(--ink); outline:none; width:150px;">
+          </div>
         </div>
         <div id="fav-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           ${state.favorites.length === 0 ? `
             <div class="sm:col-span-2" style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
               <i data-lucide="star" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
               <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无收藏</p>
-              <p style="font-size:var(--text-caption); color:var(--ink-3);">点击右上方「添加收藏」录入股票</p>
+              <p style="font-size:var(--text-caption); color:var(--ink-3);">可在「持仓检查」中添加自选</p>
             </div>
           ` : state.favorites.map((s, idx) => favCardHTML(s, idx)).join('')}
         </div>
@@ -381,6 +378,36 @@ export function createOverviewPage(root) {
     `
   }
 
+  function renderRecentTrades(data, isFiltered = false) {
+    const container = root.querySelector('#recent-trades')
+    if (!container) return
+    const trades = data || (lsGetJSON(STORAGE_KEYS.tradeRecords, []) || [])
+
+    container.innerHTML = trades.length === 0 ? `
+      <div style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
+        <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+        <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">${isFiltered ? '无匹配交易记录' : '暂无交易记录'}</p>
+        ${!isFiltered ? '<p style="font-size:var(--text-caption); color:var(--ink-3);">可在「交易记录」页面新增</p>' : ''}
+      </div>
+    ` : trades.slice(0, 5).map((t) => {
+      const pnl = String(t.actualPnl || '--')
+      const pnlColor = pnl.startsWith('+') ? 'var(--price-up)' : pnl.startsWith('-') ? 'var(--price-down)' : 'var(--ink-3)'
+      const isCompliant = t.status === '合规'
+      const date = t.date ? t.date.slice(5).replace('-', '.') : '--'
+      return recentTradeHTML({
+        date,
+        name: t.name + ' / ' + t.code,
+        pnl,
+        pnlColor,
+        status: t.status || '--',
+        statusBg: isCompliant ? 'var(--state-success-bg)' : 'var(--state-error-bg)',
+        statusColor: isCompliant ? 'var(--state-success)' : 'var(--state-error)',
+        icon: isCompliant ? 'check' : 'x'
+      })
+    }).join('')
+    refreshIcons()
+  }
+
   function favCardHTML(s, idx) {
     return `
       <div class="fav-card" data-fav-idx="${idx}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) var(--s-5);">
@@ -412,28 +439,41 @@ export function createOverviewPage(root) {
     `
   }
 
-  function renderFavorites() {
+  function renderFavorites(filtered = state.favorites) {
     const grid = root.querySelector('#fav-grid')
     const count = root.querySelector('#fav-count')
     if (!grid || !count) return
-    grid.innerHTML = state.favorites.map((s, idx) => favCardHTML(s, idx)).join('')
-    count.textContent = state.favorites.length + '只'
+    const isFiltered = filtered !== state.favorites
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="sm:col-span-2" style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
+          <i data-lucide="star" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
+          <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">${isFiltered ? '无匹配收藏' : '暂无收藏'}</p>
+          ${!isFiltered ? '<p style="font-size:var(--text-caption); color:var(--ink-3);">可在「持仓检查」中添加自选</p>' : ''}
+        </div>
+      `
+    } else {
+      grid.innerHTML = filtered.map((s, idx) => favCardHTML(s, idx)).join('')
+    }
+    count.textContent = filtered.length + '只'
     refreshIcons()
   }
 
-  function renderGoals() {
+  function renderGoals(goalsList) {
     const list = root.querySelector('#active-goals-list')
     const empty = root.querySelector('#goals-empty-state')
     const toggleArea = root.querySelector('#archived-toggle-area')
     const archivedList = root.querySelector('#archived-goals-list')
     const archivedCount = root.querySelector('#archived-count')
     if (!list) return
-    const active = state.goals.filter((g) => !g.archived)
-    const archived = state.goals.filter((g) => g.archived)
+    const goals = goalsList || state.goals
+    const active = goals.filter((g) => !g.archived)
+    const archived = goals.filter((g) => g.archived)
 
     if (active.length === 0) {
       list.innerHTML = ''
       empty.style.display = 'flex'
+      empty.textContent = goalsList ? '无匹配目标' : '暂无目标，点击上方添加'
     } else {
       empty.style.display = 'none'
       list.innerHTML = active.map((g) => {
@@ -492,19 +532,89 @@ export function createOverviewPage(root) {
     refreshIcons()
   }
 
+  let filterState = { keyword: '', startDate: '', endDate: '', stock: 'all' }
+
+  function getFilteredData() {
+    const allTrades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
+
+    // Filter favorites by keyword
+    let filteredFavorites = state.favorites
+    if (filterState.keyword) {
+      const k = filterState.keyword.toLowerCase()
+      filteredFavorites = filteredFavorites.filter(f =>
+        f.name.toLowerCase().includes(k) || f.code.toLowerCase().includes(k)
+      )
+    }
+
+    // Filter trades by keyword, date, stock
+    let filteredTrades = allTrades
+    if (filterState.keyword) {
+      const k = filterState.keyword.toLowerCase()
+      filteredTrades = filteredTrades.filter(t => {
+        const matchStock = (t.name && t.name.toLowerCase().includes(k)) ||
+                           (t.code && t.code.toLowerCase().includes(k))
+        const matchDate = t.date && t.date.includes(filterState.keyword)
+        return matchStock || matchDate
+      })
+    }
+    if (filterState.startDate) {
+      filteredTrades = filteredTrades.filter(t => !t.date || t.date >= filterState.startDate)
+    }
+    if (filterState.endDate) {
+      filteredTrades = filteredTrades.filter(t => !t.date || t.date <= filterState.endDate)
+    }
+    if (filterState.stock !== 'all') {
+      filteredTrades = filteredTrades.filter(t => t.code === filterState.stock)
+    }
+
+    // Filter goals by keyword
+    let filteredGoals = state.goals
+    if (filterState.keyword) {
+      const k = filterState.keyword.toLowerCase()
+      filteredGoals = filteredGoals.filter(g =>
+        g.name && g.name.toLowerCase().includes(k)
+      )
+    }
+
+    return { filteredFavorites, filteredTrades, filteredGoals }
+  }
+
+  function refreshFilteredViews() {
+    const { filteredFavorites, filteredTrades, filteredGoals } = getFilteredData()
+    const isFiltered = !!filterState.keyword || filterState.stock !== 'all' || !!filterState.startDate || !!filterState.endDate
+    renderFavorites(filteredFavorites)
+    renderRecentTrades(filteredTrades, isFiltered)
+    renderGoals(filteredGoals)
+  }
+
   function bindEvents() {
-    // Filter
+    // Filter bar
     const applyBtn = root.querySelector('#filter-apply')
-    if (applyBtn) applyBtn.addEventListener('click', () => showToast('已应用筛选条件'))
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => {
+        const startEl = root.querySelector('#filter-date-start')
+        const endEl = root.querySelector('#filter-date-end')
+        const stockEl = root.querySelector('#filter-stock')
+        filterState.startDate = startEl ? startEl.value : ''
+        filterState.endDate = endEl ? endEl.value : ''
+        filterState.stock = stockEl ? stockEl.value : 'all'
+        refreshFilteredViews()
+        showToast('已应用筛选条件')
+      })
+    }
     const resetBtn = root.querySelector('#filter-reset')
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         const startEl = root.querySelector('#filter-date-start')
         const endEl = root.querySelector('#filter-date-end')
         const stockEl = root.querySelector('#filter-stock')
+        const favSearch = root.querySelector('#fav-search-input')
         if (startEl) startEl.value = ''
         if (endEl) endEl.value = ''
         if (stockEl) stockEl.value = 'all'
+        if (favSearch) favSearch.value = ''
+        filterState = { keyword: '', startDate: '', endDate: '', stock: 'all' }
+        refreshFilteredViews()
         showToast('筛选已重置')
       })
     }
@@ -522,96 +632,19 @@ export function createOverviewPage(root) {
         setTimeout(() => {
           state.favorites.splice(idx, 1)
           saveFavorites()
-          renderFavorites()
+          refreshFilteredViews()
         }, 250)
       })
     }
 
-    // Favorites: add popover
-    const addBtn = root.querySelector('#add-favorite-btn')
-    if (addBtn) {
-      addBtn.addEventListener('click', () => openFavPopover())
-    }
-  }
-
-  let popoverEl = null
-  let overlayEl = null
-  function openFavPopover() {
-    closeFavPopover()
-    const addBtn = root.querySelector('#add-favorite-btn')
-    if (!addBtn) return
-    const rect = addBtn.getBoundingClientRect()
-
-    overlayEl = document.createElement('div')
-    overlayEl.style.cssText = 'position:fixed; inset:0; z-index:89;'
-    overlayEl.addEventListener('click', closeFavPopover)
-    document.body.appendChild(overlayEl)
-
-    popoverEl = document.createElement('div')
-    popoverEl.style.cssText = `display:block; position:fixed; z-index:90; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-float); padding:var(--s-5); width:min(320px, calc(100vw - 32px)); top:${rect.bottom + 8}px; left:${Math.max(16, Math.min(rect.left, window.innerWidth - 336))}px;`
-    popoverEl.innerHTML = `
-      <div class="flex items-center justify-between mb-3">
-        <span style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:var(--ink);">添加收藏</span>
-        <button id="close-fav-popover" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px;">
-          <i data-lucide="x" style="width:14px; height:14px;"></i>
-        </button>
-      </div>
-      <input type="text" id="fav-search-input" placeholder="输入股票名称或代码" class="field-input" style="width:100%;">
-      <div id="fav-search-results" class="flex flex-col gap-1 mt-2" style="max-height:160px; overflow-y:auto;"></div>
-      <div id="fav-empty-hint" class="py-4 flex flex-col items-center gap-2" style="color:var(--ink-3);">
-        <i data-lucide="search" style="width:20px; height:20px;"></i>
-        <span style="font-size:var(--text-caption);">搜索股票以添加收藏</span>
-      </div>
-    `
-    document.body.appendChild(popoverEl)
-    refreshIcons()
-
-    popoverEl.querySelector('#close-fav-popover').addEventListener('click', closeFavPopover)
-    const searchInput = popoverEl.querySelector('#fav-search-input')
-    const results = popoverEl.querySelector('#fav-search-results')
-    const emptyHint = popoverEl.querySelector('#fav-empty-hint')
-    searchInput.focus()
-
-    searchInput.addEventListener('input', () => {
-      const q = searchInput.value.trim().toLowerCase()
-      if (!q) {
-        results.innerHTML = ''
-        emptyHint.style.display = 'flex'
-        return
-      }
-      emptyHint.style.display = 'none'
-      const matches = STOCK_POOL.filter((s) => s.name.toLowerCase().includes(q) || s.code.includes(q))
-      results.innerHTML = matches.map((s) => `
-        <div class="fav-result-item" data-code="${s.code}">
-          <div class="min-w-0">
-            <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink);">${escHtml(s.name)}</span>
-            <span style="font-size:var(--text-mono); color:var(--ink-3); font-family:var(--font-mono); margin-left:8px;">${escHtml(s.code)}</span>
-          </div>
-          <span style="font-size:var(--text-caption); color:var(--brand);">添加</span>
-        </div>
-      `).join('')
-      results.querySelectorAll('.fav-result-item').forEach((item) => {
-        item.addEventListener('click', () => {
-          const code = item.getAttribute('data-code')
-          const stock = STOCK_POOL.find((s) => s.code === code)
-          if (stock && !state.favorites.some((f) => f.code === code)) {
-            state.favorites.push({ ...stock })
-            saveFavorites()
-            renderFavorites()
-            showToast('已添加 ' + stock.name)
-          } else {
-            showToast('已在收藏中')
-          }
-          closeFavPopover()
-        })
+    // Favorites: search
+    const favSearchInput = root.querySelector('#fav-search-input')
+    if (favSearchInput) {
+      favSearchInput.addEventListener('input', (e) => {
+        filterState.keyword = e.target.value.trim()
+        refreshFilteredViews()
       })
-    })
-  }
-  function closeFavPopover() {
-    if (popoverEl && popoverEl.parentNode) popoverEl.parentNode.removeChild(popoverEl)
-    if (overlayEl && overlayEl.parentNode) overlayEl.parentNode.removeChild(overlayEl)
-    popoverEl = null
-    overlayEl = null
+    }
   }
 
   // Goal form + interactions (delegated on root)
@@ -738,7 +771,7 @@ export function createOverviewPage(root) {
       bindEvents()
     },
     unmount() {
-      closeFavPopover()
+      // cleanup if needed
     }
   }
 }
