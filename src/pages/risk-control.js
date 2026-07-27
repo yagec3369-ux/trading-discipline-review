@@ -9,10 +9,13 @@ import {
   STORAGE_KEYS
 } from '../utils/storage.js'
 import { on, off, emit, DATA_EVENTS } from '../utils/events.js'
-import { getGistToken, setGistToken, syncToGist, pullFromGist } from '../utils/sync.js'
+import { getGistToken, setGistToken, getGistId, setGistId, syncToGist, pullFromGist } from '../utils/sync.js'
 
 function getSyncToken() {
   return getGistToken()
+}
+function getSyncGistId() {
+  return getGistId()
 }
 
 // Field keys persisted under STORAGE_KEYS.riskCtrl prefix
@@ -198,12 +201,21 @@ export function createRiskControlPage(root) {
 
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5); margin-top:var(--s-4);">
           <p style="font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium); margin-bottom:var(--s-3);">云同步 (GitHub Gist)</p>
-          <p style="font-size:var(--text-caption); color:var(--ink-3); margin-bottom:var(--s-4);">配置 Token 后可多设备同步数据。需 <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--brand);">创建 Token</a> 并勾选 gist 权限</p>
-          <div class="flex items-center gap-2 mb-4">
-            <input type="text" id="sync-token-input" placeholder="ghp_xxx..." value="${escHtml(getSyncToken())}" style="flex:1; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm); padding:var(--s-2) var(--s-3); font-size:var(--text-body); font-family:var(--font-mono);">
-            <button id="save-token-btn" class="shrink-0 px-4 h-9" style="background:var(--surface-2); color:var(--ink); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-medium); cursor:pointer;">
-              保存
-            </button>
+          <p style="font-size:var(--text-caption); color:var(--ink-3); margin-bottom:var(--s-4);">配置 Token 后可多设备同步数据。需 <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--brand);">创建 Token</a> 并勾选 gist 权限。多设备同步时，另一台设备需填写相同的 Gist ID。</p>
+          <div class="flex flex-col gap-2 mb-4">
+            <div class="flex items-center gap-2">
+              <label style="font-size:var(--text-caption); color:var(--ink-3); width:60px; flex-shrink:0;">Token</label>
+              <input type="text" id="sync-token-input" placeholder="ghp_xxx..." value="${escHtml(getSyncToken())}" style="flex:1; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm); padding:var(--s-2) var(--s-3); font-size:var(--text-body); font-family:var(--font-mono);">
+            </div>
+            <div class="flex items-center gap-2">
+              <label style="font-size:var(--text-caption); color:var(--ink-3); width:60px; flex-shrink:0;">Gist ID</label>
+              <input type="text" id="sync-gist-id-input" placeholder="首次上传后自动生成，多设备同步需手动填写" value="${escHtml(getSyncGistId() || '')}" style="flex:1; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm); padding:var(--s-2) var(--s-3); font-size:var(--text-body); font-family:var(--font-mono);">
+            </div>
+            <div class="flex justify-end">
+              <button id="save-sync-btn" class="shrink-0 px-4 h-9" style="background:var(--surface-2); color:var(--ink); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-medium); cursor:pointer;">
+                保存
+              </button>
+            </div>
           </div>
           <div class="flex items-center gap-3 flex-wrap">
             <button id="sync-upload-btn" class="flex items-center gap-2 px-4 h-9" style="background:var(--brand); color:var(--brand-ink); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); border:none; cursor:pointer;">
@@ -383,21 +395,37 @@ export function createRiskControlPage(root) {
     // Clear all data
     root.querySelector('#clear-data-btn')?.addEventListener('click', () => {
       if (!confirm('确认清除所有数据？此操作不可撤销。')) return
-      if (!confirm('再次确认：将删除所有交易记录、持仓、计划、逻辑库等数据。')) return
-      localStorage.clear()
+      if (!confirm('再次确认：将删除所有交易记录、持仓、计划、逻辑库等数据。云同步Token和Gist ID会保留，可随时拉取恢复。')) return
+      const preservedToken = localStorage.getItem('td_gist_token')
+      const preservedGistId = localStorage.getItem('td_gist_id')
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && key.startsWith('td_') && key !== 'td_gist_token' && key !== 'td_gist_id') {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach((k) => localStorage.removeItem(k))
+      if (preservedToken) localStorage.setItem('td_gist_token', preservedToken)
+      if (preservedGistId) localStorage.setItem('td_gist_id', preservedGistId)
       location.reload()
     })
 
-    // Sync: save token
-    root.querySelector('#save-token-btn')?.addEventListener('click', () => {
-      const input = root.querySelector('#sync-token-input')
-      const token = input?.value?.trim() || ''
+    // Sync: save token + gist id
+    root.querySelector('#save-sync-btn')?.addEventListener('click', () => {
+      const tokenInput = root.querySelector('#sync-token-input')
+      const gistIdInput = root.querySelector('#sync-gist-id-input')
+      const token = tokenInput?.value?.trim() || ''
+      const gistId = gistIdInput?.value?.trim() || ''
       if (!token) {
         showSaveStatus('请输入Token', 'error')
         return
       }
       setGistToken(token)
-      showSaveStatus('Token已保存')
+      if (gistId) {
+        setGistId(gistId)
+      }
+      showSaveStatus('配置已保存')
     })
 
     // Sync: upload

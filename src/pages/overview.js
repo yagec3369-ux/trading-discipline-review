@@ -7,22 +7,11 @@ import { on, DATA_EVENTS } from '../utils/events.js'
 
 const SAMPLE_GOAL = null
 
-const INITIAL_FAVORITES = []
-
 export function createOverviewPage(root) {
   let state = {
-    favorites: loadFavorites(),
     goals: ensureGoals(loadGoals())
   }
 
-  function loadFavorites() {
-    const saved = lsGetJSON(STORAGE_KEYS.favorites, null)
-    if (saved && Array.isArray(saved)) return saved
-    return []
-  }
-  function saveFavorites() {
-    lsSetJSON(STORAGE_KEYS.favorites, state.favorites)
-  }
   function loadGoals() {
     return lsGetJSON(STORAGE_KEYS.stageGoals, null)
   }
@@ -262,30 +251,6 @@ export function createOverviewPage(root) {
         </div>
       </div>
 
-      <!-- Favorites -->
-      <div id="favorites-section" class="mb-8">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <i data-lucide="star" style="width:18px; height:18px; color:var(--state-warning);"></i>
-            <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink);">我的收藏</h3>
-            <span id="fav-count" style="font-size:var(--text-caption); color:var(--ink-3); background:var(--surface); padding:2px 8px; border-radius:var(--r-pill);">${state.favorites.length}只</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="search" style="width:14px; height:14px; color:var(--ink-3);"></i>
-            <input type="text" id="fav-search-input" placeholder="搜索股票或时间段" style="font-size:var(--text-caption); padding:4px 8px; border-radius:var(--r-sm); border:1px solid var(--line); background:var(--bg); color:var(--ink); outline:none; width:150px;">
-          </div>
-        </div>
-        <div id="fav-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          ${state.favorites.length === 0 ? `
-            <div class="sm:col-span-2" style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
-              <i data-lucide="star" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
-              <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">暂无收藏</p>
-              <p style="font-size:var(--text-caption); color:var(--ink-3);">可在「持仓检查」中添加自选</p>
-            </div>
-          ` : state.favorites.map((s, idx) => favCardHTML(s, idx)).join('')}
-        </div>
-      </div>
-
       <!-- Stage Goals -->
       <div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5) var(--s-6);">
@@ -319,6 +284,15 @@ export function createOverviewPage(root) {
                   <input type="text" id="goal-name-input" placeholder="例如：降低某股票持仓成本" class="field-input" style="width:100%;">
                 </div>
                 <div>
+                  <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">关联股票</label>
+                  <select id="goal-stock-input" class="field-select" style="width:100%;">
+                    <option value="">不关联</option>
+                    ${holdings.map((h) => `<option value="${escHtml(h.code)}">${escHtml(h.name)} (${escHtml(h.code)})</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">目标类型 *</label>
                   <select id="goal-type-input" class="field-select" style="width:100%;">
                     <option value="降低成本">降低成本</option>
@@ -326,6 +300,10 @@ export function createOverviewPage(root) {
                     <option value="达到目标价">达到目标价</option>
                     <option value="其他">其他</option>
                   </select>
+                </div>
+                <div>
+                  <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">截止日期</label>
+                  <input type="date" id="goal-deadline-input" class="field-input" style="width:100%;">
                 </div>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -336,10 +314,6 @@ export function createOverviewPage(root) {
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">目标值 *</label>
                   <input type="number" id="goal-target-input" placeholder="目标数值" class="field-input" style="width:100%;">
-                </div>
-                <div>
-                  <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:4px;">截止日期</label>
-                  <input type="date" id="goal-deadline-input" class="field-input" style="width:100%;">
                 </div>
               </div>
               <div>
@@ -408,57 +382,6 @@ export function createOverviewPage(root) {
     refreshIcons()
   }
 
-  function favCardHTML(s, idx) {
-    return `
-      <div class="fav-card" data-fav-idx="${idx}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) var(--s-5);">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2 min-w-0">
-            <i data-lucide="star" style="width:14px; height:14px; color:var(--state-warning); fill:var(--state-warning); flex-shrink:0;"></i>
-            <span style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:var(--ink);" class="truncate">${escHtml(s.name)}</span>
-            <span style="font-size:var(--text-mono); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(s.code)}</span>
-          </div>
-          <button class="unfav-btn" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px; flex-shrink:0;">
-            <i data-lucide="x" style="width:14px; height:14px;"></i>
-          </button>
-        </div>
-        <div class="flex items-center justify-between gap-2">
-          <div>
-            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block;">最新价</span>
-            <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); font-variant-numeric:tabular-nums;">${escHtml(s.price)}</span>
-          </div>
-          <div style="text-align:right;">
-            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block;">日涨跌</span>
-            <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:${s.changeColor}; font-variant-numeric:tabular-nums;">${escHtml(s.change)}</span>
-          </div>
-          <div style="text-align:right;">
-            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block;">持仓</span>
-            <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); font-variant-numeric:tabular-nums;">${escHtml(s.holding)}</span>
-          </div>
-        </div>
-      </div>
-    `
-  }
-
-  function renderFavorites(filtered = state.favorites) {
-    const grid = root.querySelector('#fav-grid')
-    const count = root.querySelector('#fav-count')
-    if (!grid || !count) return
-    const isFiltered = filtered !== state.favorites
-    if (filtered.length === 0) {
-      grid.innerHTML = `
-        <div class="sm:col-span-2" style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
-          <i data-lucide="star" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
-          <p style="font-size:var(--text-body); color:var(--ink-3); margin-bottom:var(--s-1);">${isFiltered ? '无匹配收藏' : '暂无收藏'}</p>
-          ${!isFiltered ? '<p style="font-size:var(--text-caption); color:var(--ink-3);">可在「持仓检查」中添加自选</p>' : ''}
-        </div>
-      `
-    } else {
-      grid.innerHTML = filtered.map((s, idx) => favCardHTML(s, idx)).join('')
-    }
-    count.textContent = filtered.length + '只'
-    refreshIcons()
-  }
-
   function renderGoals(goalsList) {
     const list = root.querySelector('#active-goals-list')
     const empty = root.querySelector('#goals-empty-state')
@@ -486,6 +409,7 @@ export function createOverviewPage(root) {
               <div class="flex items-center gap-2 min-w-0 flex-1">
                 <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escHtml(g.name)}</span>
                 <span class="inline-flex items-center px-2 py-0.5 whitespace-nowrap" style="font-size:11px; border-radius:var(--r-sm); background:var(--surface-2); color:var(--ink-3);">${escHtml(g.type)}</span>
+                ${g.stockCode ? '<span class="inline-flex items-center px-2 py-0.5 whitespace-nowrap" style="font-size:11px; border-radius:var(--r-sm); background:var(--brand-bg); color:var(--brand); font-family:var(--font-mono);">' + escHtml(g.stockCode) + '</span>' : ''}
               </div>
               ${completed
                 ? '<span class="archive-trigger inline-flex items-center px-2 py-0.5 whitespace-nowrap cursor-pointer" data-goal-id="' + g.id + '" style="font-size:var(--text-caption); border-radius:var(--r-sm); background:var(--state-success-bg); color:var(--state-success); font-weight:var(--weight-medium);">完成，点击归档</span>'
@@ -537,16 +461,6 @@ export function createOverviewPage(root) {
   function getFilteredData() {
     const allTrades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
 
-    // Filter favorites by keyword
-    let filteredFavorites = state.favorites
-    if (filterState.keyword) {
-      const k = filterState.keyword.toLowerCase()
-      filteredFavorites = filteredFavorites.filter(f =>
-        f.name.toLowerCase().includes(k) || f.code.toLowerCase().includes(k)
-      )
-    }
-
-    // Filter trades by keyword, date, stock
     let filteredTrades = allTrades
     if (filterState.keyword) {
       const k = filterState.keyword.toLowerCase()
@@ -567,7 +481,6 @@ export function createOverviewPage(root) {
       filteredTrades = filteredTrades.filter(t => t.code === filterState.stock)
     }
 
-    // Filter goals by keyword
     let filteredGoals = state.goals
     if (filterState.keyword) {
       const k = filterState.keyword.toLowerCase()
@@ -575,14 +488,16 @@ export function createOverviewPage(root) {
         g.name && g.name.toLowerCase().includes(k)
       )
     }
+    if (filterState.stock !== 'all') {
+      filteredGoals = filteredGoals.filter(g => !g.stockCode || g.stockCode === filterState.stock)
+    }
 
-    return { filteredFavorites, filteredTrades, filteredGoals }
+    return { filteredTrades, filteredGoals }
   }
 
   function refreshFilteredViews() {
-    const { filteredFavorites, filteredTrades, filteredGoals } = getFilteredData()
+    const { filteredTrades, filteredGoals } = getFilteredData()
     const isFiltered = !!filterState.keyword || filterState.stock !== 'all' || !!filterState.startDate || !!filterState.endDate
-    renderFavorites(filteredFavorites)
     renderRecentTrades(filteredTrades, isFiltered)
     renderGoals(filteredGoals)
   }
@@ -608,41 +523,12 @@ export function createOverviewPage(root) {
         const startEl = root.querySelector('#filter-date-start')
         const endEl = root.querySelector('#filter-date-end')
         const stockEl = root.querySelector('#filter-stock')
-        const favSearch = root.querySelector('#fav-search-input')
         if (startEl) startEl.value = ''
         if (endEl) endEl.value = ''
         if (stockEl) stockEl.value = 'all'
-        if (favSearch) favSearch.value = ''
         filterState = { keyword: '', startDate: '', endDate: '', stock: 'all' }
         refreshFilteredViews()
         showToast('筛选已重置')
-      })
-    }
-
-    // Favorites: remove
-    const favGrid = root.querySelector('#fav-grid')
-    if (favGrid) {
-      favGrid.addEventListener('click', (e) => {
-        const btn = e.target.closest('.unfav-btn')
-        if (!btn) return
-        const card = btn.closest('.fav-card')
-        if (!card) return
-        const idx = parseInt(card.getAttribute('data-fav-idx'), 10)
-        card.classList.add('removing')
-        setTimeout(() => {
-          state.favorites.splice(idx, 1)
-          saveFavorites()
-          refreshFilteredViews()
-        }, 250)
-      })
-    }
-
-    // Favorites: search
-    const favSearchInput = root.querySelector('#fav-search-input')
-    if (favSearchInput) {
-      favSearchInput.addEventListener('input', (e) => {
-        filterState.keyword = e.target.value.trim()
-        refreshFilteredViews()
       })
     }
   }
@@ -669,12 +555,14 @@ export function createOverviewPage(root) {
           if (el) el.value = sel === '#goal-type-input' ? '降低成本' : ''
         })
         root.querySelector('#goal-type-input').value = '降低成本'
+        root.querySelector('#goal-stock-input').value = ''
       })
     }
     if (goalConfirmBtn) {
       goalConfirmBtn.addEventListener('click', () => {
         const name = root.querySelector('#goal-name-input').value.trim()
         const type = root.querySelector('#goal-type-input').value
+        const stockCode = root.querySelector('#goal-stock-input').value
         const startVal = parseFloat(root.querySelector('#goal-start-input').value)
         const targetVal = parseFloat(root.querySelector('#goal-target-input').value)
         const deadline = root.querySelector('#goal-deadline-input').value
@@ -685,7 +573,7 @@ export function createOverviewPage(root) {
         if (isNaN(targetVal)) { showToast('请填写目标值'); return }
         state.goals.push({
           id: 'goal-' + Date.now(),
-          name, type,
+          name, type, stockCode,
           startValue: startVal,
           targetValue: targetVal,
           currentValue: startVal,
@@ -697,6 +585,7 @@ export function createOverviewPage(root) {
         saveGoals()
         addGoalForm.style.maxHeight = '0'
         root.querySelector('#goal-name-input').value = ''
+        root.querySelector('#goal-stock-input').value = ''
         root.querySelector('#goal-start-input').value = ''
         root.querySelector('#goal-target-input').value = ''
         root.querySelector('#goal-deadline-input').value = ''
