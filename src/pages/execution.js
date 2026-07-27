@@ -1,34 +1,25 @@
-// 执行情况 page —延续下单计划，可按计划操作/取消/弃用，查看历史计划及操作情况。
+// 执行情况 page —按买入/卖出拆分显示每条计划执行记录
 
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
-import { notifyDataChange, DATA_EVENTS } from '../utils/events.js'
+import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
-const STATUS_DEFS = {
+const LEG_STATUS = {
   pending: { label: '待执行', color: 'var(--state-warning)', bg: 'var(--state-warning-bg)', icon: 'clock' },
   executed: { label: '已操作', color: 'var(--state-success)', bg: 'var(--state-success-bg)', icon: 'check-circle-2' },
   cancelled: { label: '已取消', color: 'var(--state-info)', bg: 'var(--state-info-bg)', icon: 'x-circle' },
-  discarded: { label: '已弃用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'archive' }
+  discarded: { label: '已弃用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'archive' },
+  skip: { label: '不适用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'minus' }
 }
 
 const FILTER_TABS = [
   { id: 'all', label: '全部' },
+  { id: 'buy', label: '买入执行' },
+  { id: 'sell', label: '卖出执行' },
   { id: 'pending', label: '待执行' },
-  { id: 'executed', label: '已操作' },
-  { id: 'cancelled', label: '已取消' },
-  { id: 'discarded', label: '已弃用' }
+  { id: 'executed', label: '已操作' }
 ]
-
-const MOTIVE_LABELS = {
-  plan: '计划内操作', fomo: '怕错过 (FOMO)', revenge: '报复性交易',
-  recovery: '急于回本', greed: '贪婪追涨', fear: '恐慌杀跌'
-}
-
-const EMOTION_LABELS = {
-  calm: '平静', anxious: '焦虑', excited: '兴奋',
-  frustrated: '沮丧', confident: '自信'
-}
 
 export function createExecutionPage(root) {
   let plans = loadPlans()
@@ -45,10 +36,58 @@ export function createExecutionPage(root) {
     showSaveStatus()
   }
 
+  function listLegs() {
+    const legs = []
+    plans.forEach((p) => {
+      const op = p.operationType || 'buy'
+      const hasBuy = op === 'buy' || op === 't0'
+      const hasSell = op === 'sell' || op === 't0'
+
+      if (hasBuy) {
+        const buyStatus = (p.buyStatus && LEG_STATUS[p.buyStatus]) ? p.buyStatus : (op === 'buy' ? p.status || 'pending' : p.buyStatus || 'pending')
+        legs.push({
+          id: p.id + '_buy',
+          plan: p,
+          legType: 'buy',
+          status: buyStatus,
+          actionLabel: '买入',
+          actionColor: 'var(--state-error)',
+          actionBg: 'var(--state-error-bg)',
+          price: p.buyPrice,
+          shares: p.buyShares,
+          amount: p.buyAmount || ((parseFloat(p.buyPrice) || 0) * (parseFloat(p.buyShares) || 0)),
+          operable: op === 'buy' || op === 't0',
+          operatedAt: p.buyOperatedAt || null,
+          note: p.buyNote || ''
+        })
+      }
+      if (hasSell) {
+        const sellStatus = (p.sellStatus && LEG_STATUS[p.sellStatus]) ? p.sellStatus : (op === 'sell' ? p.status || 'pending' : p.sellStatus || 'pending')
+        legs.push({
+          id: p.id + '_sell',
+          plan: p,
+          legType: 'sell',
+          status: sellStatus,
+          actionLabel: '卖出',
+          actionColor: 'var(--state-success)',
+          actionBg: 'var(--state-success-bg)',
+          price: p.sellPrice,
+          shares: p.sellShares,
+          amount: p.sellAmount || ((parseFloat(p.sellPrice) || 0) * (parseFloat(p.sellShares) || 0)),
+          operable: op === 'sell' || op === 't0',
+          operatedAt: p.sellOperatedAt || null,
+          note: p.sellNote || ''
+        })
+      }
+    })
+    return legs
+  }
+
   function render() {
-    const counts = countByStatus()
+    const legs = listLegs()
+    const counts = countLegsByStatus(legs)
+
     root.innerHTML = `
-      <!-- Section 1: 统计概览 -->
       <section class="mb-6">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           ${statCard('待执行', counts.pending, 'clock', 'var(--state-warning)', 'var(--state-warning-bg)')}
@@ -58,7 +97,6 @@ export function createExecutionPage(root) {
         </div>
       </section>
 
-      <!-- Section 2: 筛选 + 计划列表 -->
       <section>
         <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div class="flex items-center gap-3">
@@ -68,14 +106,14 @@ export function createExecutionPage(root) {
           <div class="flex items-center gap-1 flex-wrap">
             ${FILTER_TABS.map((t) => `
               <button class="filter-btn px-3 py-1" data-filter="${t.id}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); border-radius:var(--r-pill); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; transition:all var(--duration-hover) var(--ease-hover);">
-                ${t.label}${t.id !== 'all' ? ` <span class="filter-count" data-count="${t.id}">(${counts[t.id] || 0})</span>` : ''}
+                ${t.label}${t.id !== 'all' ? ` <span class="filter-count">(${counts[t.id] || 0})</span>` : ''}
               </button>
             `).join('')}
           </div>
         </div>
 
-        <div id="plans-list" class="flex flex-col gap-3">
-          ${renderPlanCards()}
+        <div id="legs-list" class="flex flex-col gap-3">
+          ${renderLegCards(legs)}
         </div>
       </section>
     `
@@ -98,23 +136,28 @@ export function createExecutionPage(root) {
     `
   }
 
-  function countByStatus() {
+  function countLegsByStatus(legs) {
     const counts = { pending: 0, executed: 0, cancelled: 0, discarded: 0 }
-    plans.forEach((p) => {
-      if (counts[p.status] !== undefined) counts[p.status]++
+    legs.forEach((l) => {
+      if (counts[l.status] !== undefined) counts[l.status]++
     })
     return counts
   }
 
-  function renderPlanCards() {
-    const filtered = currentFilter === 'all'
-      ? plans
-      : plans.filter((p) => p.status === currentFilter)
+  function renderLegCards(legs) {
+    let filtered = legs
+    if (currentFilter === 'buy') {
+      filtered = legs.filter((l) => l.legType === 'buy')
+    } else if (currentFilter === 'sell') {
+      filtered = legs.filter((l) => l.legType === 'sell')
+    } else if (currentFilter === 'pending' || currentFilter === 'executed') {
+      filtered = legs.filter((l) => l.status === currentFilter)
+    }
 
     if (filtered.length === 0) {
-      const emptyText = plans.length === 0
+      const emptyText = legs.length === 0
         ? '暂无计划，请先在「下单计划」页面提交计划'
-        : '该状态下暂无计划'
+        : '该状态下暂无记录'
       return `
         <div style="background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); padding:var(--s-7) var(--s-5); text-align:center;">
           <i data-lucide="inbox" style="width:32px; height:32px; color:var(--ink-3); margin-bottom:var(--s-3);"></i>
@@ -123,42 +166,38 @@ export function createExecutionPage(root) {
       `
     }
 
-    // 按创建时间倒序（最新的在前）
     const sorted = [...filtered].sort((a, b) => {
-      const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0
-      const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0
+      const ta = a.plan.createdAt ? new Date(a.plan.createdAt).getTime() : 0
+      const tb = b.plan.createdAt ? new Date(b.plan.createdAt).getTime() : 0
       return tb - ta
     })
 
-    return sorted.map((p) => planCardHTML(p)).join('')
+    return sorted.map((l) => legCardHTML(l)).join('')
   }
 
-  function planCardHTML(p) {
-    const sd = STATUS_DEFS[p.status] || STATUS_DEFS.pending
-    const created = formatDate(p.createdAt)
-    const operated = p.operatedAt ? formatDate(p.operatedAt) : ''
-    const motiveLabel = MOTIVE_LABELS[p.motiveType] || p.motiveType || '--'
-    const emotionLabel = EMOTION_LABELS[p.emotionState] || p.emotionState || '--'
-
-    const currentPrice = parseFloat(p.currentPrice) || 0
-    const takeProfit = parseFloat(p.takeProfit) || 0
-    const stopLoss = parseFloat(p.stopLoss) || 0
-    const maxLoss = parseFloat(p.maxLoss) || 0
-    const expGain = parseFloat(p.expectedGain) || 0
-    const planShares = parseInt(p.planShares) || 0
-    const planAmount = parseFloat(p.planAmount) || 0
-    const rr = maxLoss > 0 && expGain > 0 ? (expGain / maxLoss).toFixed(1) : '--'
-
-    const showActions = p.status === 'pending'
+  function legCardHTML(l) {
+    const sd = LEG_STATUS[l.status] || LEG_STATUS.pending
+    const p = l.plan
+    const opTypeLabel = p.operationType === 't0' ? '做T' : p.operationType === 'sell' ? '卖出' : '买入'
+    const operated = l.operatedAt ? formatDate(l.operatedAt) : ''
+    const totalAmount = (parseFloat(p.buyAmount) || 0) + (parseFloat(p.sellAmount) || 0)
+    const expAmount = (p.expectedGainNR || 0) * 1000
+    const lossAmount = (p.maxLossNR || 0) * 1000
+    const rr = lossAmount > 0 && expAmount > 0 ? (expAmount / lossAmount).toFixed(1) : '--'
+    const canAct = l.status === 'pending'
 
     return `
-      <div class="plan-card" data-plan-id="${escHtml(p.id)}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;">
-        <!-- 卡片头部 -->
+      <div class="leg-card" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;">
         <div class="flex items-center justify-between px-4 sm:px-5 py-3" style="border-bottom:1px solid var(--line);">
           <div class="flex items-center gap-3 min-w-0 flex-wrap">
-            <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(p.stockName || '未命名')}</span>
-            <span style="font-size:var(--text-mono); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(p.stockCode || '')}</span>
-            <span style="font-size:var(--text-caption); color:var(--ink-3);">${escHtml(created)}</span>
+            <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(p.name || '未命名')}</span>
+            <span style="font-size:var(--text-mono); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(p.code || '')}</span>
+            <span style="font-size:11px; padding:2px 8px; border-radius:var(--r-pill); background:${l.actionBg}; color:${l.actionColor}; font-weight:var(--weight-medium); display:inline-flex; align-items:center; gap:4px;">
+              <i data-lucide="${l.legType === 'buy' ? 'trending-up' : 'trending-down'}" style="width:11px; height:11px;"></i>
+              ${l.actionLabel}执行
+            </span>
+            ${p.operationType === 't0' ? `<span style="font-size:11px; padding:2px 8px; border-radius:var(--r-pill); background:var(--state-warning-bg); color:var(--state-warning); font-weight:var(--weight-medium);">${opTypeLabel}</span>` : ''}
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">操作类型: ${opTypeLabel}</span>
           </div>
           <span style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:2px 10px; border-radius:var(--r-pill); background:${sd.bg}; color:${sd.color}; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="${sd.icon}" style="width:12px; height:12px;"></i>
@@ -166,34 +205,31 @@ export function createExecutionPage(root) {
           </span>
         </div>
 
-        <!-- 关键指标 -->
-        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 px-3 sm:px-5 py-3" style="border-bottom:1px solid var(--line);">
-          ${metricCell('买入价', p.currentPrice || '--')}
-          ${metricCell('止盈', p.takeProfit || '--', takeProfit > 0 && currentPrice > 0 ? 'var(--price-up)' : 'var(--ink-2)')}
-          ${metricCell('止损', p.stopLoss || '--', stopLoss > 0 && currentPrice > 0 ? 'var(--price-down)' : 'var(--ink-2)')}
-          ${metricCell('计划金额', planAmount > 0 ? planAmount.toLocaleString('zh-CN') : '--')}
-          ${metricCell('仓位(股)', planShares > 0 ? planShares.toLocaleString('zh-CN') : '--')}
-          ${metricCell('风险收益比', rr === '--' ? '--' : '1:' + rr)}
+        <div class="px-4 sm:px-5 py-3">
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
+            ${metricCell(l.legType === 'buy' ? '买入价' : '卖出价', l.price || '--', l.actionColor)}
+            ${metricCell('股数', l.shares || '--')}
+            ${metricCell('金额', l.amount ? Number(l.amount).toLocaleString() : '--')}
+            ${metricCell('收盘价', p.dailyClose || '--')}
+            ${metricCell('预期收益', (p.expectedGainNR || 0) + 'R')}
+            ${metricCell('风险收益比', rr === '--' ? '--' : '1:' + rr)}
+          </div>
+          ${l.note ? `<div style="font-size:var(--text-caption); color:var(--ink-3); padding:var(--s-2) var(--s-3); background:var(--bg); border-radius:var(--r-sm); border-left:3px solid ${l.actionColor};"><strong style="color:var(--ink-2);">操作备注：</strong>${escHtml(l.note)}</div>` : ''}
         </div>
 
-        <!-- 操作按钮 / 操作结果 -->
-        ${showActions ? `
+        ${canAct ? `
           <div class="flex items-center gap-2 px-4 sm:px-5 py-3 flex-wrap">
-            <button class="exec-action-btn" data-action="executed" data-plan-id="${escHtml(p.id)}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:var(--state-success); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:var(--state-success); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="check" style="width:12px; height:12px;"></i>
-              按计划操作
+              已${l.actionLabel}
             </button>
-            <button class="exec-action-btn" data-action="cancelled" data-plan-id="${escHtml(p.id)}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:var(--state-info); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            <button class="exec-leg-btn" data-action="cancelled" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; background:var(--state-info); color:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="x" style="width:12px; height:12px;"></i>
               取消
             </button>
-            <button class="exec-action-btn" data-action="discarded" data-plan-id="${escHtml(p.id)}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            <button class="exec-leg-btn" data-action="discarded" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:1px solid var(--line); background:transparent; color:var(--ink-3); cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="archive" style="width:12px; height:12px;"></i>
               弃用
-            </button>
-            <button class="plan-toggle-detail" data-plan-id="${escHtml(p.id)}" style="font-size:var(--text-caption); color:var(--brand); background:none; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px; margin-left:auto;">
-              <i data-lucide="chevron-down" class="detail-chevron" style="width:14px; height:14px; transition:transform 0.2s ease;"></i>
-              详情
             </button>
           </div>
         ` : `
@@ -201,29 +237,24 @@ export function createExecutionPage(root) {
             <span style="font-size:var(--text-caption); color:var(--ink-3);">
               ${operated ? '操作时间：' + escHtml(operated) : '未操作'}
             </span>
-            <button class="plan-toggle-detail" data-plan-id="${escHtml(p.id)}" style="font-size:var(--text-caption); color:var(--brand); background:none; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            <button class="plan-toggle-detail" data-leg-id="${escHtml(l.id)}" style="font-size:var(--text-caption); color:var(--brand); background:none; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="chevron-down" class="detail-chevron" style="width:14px; height:14px; transition:transform 0.2s ease;"></i>
               详情
             </button>
           </div>
-        `}
-
-        <!-- 详情（可折叠） -->
-        <div class="plan-detail" style="max-height:0; overflow:hidden; transition:max-height 0.3s ease;">
-          <div class="px-4 sm:px-5 pb-4" style="border-top:1px solid var(--line); padding-top:var(--s-4);">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-              ${detailItem('买入动机', motiveLabel)}
-              ${detailItem('情绪状态', emotionLabel)}
-              ${detailItem('波段模式', p.waveMode === '10-20' ? '10-20天波段' : p.waveMode === '20-60' ? '20-60天波段' : (p.waveMode || '--'))}
-              ${detailItem('最大可接受亏损', p.maxLoss ? p.maxLoss + ' 元' : '--')}
+          <div class="plan-detail" style="max-height:0; overflow:hidden; transition:max-height 0.3s ease;">
+            <div class="px-4 sm:px-5 pb-4" style="border-top:1px solid var(--line); padding-top:var(--s-4);">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                ${detailItem('操作类型', opTypeLabel)}
+                ${detailItem('执行类型', l.actionLabel)}
+                ${detailItem('状态', sd.label)}
+                ${detailItem('创建时间', formatDate(p.createdAt))}
+              </div>
+              ${p.reviewNotes ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">复盘总结</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.reviewNotes)}</p></div>` : ''}
+              ${totalAmount > 0 ? `<div class="mt-2" style="font-size:var(--text-caption); color:var(--ink-3);">计划总金额: ${totalAmount.toLocaleString()} 元</div>` : ''}
             </div>
-            ${p.buyLogic ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入逻辑</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.buyLogic)}</p></div>` : ''}
-            ${p.sellLogic ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">卖出逻辑</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.sellLogic)}</p></div>` : ''}
-            ${p.triggerDetail ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入触发条件</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.triggerDetail)}</p></div>` : ''}
-            ${p.execNotes ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">执行备注</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.execNotes)}</p></div>` : ''}
-            ${p.actionNote ? `<div class="mt-3 p-3" style="background:var(--bg); border-radius:var(--r-sm); border-left:3px solid ${sd.color};"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">操作备注</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.actionNote)}</p></div>` : ''}
           </div>
-        </div>
+        `}
       </div>
     `
   }
@@ -261,14 +292,13 @@ export function createExecutionPage(root) {
   }
 
   function bindEvents() {
-    // 筛选按钮
     root.querySelectorAll('.filter-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         currentFilter = btn.getAttribute('data-filter')
         updateFilterActive()
-        const list = root.querySelector('#plans-list')
+        const list = root.querySelector('#legs-list')
         if (list) {
-          list.innerHTML = renderPlanCards()
+          list.innerHTML = renderLegCards(listLegs())
           refreshIcons()
           bindCardEvents()
         }
@@ -294,19 +324,18 @@ export function createExecutionPage(root) {
   }
 
   function bindCardEvents() {
-    // 操作按钮
-    root.querySelectorAll('.exec-action-btn').forEach((btn) => {
+    root.querySelectorAll('.exec-leg-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         const action = btn.getAttribute('data-action')
-        const id = btn.getAttribute('data-plan-id')
-        handleAction(id, action)
+        const planId = btn.getAttribute('data-plan-id')
+        const legType = btn.getAttribute('data-leg-type')
+        handleLegAction(planId, legType, action)
       })
     })
 
-    // 详情展开
     root.querySelectorAll('.plan-toggle-detail').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const card = btn.closest('.plan-card')
+        const card = btn.closest('.leg-card')
         if (!card) return
         const detail = card.querySelector('.plan-detail')
         const chevron = btn.querySelector('.detail-chevron')
@@ -324,86 +353,164 @@ export function createExecutionPage(root) {
     })
   }
 
-  function handleAction(id, action) {
-    const plan = plans.find((p) => p.id === id)
+  function handleLegAction(planId, legType, action) {
+    const plan = plans.find((p) => p.id === planId)
     if (!plan) return
-    const def = STATUS_DEFS[action]
-    if (!def) return
 
-    plan.status = action
-    plan.operatedAt = new Date().toISOString()
+    if (legType === 'buy') {
+      plan.buyStatus = action
+      plan.buyOperatedAt = new Date().toISOString()
+    } else if (legType === 'sell') {
+      plan.sellStatus = action
+      plan.sellOperatedAt = new Date().toISOString()
+    }
 
-    const actionLabels = { executed: '按计划操作', cancelled: '取消', discarded: '弃用' }
+    // update overall status based on legs
+    const opType = plan.operationType || 'buy'
+    if (opType === 'buy') {
+      plan.status = plan.buyStatus
+    } else if (opType === 'sell') {
+      plan.status = plan.sellStatus
+    } else {
+      // t0: if both legs are executed => executed; if any cancelled => cancelled; etc.
+      const bs = plan.buyStatus || 'pending'
+      const ss = plan.sellStatus || 'pending'
+      if (bs === 'executed' && ss === 'executed') plan.status = 'executed'
+      else if (bs === 'cancelled' || ss === 'cancelled') plan.status = 'cancelled'
+      else if (bs === 'discarded' || ss === 'discarded') plan.status = 'discarded'
+      else plan.status = 'pending'
+    }
 
-    // 标记为已操作时，自动创建交易记录并同步持仓
+    const actionLabels = { executed: '已操作', cancelled: '取消', discarded: '弃用' }
+
     if (action === 'executed') {
-      createTradeRecordFromPlan(plan)
+      createTradeRecordFromPlan(plan, legType)
     }
 
     savePlans()
-    showToast('计划已标记为「' + actionLabels[action] + '」' + (action === 'executed' ? '，交易记录已自动生成' : ''))
-
+    showToast(legType === 'buy' ? '买入记录已标记为「' + actionLabels[action] + '」' : '卖出记录已标记为「' + actionLabels[action] + '」')
     render()
   }
 
-  function createTradeRecordFromPlan(plan) {
+  function createTradeRecordFromPlan(plan, legType) {
     const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
-    const shares = plan.planShares || '--'
-    const newTrade = {
-      id: 't' + Date.now(),
-      date: new Date().toISOString().slice(0, 10),
-      name: plan.stockName || '',
-      code: plan.stockCode || '',
-      wave: plan.waveMode || '',
-      status: '合规',
-      statusColor: 'var(--state-success)',
-      statusBg: 'var(--state-success-bg)',
-      holdingStatus: '',
-      buyLogic: plan.buyLogic || '—',
-      planBuyPrice: plan.currentPrice || '--',
-      actualBuyPrice: plan.currentPrice || '--',
-      planExitPrice: plan.takeProfit || '--',
-      actualExitPrice: '--',
-      planPosition: shares,
-      actualPosition: shares,
-      planRisk: plan.maxLoss || '--',
-      actualPnl: shares,
-      pnlColor: 'var(--ink)',
-      violation: '无违规。',
-      violationBg: 'var(--state-success-bg)',
-      violationColor: 'var(--state-success)',
-      experience: '请补充本次经验',
-      fromPlanId: plan.id
-    }
-    trades.unshift(newTrade)
-    lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
+    const operationType = plan.operationType || 'buy'
+    const records = []
 
-    // 同步持仓
-    const qty = parseInt(shares, 10) || 0
-    if (qty > 0 && plan.stockCode) {
-      const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
-      const existing = holdings.find((h) => h.code === plan.stockCode)
-      if (existing) {
-        existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
-      } else {
-        holdings.push({
-          id: 'h_' + Date.now(),
-          name: plan.stockName || '',
-          code: plan.stockCode,
-          buyPrice: plan.currentPrice || '--',
-          currentPrice: plan.currentPrice || '--',
-          quantity: qty,
-          createdAt: new Date().toISOString()
+    const pushLeg = (type) => {
+      if (type === 'buy' && plan.buyPrice && plan.buyShares) {
+        records.push({
+          id: 't_buy_' + Date.now(),
+          date: new Date().toISOString().slice(0, 10),
+          type: 'buy',
+          name: plan.name || '',
+          code: plan.code || '',
+          planPrice: plan.buyPrice,
+          actualPrice: plan.buyPrice,
+          planShares: plan.buyShares,
+          actualShares: plan.buyShares,
+          planAmount: plan.buyAmount || (plan.buyPrice * plan.buyShares),
+          actualAmount: plan.buyAmount || (plan.buyPrice * plan.buyShares),
+          status: '合规',
+          fromPlanId: plan.id,
+          note: plan.reviewNotes || ''
+        })
+      } else if (type === 'sell' && plan.sellPrice && plan.sellShares) {
+        records.push({
+          id: 't_sell_' + Date.now(),
+          date: new Date().toISOString().slice(0, 10),
+          type: 'sell',
+          name: plan.name || '',
+          code: plan.code || '',
+          planPrice: plan.sellPrice,
+          actualPrice: plan.sellPrice,
+          planShares: plan.sellShares,
+          actualShares: plan.sellShares,
+          planAmount: plan.sellAmount || (plan.sellPrice * plan.sellShares),
+          actualAmount: plan.sellAmount || (plan.sellPrice * plan.sellShares),
+          status: '合规',
+          fromPlanId: plan.id,
+          note: plan.reviewNotes || ''
         })
       }
+    }
+
+    // Only create record for the specific leg being executed
+    if (legType === 'buy') {
+      pushLeg('buy')
+    } else if (legType === 'sell') {
+      pushLeg('sell')
+    } else {
+      pushLeg('buy')
+      pushLeg('sell')
+    }
+
+    records.forEach((r) => trades.unshift(r))
+    lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
+
+    const code = plan.code
+    const name = plan.name
+
+    if (code) {
+      const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+
+      const updateHoldings = (type) => {
+        const existing = holdings.find((h) => h.code === code)
+        if (type === 'buy' && plan.buyShares) {
+          const qty = parseInt(plan.buyShares, 10) || 0
+          if (existing) {
+            existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
+            if (plan.buyPrice) existing.buyPrice = plan.buyPrice
+            existing.currentPrice = plan.dailyClose || plan.buyPrice || existing.currentPrice
+          } else {
+            holdings.push({
+              id: 'h_' + Date.now(),
+              name: name,
+              code: code,
+              buyPrice: plan.buyPrice || '--',
+              currentPrice: plan.dailyClose || plan.buyPrice || '--',
+              quantity: qty,
+              createdAt: new Date().toISOString()
+            })
+          }
+        } else if (type === 'sell' && plan.sellShares) {
+          const qty = parseInt(plan.sellShares, 10) || 0
+          if (existing) {
+            existing.quantity = Math.max(0, (parseInt(existing.quantity, 10) || 0) - qty)
+            existing.currentPrice = plan.sellPrice || existing.currentPrice
+          }
+        }
+      }
+
+      if (legType === 'buy') updateHoldings('buy')
+      else if (legType === 'sell') updateHoldings('sell')
+
       lsSetJSON(STORAGE_KEYS.holdings, holdings)
       notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
     }
     notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
   }
 
+  let _plansListener = null
+
   return {
-    mount() { render() },
-    unmount() {}
+    mount() {
+      _plansListener = () => {
+        plans = loadPlans()
+        render()
+      }
+      on(DATA_EVENTS.PLANS_CHANGED, _plansListener)
+      on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _plansListener)
+      on(DATA_EVENTS.HOLDINGS_CHANGED, _plansListener)
+      render()
+    },
+    unmount() {
+      if (_plansListener) {
+        off(DATA_EVENTS.PLANS_CHANGED, _plansListener)
+        off(DATA_EVENTS.TRADE_RECORDS_CHANGED, _plansListener)
+        off(DATA_EVENTS.HOLDINGS_CHANGED, _plansListener)
+        _plansListener = null
+      }
+    }
   }
 }
