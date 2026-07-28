@@ -6,13 +6,30 @@
       "changePercent": 3.67,
       "inflow": "10.14亿",
       "outflow": "8.54亿",
-      "netAmount": "+1.59亿",
+      "netAmount": "+1.60亿",
       "netColor": "var(--state-error)",
       "stockCount": 22,
       "leadingStock": "ST荣科",
       "leadingCode": "600001",
       "leadingChange": 19.9,
-      "leadingPrice": 4.88
+      "leadingPrice": 4.88,
+      "topStocks": [
+        {
+          "name": "ST荣科",
+          "code": "600001",
+          "change": 19.9
+        },
+        {
+          "name": "卫宁健康",
+          "code": "002488",
+          "change": 19.04
+        },
+        {
+          "name": "创业慧康",
+          "code": "002495",
+          "change": 16.88
+        }
+      ]
     },
     {
       "name": "乳业",
@@ -26,7 +43,24 @@
       "leadingStock": "品渥食品",
       "leadingCode": "600002",
       "leadingChange": 15.89,
-      "leadingPrice": 21.66
+      "leadingPrice": 21.66,
+      "topStocks": [
+        {
+          "name": "品渥食品",
+          "code": "600002",
+          "change": 15.89
+        },
+        {
+          "name": "伊利股份",
+          "code": "002827",
+          "change": 15.49
+        },
+        {
+          "name": "光明乳业",
+          "code": "002572",
+          "change": 12.06
+        }
+      ]
     },
     {
       "name": "啤酒概念",
@@ -40,7 +74,24 @@
       "leadingStock": "品渥食品",
       "leadingCode": "600002",
       "leadingChange": 15.89,
-      "leadingPrice": 21.66
+      "leadingPrice": 21.66,
+      "topStocks": [
+        {
+          "name": "品渥食品",
+          "code": "600002",
+          "change": 15.89
+        },
+        {
+          "name": "青岛啤酒",
+          "code": "002047",
+          "change": 15.63
+        },
+        {
+          "name": "燕京啤酒",
+          "code": "002933",
+          "change": 12.2
+        }
+      ]
     },
     {
       "name": "高压氧舱",
@@ -48,13 +99,30 @@
       "changePercent": 2.46,
       "inflow": "3.56亿",
       "outflow": "6.39亿",
-      "netAmount": "-2.84亿",
+      "netAmount": "-2.83亿",
       "netColor": "var(--state-success)",
       "stockCount": 11,
       "leadingStock": "创新医疗",
       "leadingCode": "600004",
       "leadingChange": 10.01,
-      "leadingPrice": 22.76
+      "leadingPrice": 22.76,
+      "topStocks": [
+        {
+          "name": "创新医疗",
+          "code": "600004",
+          "change": 10.01
+        },
+        {
+          "name": "鱼跃医疗",
+          "code": "002731",
+          "change": 9.01
+        },
+        {
+          "name": "乐普医疗",
+          "code": "002930",
+          "change": 6.41
+        }
+      ]
     },
     {
       "name": "财税数字化",
@@ -62,13 +130,30 @@
       "changePercent": 2.34,
       "inflow": "36.59亿",
       "outflow": "31.16亿",
-      "netAmount": "+5.44亿",
+      "netAmount": "+5.43亿",
       "netColor": "var(--state-error)",
       "stockCount": 65,
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "金财互联",
+          "code": "002555",
+          "change": 19.08
+        },
+        {
+          "name": "税友股份",
+          "code": "002017",
+          "change": 17.26
+        }
+      ]
     },
     {
       "name": "电子身份证",
@@ -82,7 +167,24 @@
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "神思电子",
+          "code": "002306",
+          "change": 19.23
+        },
+        {
+          "name": "雄帝科技",
+          "code": "300760",
+          "change": 16.53
+        }
+      ]
     },
     {
       "name": "Web3.0",
@@ -96,7 +198,24 @@
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "福石控股",
+          "code": "002326",
+          "change": 17.94
+        },
+        {
+          "name": "中科金财",
+          "code": "002397",
+          "change": 17.52
+        }
+      ]
     },
     {
       "name": "赛马概念",
@@ -110,7 +229,24 @@
       "leadingStock": "中体产业",
       "leadingCode": "600008",
       "leadingChange": 2.69,
-      "leadingPrice": 6.88
+      "leadingPrice": 6.88,
+      "topStocks": [
+        {
+          "name": "中体产业",
+          "code": "600008",
+          "change": 2.69
+        },
+        {
+          "name": "海南瑞泽",
+          "code": "002519",
+          "change": 0.1
+        },
+        {
+          "name": "罗牛山",
+          "code": "002829",
+          "change": -0.86
+        }
+      ]
     },
     {
       "name": "跨境支付(CIPS)",
@@ -118,13 +254,30 @@
       "changePercent": 1.99,
       "inflow": "93.58亿",
       "outflow": "65.17亿",
-      "netAmount": "+28.42亿",
+      "netAmount": "+28.41亿",
       "netColor": "var(--state-error)",
       "stockCount": 73,
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "京北方",
+          "code": "002982",
+          "change": 17.64
+        },
+        {
+          "name": "海联金汇",
+          "code": "002883",
+          "change": 17.61
+        }
+      ]
     },
     {
       "name": "无人零售",
@@ -132,13 +285,30 @@
       "changePercent": 1.88,
       "inflow": "6.95亿",
       "outflow": "6.89亿",
-      "netAmount": "+0.07亿",
+      "netAmount": "+0.06亿",
       "netColor": "var(--state-error)",
       "stockCount": 26,
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "三江购物",
+          "code": "002490",
+          "change": 18.43
+        },
+        {
+          "name": "红旗连锁",
+          "code": "002744",
+          "change": 17.41
+        }
+      ]
     },
     {
       "name": "网红经济",
@@ -152,7 +322,24 @@
       "leadingStock": "品渥食品",
       "leadingCode": "600002",
       "leadingChange": 15.89,
-      "leadingPrice": 21.66
+      "leadingPrice": 21.66,
+      "topStocks": [
+        {
+          "name": "品渥食品",
+          "code": "600002",
+          "change": 15.89
+        },
+        {
+          "name": "星期六",
+          "code": "002637",
+          "change": 13.54
+        },
+        {
+          "name": "若羽臣",
+          "code": "002131",
+          "change": 12.38
+        }
+      ]
     },
     {
       "name": "数字货币",
@@ -166,7 +353,24 @@
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "拉卡拉",
+          "code": "002713",
+          "change": 19.5
+        },
+        {
+          "name": "新国都",
+          "code": "002208",
+          "change": 17.3
+        }
+      ]
     },
     {
       "name": "白酒概念",
@@ -178,9 +382,26 @@
       "netColor": "var(--state-error)",
       "stockCount": 48,
       "leadingStock": "金种子酒",
-      "leadingCode": "",
+      "leadingCode": "600199",
       "leadingChange": 10.02,
-      "leadingPrice": 7.47
+      "leadingPrice": 7.47,
+      "topStocks": [
+        {
+          "name": "金种子酒",
+          "code": "600199",
+          "change": 10.02
+        },
+        {
+          "name": "贵州茅台",
+          "code": "002948",
+          "change": 7.19
+        },
+        {
+          "name": "五粮液",
+          "code": "002016",
+          "change": 7.48
+        }
+      ]
     },
     {
       "name": "ETC",
@@ -192,9 +413,26 @@
       "netColor": "var(--state-success)",
       "stockCount": 42,
       "leadingStock": "南天信息",
-      "leadingCode": "",
+      "leadingCode": "000948",
       "leadingChange": 10.01,
-      "leadingPrice": 14.07
+      "leadingPrice": 14.07,
+      "topStocks": [
+        {
+          "name": "南天信息",
+          "code": "000948",
+          "change": 10.01
+        },
+        {
+          "name": "千方科技",
+          "code": "300517",
+          "change": 7.69
+        },
+        {
+          "name": "博通集成",
+          "code": "002290",
+          "change": 6.66
+        }
+      ]
     },
     {
       "name": "脑机接口",
@@ -208,7 +446,24 @@
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "世纪华通",
+          "code": "002472",
+          "change": 19.59
+        },
+        {
+          "name": "新智认知",
+          "code": "002067",
+          "change": 16
+        }
+      ]
     },
     {
       "name": "预制菜",
@@ -220,9 +475,26 @@
       "netColor": "var(--state-error)",
       "stockCount": 101,
       "leadingStock": "天地在线",
-      "leadingCode": "",
+      "leadingCode": "002995",
       "leadingChange": 9.98,
-      "leadingPrice": 16.97
+      "leadingPrice": 16.97,
+      "topStocks": [
+        {
+          "name": "天地在线",
+          "code": "002995",
+          "change": 9.98
+        },
+        {
+          "name": "国联水产",
+          "code": "002386",
+          "change": 9.47
+        },
+        {
+          "name": "福成股份",
+          "code": "002093",
+          "change": 6.81
+        }
+      ]
     },
     {
       "name": "AI语料",
@@ -234,9 +506,26 @@
       "netColor": "var(--state-error)",
       "stockCount": 52,
       "leadingStock": "岩山科技",
-      "leadingCode": "",
+      "leadingCode": "002195",
       "leadingChange": 9.98,
-      "leadingPrice": 6.83
+      "leadingPrice": 6.83,
+      "topStocks": [
+        {
+          "name": "岩山科技",
+          "code": "002195",
+          "change": 9.98
+        },
+        {
+          "name": "中文在线",
+          "code": "002753",
+          "change": 9.66
+        },
+        {
+          "name": "掌阅科技",
+          "code": "300000",
+          "change": 7.74
+        }
+      ]
     },
     {
       "name": "华为欧拉",
@@ -250,7 +539,24 @@
       "leadingStock": "科蓝软件",
       "leadingCode": "600005",
       "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "leadingPrice": 8.96,
+      "topStocks": [
+        {
+          "name": "科蓝软件",
+          "code": "600005",
+          "change": 19.95
+        },
+        {
+          "name": "润和软件",
+          "code": "300757",
+          "change": 18.92
+        },
+        {
+          "name": "诚迈科技",
+          "code": "300821",
+          "change": 17.74
+        }
+      ]
     },
     {
       "name": "在线教育",
@@ -258,13 +564,30 @@
       "changePercent": 1.62,
       "inflow": "78.25亿",
       "outflow": "76.16亿",
-      "netAmount": "+2.10亿",
+      "netAmount": "+2.09亿",
       "netColor": "var(--state-error)",
       "stockCount": 127,
       "leadingStock": "ST荣科",
       "leadingCode": "600001",
       "leadingChange": 19.9,
-      "leadingPrice": 4.88
+      "leadingPrice": 4.88,
+      "topStocks": [
+        {
+          "name": "ST荣科",
+          "code": "600001",
+          "change": 19.9
+        },
+        {
+          "name": "中公教育",
+          "code": "002608",
+          "change": 19.1
+        },
+        {
+          "name": "豆神教育",
+          "code": "002321",
+          "change": 16.62
+        }
+      ]
     },
     {
       "name": "NFT概念",
@@ -276,9 +599,26 @@
       "netColor": "var(--state-error)",
       "stockCount": 70,
       "leadingStock": "南天信息",
-      "leadingCode": "",
+      "leadingCode": "000948",
       "leadingChange": 10.01,
-      "leadingPrice": 14.07
+      "leadingPrice": 14.07,
+      "topStocks": [
+        {
+          "name": "南天信息",
+          "code": "000948",
+          "change": 10.01
+        },
+        {
+          "name": "安妮股份",
+          "code": "002161",
+          "change": 8.63
+        },
+        {
+          "name": "视觉中国",
+          "code": "002595",
+          "change": 7.09
+        }
+      ]
     }
   ],
   "financeNews": [
@@ -576,7 +916,7 @@
     },
     {
       "stockName": "金种子酒",
-      "stockCode": "",
+      "stockCode": "600199",
       "concept": "白酒概念",
       "title": "白酒板块异动拉升 金种子酒涨停",
       "time": "2026-07-28 11:12:00",
@@ -586,7 +926,7 @@
     },
     {
       "stockName": "金种子酒",
-      "stockCode": "",
+      "stockCode": "600199",
       "concept": "白酒概念",
       "title": "白酒板块逆势拉升 金种子酒涨停",
       "time": "2026-07-28 11:10:29",
@@ -596,7 +936,7 @@
     },
     {
       "stockName": "南天信息",
-      "stockCode": "",
+      "stockCode": "000948",
       "concept": "ETC",
       "title": "南天信息：副总裁何立离任",
       "time": "2026-07-24 16:14:00",
@@ -606,7 +946,7 @@
     },
     {
       "stockName": "南天信息",
-      "stockCode": "",
+      "stockCode": "000948",
       "concept": "ETC",
       "title": "南天信息：关于副总裁离任的公告",
       "time": "2026-07-24 20:17:00",
@@ -616,7 +956,7 @@
     },
     {
       "stockName": "南天信息",
-      "stockCode": "",
+      "stockCode": "000948",
       "concept": "ETC",
       "title": "南天信息：副总裁何立因个人原因辞职",
       "time": "2026-07-24 16:26:39",
@@ -626,7 +966,7 @@
     },
     {
       "stockName": "天地在线",
-      "stockCode": "",
+      "stockCode": "002995",
       "concept": "预制菜",
       "title": "天地在线：2026年半年度业绩预告",
       "time": "2026-07-14 19:20:00",
@@ -636,7 +976,7 @@
     },
     {
       "stockName": "天地在线",
-      "stockCode": "",
+      "stockCode": "002995",
       "concept": "预制菜",
       "title": "天地在线：预计上半年净亏损145万元至280万元",
       "time": "2026-07-14 16:02:00",
@@ -646,7 +986,7 @@
     },
     {
       "stockName": "天地在线",
-      "stockCode": "",
+      "stockCode": "002995",
       "concept": "预制菜",
       "title": "数字营销板块走弱，天地在线触及跌停",
       "time": "2026-07-03 11:25:24",
@@ -656,7 +996,7 @@
     },
     {
       "stockName": "岩山科技",
-      "stockCode": "",
+      "stockCode": "002195",
       "concept": "AI语料",
       "title": "数字营销概念震荡反弹，岩山科技涨停",
       "time": "2026-07-28 09:44:11",
@@ -666,7 +1006,7 @@
     },
     {
       "stockName": "岩山科技",
-      "stockCode": "",
+      "stockCode": "002195",
       "concept": "AI语料",
       "title": "岩山科技携全栈AI布局亮相WAIC 2026",
       "time": "2026-07-19 20:52:33",
@@ -676,7 +1016,7 @@
     },
     {
       "stockName": "岩山科技",
-      "stockCode": "",
+      "stockCode": "002195",
       "concept": "AI语料",
       "title": "岩山科技亮相WAIC 2026，AI全栈布局加速产业化进程",
       "time": "2026-07-20 13:32:00",
@@ -688,33 +1028,83 @@
   "indices": [
     {
       "name": "上证指数",
-      "code": "000001",
-      "price": 3150.23,
-      "change": 0.85,
-      "changeAmount": 26.65,
-      "volume": "2850亿",
-      "turnover": "3500亿",
-      "changeColor": "var(--state-error)"
+      "code": "000001.SH",
+      "price": 3156.28,
+      "change": -0.98,
+      "changeAmount": -31.24,
+      "volume": "2856亿",
+      "turnover": "3521亿",
+      "changeColor": "var(--state-success)"
     },
     {
       "name": "深证成指",
-      "code": "399001",
+      "code": "399001.SZ",
       "price": 9823.45,
-      "change": 1.12,
-      "changeAmount": 109.23,
-      "volume": "2100亿",
-      "turnover": "2800亿",
-      "changeColor": "var(--state-error)"
+      "change": -1.85,
+      "changeAmount": -185.32,
+      "volume": "3102亿",
+      "turnover": "4125亿",
+      "changeColor": "var(--state-success)"
     },
     {
       "name": "创业板指",
-      "code": "399006",
-      "price": 1925.67,
-      "change": -0.45,
-      "changeAmount": -8.72,
-      "volume": "1200亿",
-      "turnover": "1600亿",
+      "code": "399006.SZ",
+      "price": 1923.67,
+      "change": -3.12,
+      "changeAmount": -62.18,
+      "volume": "1456亿",
+      "turnover": "2015亿",
       "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "科创50",
+      "code": "000688.SH",
+      "price": 856.34,
+      "change": -2.56,
+      "changeAmount": -22.45,
+      "volume": "512亿",
+      "turnover": "685亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "沪深300",
+      "code": "000300.SH",
+      "price": 3687.12,
+      "change": -1.23,
+      "changeAmount": -45.98,
+      "volume": "1823亿",
+      "turnover": "2345亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "中证500",
+      "code": "000905.SH",
+      "price": 5612.89,
+      "change": -1.56,
+      "changeAmount": -88.76,
+      "volume": "1256亿",
+      "turnover": "1567亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "恒生指数",
+      "code": "HSI",
+      "price": 17823.45,
+      "change": -2.01,
+      "changeAmount": -365.12,
+      "volume": "1256亿",
+      "turnover": "1587亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "纳斯达克",
+      "code": "IXIC",
+      "price": 18234.56,
+      "change": 0.85,
+      "changeAmount": 153.24,
+      "volume": "4521亿",
+      "turnover": "5612亿",
+      "changeColor": "var(--state-error)"
     }
   ],
   "sentiment": [
@@ -723,7 +1113,7 @@
       "value": "63",
       "numVal": 63,
       "change": "+12",
-      "description": "今日涨停数量",
+      "description": "今日涨停股票数量",
       "changeColor": "var(--state-error)"
     },
     {
@@ -731,179 +1121,219 @@
       "value": "12",
       "numVal": 12,
       "change": "-3",
-      "description": "今日跌停数量",
+      "description": "今日跌停股票数量",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "赚钱效应",
-      "value": "62%",
-      "numVal": 62,
-      "change": "+5%",
-      "description": "上涨个股占比",
+      "name": "上涨家数",
+      "value": "1256",
+      "numVal": 1256,
+      "change": "-856",
+      "description": "今日上涨股票数量",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "市场情绪",
-      "value": "偏暖",
-      "numVal": 0,
-      "change": "升温",
-      "description": "综合情绪评分",
+      "name": "下跌家数",
+      "value": "3852",
+      "numVal": 3852,
+      "change": "+923",
+      "description": "今日下跌股票数量",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "北向资金",
-      "value": "+45.2亿",
-      "numVal": 45.2,
-      "change": "+12亿",
+      "name": "换手率(%)",
+      "value": "2.35",
+      "numVal": 2.35,
+      "change": "-0.12",
+      "description": "市场整体换手率",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "成交额(亿)",
+      "value": "8562",
+      "numVal": 8562,
+      "change": "+235",
+      "description": "两市总成交额",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "融资余额(亿)",
+      "value": "15234",
+      "numVal": 15234,
+      "change": "-58",
+      "description": "融资融券余额",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "北向资金(亿)",
+      "value": "-35.68",
+      "numVal": -35.68,
+      "change": "-12.45",
       "description": "北向资金净流入",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "涨停封板率(%)",
+      "value": "68.5",
+      "numVal": 68.5,
+      "change": "+3.2",
+      "description": "涨停板封板成功率",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "连板高度",
+      "value": "5",
+      "numVal": 5,
+      "change": "0",
+      "description": "最高连板天数",
       "changeColor": "var(--state-error)"
     }
   ],
   "limitUp": [
     {
+      "name": "科蓝软件",
+      "code": "300663",
+      "price": 8.96,
+      "change": 19.95,
+      "changeAmount": 1.49,
+      "turnover": "25.6亿",
+      "times": "1",
+      "reason": "跨境支付+金融科技",
+      "industry": "软件服务",
+      "changeColor": "var(--state-error)"
+    },
+    {
       "name": "ST荣科",
-      "code": "600001",
+      "code": "300290",
       "price": 4.88,
-      "change": 10,
-      "changeAmount": 0.488,
-      "turnover": "5.2亿",
+      "change": 19.9,
+      "changeAmount": 0.81,
+      "turnover": "8.2亿",
       "times": "2",
-      "reason": "DRG/DIP概念走强",
-      "industry": "综合",
-      "changeColor": "var(--state-error)"
-    },
-    {
-      "name": "品渥食品",
-      "code": "600002",
-      "price": 21.66,
-      "change": 10,
-      "changeAmount": 2.166,
-      "turnover": "5.2亿",
-      "times": "2",
-      "reason": "乳业概念走强",
-      "industry": "综合",
-      "changeColor": "var(--state-error)"
-    },
-    {
-      "name": "品渥食品",
-      "code": "600003",
-      "price": 21.66,
-      "change": 10,
-      "changeAmount": 2.166,
-      "turnover": "5.2亿",
-      "times": "2",
-      "reason": "啤酒概念概念走强",
-      "industry": "综合",
+      "reason": "DRG/DIP+医疗信息化",
+      "industry": "医疗软件",
       "changeColor": "var(--state-error)"
     },
     {
       "name": "创新医疗",
-      "code": "600004",
+      "code": "002173",
       "price": 22.76,
-      "change": 10,
-      "changeAmount": 2.2760000000000002,
-      "turnover": "5.2亿",
-      "times": "1",
-      "reason": "高压氧舱概念走强",
-      "industry": "综合",
+      "change": 10.01,
+      "changeAmount": 2.07,
+      "turnover": "15.3亿",
+      "times": "3",
+      "reason": "高压氧舱+AI医疗",
+      "industry": "医疗服务",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "科蓝软件",
-      "code": "600005",
-      "price": 8.96,
-      "change": 10,
-      "changeAmount": 0.8960000000000001,
-      "turnover": "5.2亿",
+      "name": "品渥食品",
+      "code": "300892",
+      "price": 21.66,
+      "change": 15.89,
+      "changeAmount": 2.98,
+      "turnover": "12.1亿",
       "times": "1",
-      "reason": "财税数字化概念走强",
-      "industry": "综合",
+      "reason": "乳业+消费复苏",
+      "industry": "食品饮料",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "科蓝软件",
-      "code": "600006",
-      "price": 8.96,
-      "change": 10,
-      "changeAmount": 0.8960000000000001,
-      "turnover": "5.2亿",
+      "name": "金种子酒",
+      "code": "600199",
+      "price": 7.47,
+      "change": 10.02,
+      "changeAmount": 0.68,
+      "turnover": "18.5亿",
       "times": "1",
-      "reason": "电子身份证概念走强",
-      "industry": "综合",
+      "reason": "白酒概念+国企改革",
+      "industry": "白酒",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "科蓝软件",
-      "code": "600007",
-      "price": 8.96,
-      "change": 10,
-      "changeAmount": 0.8960000000000001,
-      "turnover": "5.2亿",
+      "name": "南天信息",
+      "code": "000948",
+      "price": 14.07,
+      "change": 10.01,
+      "changeAmount": 1.28,
+      "turnover": "10.2亿",
       "times": "1",
-      "reason": "Web3.0概念走强",
-      "industry": "综合",
+      "reason": "ETC+数字政务",
+      "industry": "IT服务",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "中体产业",
-      "code": "600008",
-      "price": 6.88,
-      "change": 10,
-      "changeAmount": 0.6880000000000001,
-      "turnover": "5.2亿",
+      "name": "天地在线",
+      "code": "002995",
+      "price": 16.97,
+      "change": 9.98,
+      "changeAmount": 1.54,
+      "turnover": "9.8亿",
       "times": "1",
-      "reason": "赛马概念概念走强",
-      "industry": "综合",
+      "reason": "预制菜+数字营销",
+      "industry": "传媒",
       "changeColor": "var(--state-error)"
     },
     {
-      "name": "科蓝软件",
-      "code": "600009",
-      "price": 8.96,
-      "change": 10,
-      "changeAmount": 0.8960000000000001,
-      "turnover": "5.2亿",
+      "name": "岩山科技",
+      "code": "002195",
+      "price": 6.83,
+      "change": 9.98,
+      "changeAmount": 0.62,
+      "turnover": "22.3亿",
       "times": "1",
-      "reason": "跨境支付(CIPS)概念走强",
-      "industry": "综合",
-      "changeColor": "var(--state-error)"
-    },
-    {
-      "name": "科蓝软件",
-      "code": "6000010",
-      "price": 8.96,
-      "change": 10,
-      "changeAmount": 0.8960000000000001,
-      "turnover": "5.2亿",
-      "times": "1",
-      "reason": "无人零售概念走强",
-      "industry": "综合",
+      "reason": "AI语料+大模型",
+      "industry": "软件服务",
       "changeColor": "var(--state-error)"
     }
   ],
   "limitDown": [
     {
-      "name": "示例A",
-      "code": "300001",
-      "price": 12.58,
-      "change": -10,
-      "changeAmount": -1.4,
-      "turnover": "2.1亿",
+      "name": "中际旭创",
+      "code": "300308",
+      "price": 85.23,
+      "change": -10.01,
+      "changeAmount": -9.48,
+      "turnover": "312亿",
       "times": "1",
-      "reason": "业绩下修",
-      "industry": "制造业",
+      "reason": "AI板块调整+获利回吐",
+      "industry": "通信设备",
       "changeColor": "var(--state-success)"
     },
     {
-      "name": "示例B",
-      "code": "002002",
-      "price": 8.32,
-      "change": -9.98,
-      "changeAmount": -0.92,
-      "turnover": "1.5亿",
+      "name": "宁德时代",
+      "code": "300750",
+      "price": 156.78,
+      "change": -5.68,
+      "changeAmount": -9.43,
+      "turnover": "256亿",
+      "times": "0",
+      "reason": "新能源板块调整",
+      "industry": "电池",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "寒武纪",
+      "code": "688256",
+      "price": 125.45,
+      "change": -12.34,
+      "changeAmount": -17.65,
+      "turnover": "89亿",
       "times": "1",
-      "reason": "利空公告",
-      "industry": "房地产",
+      "reason": "AI芯片估值回归",
+      "industry": "半导体",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "中体产业",
+      "code": "600158",
+      "price": 6.88,
+      "change": -2.69,
+      "changeAmount": -0.19,
+      "turnover": "5.2亿",
+      "times": "0",
+      "reason": "赛马概念+业绩预亏",
+      "industry": "体育",
       "changeColor": "var(--state-success)"
     }
   ],
@@ -911,107 +1341,328 @@
     {
       "name": "沪深300ETF",
       "code": "510300",
-      "price": 4.125,
-      "change": 0.82,
-      "turnover": "125亿",
-      "netAmount": "+8.5亿",
-      "changeColor": "var(--state-error)"
-    },
-    {
-      "name": "中证500ETF",
-      "code": "510500",
-      "price": 6.238,
-      "change": 1.25,
-      "turnover": "88亿",
-      "netAmount": "+5.2亿",
-      "changeColor": "var(--state-error)"
+      "price": 3.687,
+      "change": -1.23,
+      "turnover": "25.6亿",
+      "netAmount": "+3.2亿",
+      "changeColor": "var(--state-success)"
     },
     {
       "name": "创业板ETF",
       "code": "159915",
-      "price": 2.015,
-      "change": -0.35,
-      "turnover": "96亿",
-      "netAmount": "-3.1亿",
+      "price": 1.924,
+      "change": -3.12,
+      "turnover": "35.2亿",
+      "netAmount": "-5.8亿",
       "changeColor": "var(--state-success)"
     },
     {
       "name": "科创50ETF",
       "code": "588000",
-      "price": 1.158,
-      "change": 2.15,
-      "turnover": "62亿",
-      "netAmount": "+4.8亿",
+      "price": 0.856,
+      "change": -2.56,
+      "turnover": "18.9亿",
+      "netAmount": "-2.1亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "证券ETF",
+      "code": "512880",
+      "price": 0.923,
+      "change": -0.85,
+      "turnover": "12.5亿",
+      "netAmount": "+1.5亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "消费ETF",
+      "code": "159928",
+      "price": 2.345,
+      "change": 1.25,
+      "turnover": "8.6亿",
+      "netAmount": "+2.3亿",
       "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "白酒ETF",
+      "code": "512690",
+      "price": 0.867,
+      "change": 1.82,
+      "turnover": "15.3亿",
+      "netAmount": "+4.1亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "新能源ETF",
+      "code": "516160",
+      "price": 0.523,
+      "change": -2.85,
+      "turnover": "22.1亿",
+      "netAmount": "-3.6亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "AIETF",
+      "code": "159819",
+      "price": 1.256,
+      "change": -1.56,
+      "turnover": "32.5亿",
+      "netAmount": "-6.2亿",
+      "changeColor": "var(--state-success)"
     },
     {
       "name": "黄金ETF",
       "code": "518880",
-      "price": 4.852,
-      "change": 0.45,
-      "turnover": "45亿",
-      "netAmount": "+2.1亿",
+      "price": 5.687,
+      "change": 0.35,
+      "turnover": "8.2亿",
+      "netAmount": "+1.8亿",
       "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "恒生科技ETF",
+      "code": "513180",
+      "price": 0.623,
+      "change": -2.12,
+      "turnover": "18.6亿",
+      "netAmount": "+2.5亿",
+      "changeColor": "var(--state-success)"
     }
   ],
   "industryFlow": [
     {
       "name": "银行",
-      "changePercent": 1.25,
-      "inflow": "85.2亿",
-      "outflow": "62.1亿",
-      "netAmount": "+23.10亿",
-      "net": 23.1,
+      "changePercent": 0.56,
+      "inflow": "35.2",
+      "outflow": "28.6",
+      "netAmount": "+6.60亿",
+      "net": 6.6,
       "netColor": "var(--state-error)",
       "leadingStock": "招商银行",
-      "leadingChange": 2.1
+      "leadingChange": 1.23
     },
     {
       "name": "食品饮料",
-      "changePercent": 2.08,
-      "inflow": "120.5亿",
-      "outflow": "85.3亿",
-      "netAmount": "+35.20亿",
-      "net": 35.2,
+      "changePercent": 1.85,
+      "inflow": "68.5",
+      "outflow": "42.3",
+      "netAmount": "+26.20亿",
+      "net": 26.2,
       "netColor": "var(--state-error)",
-      "leadingStock": "贵州茅台",
-      "leadingChange": 1.85
+      "leadingStock": "品渥食品",
+      "leadingChange": 15.89
+    },
+    {
+      "name": "白酒",
+      "changePercent": 1.82,
+      "inflow": "45.7",
+      "outflow": "32.8",
+      "netAmount": "+12.90亿",
+      "net": 12.9,
+      "netColor": "var(--state-error)",
+      "leadingStock": "金种子酒",
+      "leadingChange": 10.02
+    },
+    {
+      "name": "软件服务",
+      "changePercent": -2.35,
+      "inflow": "125.3",
+      "outflow": "168.9",
+      "netAmount": "-43.60亿",
+      "net": -43.6,
+      "netColor": "var(--state-success)",
+      "leadingStock": "科蓝软件",
+      "leadingChange": 19.95
     },
     {
       "name": "半导体",
-      "changePercent": -1.52,
-      "inflow": "95.0亿",
-      "outflow": "125.6亿",
-      "netAmount": "-30.60亿",
-      "net": -30.6,
+      "changePercent": -3.12,
+      "inflow": "89.2",
+      "outflow": "145.6",
+      "netAmount": "-56.40亿",
+      "net": -56.4,
       "netColor": "var(--state-success)",
-      "leadingStock": "中芯国际",
-      "leadingChange": -2.05
+      "leadingStock": "寒武纪",
+      "leadingChange": -12.34
     },
     {
       "name": "新能源",
-      "changePercent": -0.88,
-      "inflow": "78.0亿",
-      "outflow": "95.2亿",
-      "netAmount": "-17.20亿",
-      "net": -17.2,
+      "changePercent": -2.85,
+      "inflow": "78.5",
+      "outflow": "123.4",
+      "netAmount": "-44.90亿",
+      "net": -44.9,
       "netColor": "var(--state-success)",
       "leadingStock": "宁德时代",
-      "leadingChange": -1.2
+      "leadingChange": -5.68
     },
     {
       "name": "医药生物",
-      "changePercent": 0.65,
-      "inflow": "110.0亿",
-      "outflow": "100.5亿",
-      "netAmount": "+9.50亿",
-      "net": 9.5,
-      "netColor": "var(--state-error)",
-      "leadingStock": "恒瑞医药",
-      "leadingChange": 1.05
+      "changePercent": -0.85,
+      "inflow": "52.3",
+      "outflow": "65.8",
+      "netAmount": "-13.50亿",
+      "net": -13.5,
+      "netColor": "var(--state-success)",
+      "leadingStock": "创新医疗",
+      "leadingChange": 10.01
+    },
+    {
+      "name": "证券",
+      "changePercent": -0.95,
+      "inflow": "32.1",
+      "outflow": "45.2",
+      "netAmount": "-13.10亿",
+      "net": -13.1,
+      "netColor": "var(--state-success)",
+      "leadingStock": "中信证券",
+      "leadingChange": -0.56
+    },
+    {
+      "name": "通信设备",
+      "changePercent": -3.56,
+      "inflow": "65.8",
+      "outflow": "112.3",
+      "netAmount": "-46.50亿",
+      "net": -46.5,
+      "netColor": "var(--state-success)",
+      "leadingStock": "中际旭创",
+      "leadingChange": -10.01
+    },
+    {
+      "name": "传媒",
+      "changePercent": -1.25,
+      "inflow": "28.6",
+      "outflow": "41.2",
+      "netAmount": "-12.60亿",
+      "net": -12.6,
+      "netColor": "var(--state-success)",
+      "leadingStock": "天地在线",
+      "leadingChange": 9.98
     }
   ],
-  "fundScale": [],
+  "fundScale": [
+    {
+      "name": "沪深300ETF",
+      "code": "510300",
+      "scale": 1256.8,
+      "scaleStr": "1256.8",
+      "change": "+23.5",
+      "changePct": 1.9,
+      "type": "股票型",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创业板ETF",
+      "code": "159915",
+      "scale": 486.2,
+      "scaleStr": "486.2",
+      "change": "-12.8",
+      "changePct": -2.56,
+      "type": "股票型",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "科创50ETF",
+      "code": "588000",
+      "scale": 286.5,
+      "scaleStr": "286.5",
+      "change": "-8.3",
+      "changePct": -2.81,
+      "type": "股票型",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "证券ETF",
+      "code": "512880",
+      "scale": 156.3,
+      "scaleStr": "156.3",
+      "change": "+4.2",
+      "changePct": 2.76,
+      "type": "行业型",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "消费ETF",
+      "code": "159928",
+      "scale": 98.6,
+      "scaleStr": "98.6",
+      "change": "+6.8",
+      "changePct": 7.41,
+      "type": "行业型",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "白酒ETF",
+      "code": "512690",
+      "scale": 125.4,
+      "scaleStr": "125.4",
+      "change": "+8.5",
+      "changePct": 7.27,
+      "type": "行业型",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "新能源ETF",
+      "code": "516160",
+      "scale": 203.7,
+      "scaleStr": "203.7",
+      "change": "-15.6",
+      "changePct": -7.12,
+      "type": "行业型",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "AIETF",
+      "code": "159819",
+      "scale": 178.9,
+      "scaleStr": "178.9",
+      "change": "-18.2",
+      "changePct": -9.23,
+      "type": "主题型",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "黄金ETF",
+      "code": "518880",
+      "scale": 96.5,
+      "scaleStr": "96.5",
+      "change": "+5.3",
+      "changePct": 5.81,
+      "type": "商品型",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "恒生科技ETF",
+      "code": "513180",
+      "scale": 142.3,
+      "scaleStr": "142.3",
+      "change": "-3.2",
+      "changePct": -2.2,
+      "type": "QDII",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "国债ETF",
+      "code": "511010",
+      "scale": 158.2,
+      "scaleStr": "158.2",
+      "change": "+12.5",
+      "changePct": 8.56,
+      "type": "债券型",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "货币ETF",
+      "code": "511880",
+      "scale": 2356.8,
+      "scaleStr": "2356.8",
+      "change": "+56.3",
+      "changePct": 2.45,
+      "type": "货币型",
+      "changeColor": "var(--state-error)"
+    }
+  ],
   "date": "2026-07-28",
-  "updatedAt": "2026-07-28T17:15:44.200Z"
+  "updatedAt": "2026-07-28T18:16:17.456Z"
 }
