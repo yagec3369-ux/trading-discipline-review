@@ -364,7 +364,7 @@ export function createOrderPlanPage(root) {
     overlayEl.addEventListener('click', (e) => { if (e.target === overlayEl) closeDialog() })
 
     dialogEl = document.createElement('div')
-    dialogEl.style.cssText = `background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-float); padding:var(--s-5) var(--s-6); width:min(640px, 100%); max-height:92vh; overflow-y:auto;`
+    dialogEl.style.cssText = `background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-float); padding:var(--s-5) var(--s-6); width:min(820px, 100%); max-height:92vh; overflow-y:auto;`
     dialogEl.innerHTML = `
       <div class="flex items-center justify-between mb-4">
         <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink);">${editItem ? '编辑计划' : '新增计划'}</h3>
@@ -410,7 +410,7 @@ export function createOrderPlanPage(root) {
               <div style="font-size:var(--text-caption); font-weight:var(--weight-semibold); color:var(--state-error); margin-bottom:var(--s-2); display:flex; align-items:center; gap:4px;">
                 <i data-lucide="trending-up" style="width:12px; height:12px;"></i>买入
               </div>
-              <div class="grid grid-cols-3 gap-2">
+              <div class="grid grid-cols-2 gap-2">
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入价</label>
                   <input type="number" id="plan-buy-price" class="field-input buy-field" style="width:100%;" placeholder="47.09" step="0.01" value="${editItem ? (editItem.buyPrice || '') : ''}">
@@ -420,7 +420,7 @@ export function createOrderPlanPage(root) {
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">股数</label>
                   <input type="number" id="plan-buy-shares" class="field-input buy-field" style="width:100%;" placeholder="1000" step="100" value="${editItem ? (editItem.buyShares || '') : ''}">
                 </div>
-                <div>
+                <div style="grid-column: span 2;">
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">金额</label>
                   <input type="number" id="plan-buy-amount" class="field-input buy-field" style="width:100%; background:var(--surface-2);" placeholder="自动" step="0.01" readonly value="${editItem ? (editItem.buyAmount || '') : ''}">
                 </div>
@@ -430,7 +430,7 @@ export function createOrderPlanPage(root) {
               <div style="font-size:var(--text-caption); font-weight:var(--weight-semibold); color:var(--state-success); margin-bottom:var(--s-2); display:flex; align-items:center; gap:4px;">
                 <i data-lucide="trending-down" style="width:12px; height:12px;"></i>卖出
               </div>
-              <div class="grid grid-cols-3 gap-2">
+              <div class="grid grid-cols-2 gap-2">
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">卖出价</label>
                   <input type="number" id="plan-sell-price" class="field-input sell-field" style="width:100%;" placeholder="50.00" step="0.01" value="${editItem ? (editItem.sellPrice || '') : ''}">
@@ -440,7 +440,7 @@ export function createOrderPlanPage(root) {
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">股数</label>
                   <input type="number" id="plan-sell-shares" class="field-input sell-field" style="width:100%;" placeholder="1000" step="100" value="${editItem ? (editItem.sellShares || '') : ''}">
                 </div>
-                <div>
+                <div style="grid-column: span 2;">
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">金额</label>
                   <input type="number" id="plan-sell-amount" class="field-input sell-field" style="width:100%; background:var(--surface-2);" placeholder="自动" step="0.01" readonly value="${editItem ? (editItem.sellAmount || '') : ''}">
                 </div>
@@ -455,9 +455,8 @@ export function createOrderPlanPage(root) {
           </div>
           <div id="t0-income-row" class="grid grid-cols-1 gap-3 mb-3" style="display:none;">
             <div>
-              <label style="font-size:var(--text-caption); color:var(--state-error); display:block; margin-bottom:4px;">做T收入（元）</label>
-              <input type="number" id="plan-t0-income" class="field-input" style="width:100%;" placeholder="500" min="0" step="0.01" value="${editItem && editItem.t0Income ? editItem.t0Income : ''}">
-              <span style="font-size:var(--text-caption); color:var(--ink-3);">卖出金额 - 买入金额</span>
+              <label style="font-size:var(--text-caption); color:var(--state-error); display:block; margin-bottom:4px;">做T收入（元）<span style="color:var(--ink-3); font-weight:var(--weight-regular);"> · 自动计算：卖出金额 − 买入金额</span></label>
+              <input type="number" id="plan-t0-income" class="field-input" style="width:100%; background:var(--surface-2);" placeholder="自动" step="0.01" readonly value="${editItem && editItem.t0Income ? editItem.t0Income : ''}">
             </div>
           </div>
           <div class="grid grid-cols-3 gap-3">
@@ -523,11 +522,22 @@ export function createOrderPlanPage(root) {
       if (price > 0 && shares > 0) {
         amountInput.value = (price * shares).toFixed(2)
       }
+      updateT0Income()
       updateNrMetrics()
     }
 
     function updateBuyAmount() { calcAmount(buyPriceInput, buySharesInput, buyAmountInput) }
     function updateSellAmount() { calcAmount(sellPriceInput, sellSharesInput, sellAmountInput) }
+
+    // 做 T 收入 = 卖出金额 − 买入金额，自动计算
+    function updateT0Income() {
+      const t0Input = dialogEl.querySelector('#plan-t0-income')
+      if (!t0Input) return
+      const buyAmount = parseFloat(buyAmountInput.value) || 0
+      const sellAmount = parseFloat(sellAmountInput.value) || 0
+      const income = sellAmount - buyAmount
+      t0Input.value = income.toFixed(2)
+    }
 
     function updatePricePct() {
       const dailyClose = parseFloat(dailyCloseInput.value) || 0
@@ -618,6 +628,7 @@ export function createOrderPlanPage(root) {
     nrExpInput.addEventListener('input', updateNrMetrics)
     nrLossInput.addEventListener('input', updateNrMetrics)
     updatePriceFields()
+    updateT0Income()
     updateNrMetrics()
     updatePricePct()
 
