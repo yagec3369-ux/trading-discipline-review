@@ -16,9 +16,9 @@ const DAILY_QUESTIONS = [
 const R_UNIT = 1000
 
 function getTotalFund() {
-  const v = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
+  const v = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '200000')
   const n = parseFloat(v)
-  return isNaN(n) || n <= 0 ? 120000 : n
+  return isNaN(n) || n <= 0 ? 200000 : n
 }
 
 function todayStr() {

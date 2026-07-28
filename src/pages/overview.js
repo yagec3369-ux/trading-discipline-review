@@ -47,7 +47,7 @@ export function createOverviewPage(root) {
     // 动态计算所有数据
     const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
-    const riskData = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
+    const riskData = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '200000')
     const totalFund = parseFloat(riskData) || 0
     const stockValue = holdings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
     // 盈亏今日 = Σ(现价 - 成本价) × 持仓数

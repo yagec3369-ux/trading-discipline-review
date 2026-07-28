@@ -74,7 +74,7 @@ const QA_MAPPING = {
 export function createRiskControlPage(root) {
   // Local state mirror of inputs for recalculation
   const state = {
-    totalFund: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, '120000'),
+    totalFund: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, '200000'),
     compliantCount: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.compliantCount, '0'),
     recoveryStatus: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.recoveryStatus, 'active')
   }
