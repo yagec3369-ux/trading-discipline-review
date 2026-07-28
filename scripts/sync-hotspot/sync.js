@@ -1,5 +1,6 @@
 // 读取 workbuddy 生成的热点 Excel，转成网页端可用的 JSON，推送到 GitHub
-// 用法: node scripts/sync-hotspot/sync.js --reportsDir="C:\Users\admin\WorkBuddy\..." [--push] [--dry]
+// 用法: node scripts/sync-hotspot/sync.js [--push] [--dry]
+//       默认读取 /workspace/stock_hotspot/reports/ 下的热点 Excel
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -13,7 +14,7 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
   return acc
 }, {})
 
-const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || ''
+const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || '/workspace/stock_hotspot/reports'
 const PUSH = args.push || false
 const DRY = args.dry || false
 const OUTPUT_PATH = path.resolve(process.cwd(), 'public/market-hot.json')
@@ -21,8 +22,8 @@ const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
 const LOGIC_LIBRARY_PATH = path.resolve(process.cwd(), 'public/logic-library.json')
 
 if (!REPORTS_DIR) {
-  console.error('错误: 请通过 --reportsDir 指定 workbuddy reports 文件夹路径')
-  console.error('示例: node scripts/sync-hotspot/sync.js --reportsDir="C:\\Users\\admin\\WorkBuddy\\2026-05-13-task-7\\stock_hotspot\\reports" --push')
+  console.error('错误: 请通过 --reportsDir 指定热点数据文件夹路径')
+  console.error('示例: node scripts/sync-hotspot/sync.js --reportsDir="/workspace/stock_hotspot/reports" --push')
   process.exit(1)
 }
 
