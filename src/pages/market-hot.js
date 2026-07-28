@@ -6,14 +6,6 @@ import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 
 const R_UNIT = 1000
 
-function loadHotData() {
-  return lsGetJSON('td_market_hot_data', null)
-}
-
-function saveHotData(data) {
-  lsSetJSON('td_market_hot_data', data)
-}
-
 const SAMPLE_CONCEPTS = [
   {
     name: '半导体',
@@ -274,13 +266,270 @@ function renderFinanceNews(news) {
   `
 }
 
+function renderIndices(data) {
+  if (!data || data.length === 0) return '<div style="padding:var(--s-8); text-align:center; color:var(--ink-3);">暂无数据</div>'
+  return `
+    <div class="mb-4 flex items-center gap-2">
+      <i data-lucide="bar-chart-3" style="width:18px; height:18px; color:var(--brand);"></i>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">主要指数行情 · 共 ${data.length} 条</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table style="width:100%; border-collapse:collapse; font-size:var(--text-caption);">
+        <thead>
+          <tr style="background:var(--surface); color:var(--ink-3);">
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">指数名称</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">最新价</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">涨跌额</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">涨跌幅</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">成交额</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map((d) => {
+            const ch = fmtChange(d.change)
+            return `
+              <tr style="border-bottom:1px solid var(--line);" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--bg)'">
+                <td style="padding:var(--s-3); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(d.name)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);">${d.price.toFixed(2)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:${d.changeColor};">${d.changeAmount >= 0 ? '+' : ''}${d.changeAmount.toFixed(2)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${ch.color};">${ch.text}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);">${escHtml(d.turnover || d.volume || '--')}</td>
+              </tr>
+            `
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
+function renderSentiment(data) {
+  if (!data || data.length === 0) return '<div style="padding:var(--s-8); text-align:center; color:var(--ink-3);">暂无数据</div>'
+  return `
+    <div class="mb-4 flex items-center gap-2">
+      <i data-lucide="activity" style="width:18px; height:18px; color:var(--brand);"></i>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">市场情绪指标 · 共 ${data.length} 条</span>
+    </div>
+    <div class="flex flex-col gap-3">
+      ${data.map((d) => `
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-3) var(--s-4); display:flex; align-items:center; gap:var(--s-4);">
+          <div style="min-width:140px;">
+            <div style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(d.name)}</div>
+            ${d.description ? `<div style="font-size:11px; color:var(--ink-3); margin-top:2px;">${escHtml(d.description)}</div>` : ''}
+          </div>
+          <div style="font-size:var(--text-h3); font-weight:var(--weight-bold); color:${d.changeColor}; font-variant-numeric:tabular-nums;">${escHtml(d.value)}</div>
+          ${d.change ? `<div style="font-size:var(--text-caption); color:${d.changeColor}; font-weight:var(--weight-medium);">${escHtml(d.change)}</div>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `
+}
+
+function renderLimitList(data, type) {
+  if (!data || data.length === 0) return '<div style="padding:var(--s-8); text-align:center; color:var(--ink-3);">暂无数据</div>'
+  const title = type === 'up' ? '涨停' : '跌停'
+  const icon = type === 'up' ? 'trending-up' : 'trending-down'
+  const color = type === 'up' ? 'var(--state-error)' : 'var(--state-success)'
+  return `
+    <div class="mb-4 flex items-center gap-2">
+      <i data-lucide="${icon}" style="width:18px; height:18px; color:${color};"></i>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">${title}明细 · 共 ${data.length} 只</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table style="width:100%; border-collapse:collapse; font-size:var(--text-caption);">
+        <thead>
+          <tr style="background:var(--surface); color:var(--ink-3);">
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">股票名称</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">最新价</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">涨跌幅</th>
+            <th style="padding:var(--s-3); text-align:center; border-bottom:1px solid var(--line);">连板</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">成交额</th>
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">原因/题材</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map((d) => {
+            const ch = fmtChange(d.change)
+            return `
+              <tr style="border-bottom:1px solid var(--line);" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--bg)'">
+                <td style="padding:var(--s-3); font-weight:var(--weight-semibold); color:var(--ink);">
+                  ${escHtml(d.name)}
+                  ${d.industry ? `<div style="font-size:11px; color:var(--ink-3); font-weight:var(--weight-normal);">${escHtml(d.industry)}</div>` : ''}
+                </td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);">${d.price.toFixed(2)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-bold); color:${ch.color};">${ch.text}</td>
+                <td style="padding:var(--s-3); text-align:center; color:${color}; font-weight:var(--weight-semibold);">${escHtml(d.times || '--')}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);">${escHtml(d.turnover || '--')}</td>
+                <td style="padding:var(--s-3); color:var(--ink-2);">${escHtml(d.reason || '--')}</td>
+              </tr>
+            `
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
+function renderETF(data) {
+  if (!data || data.length === 0) return '<div style="padding:var(--s-8); text-align:center; color:var(--ink-3);">暂无数据</div>'
+  return `
+    <div class="mb-4 flex items-center gap-2">
+      <i data-lucide="layers" style="width:18px; height:18px; color:var(--brand);"></i>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">ETF行情 · 共 ${data.length} 只</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table style="width:100%; border-collapse:collapse; font-size:var(--text-caption);">
+        <thead>
+          <tr style="background:var(--surface); color:var(--ink-3);">
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">名称</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">最新价</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">涨跌幅</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">成交额</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">净流入</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map((d) => {
+            const ch = fmtChange(d.change)
+            return `
+              <tr style="border-bottom:1px solid var(--line);" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--bg)'">
+                <td style="padding:var(--s-3); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(d.name)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);">${d.price.toFixed(3)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${ch.color};">${ch.text}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);">${escHtml(d.turnover || '--')}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2);">${escHtml(d.netAmount || '--')}</td>
+              </tr>
+            `
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
+function renderIndustryFlow(data) {
+  if (!data || data.length === 0) return '<div style="padding:var(--s-8); text-align:center; color:var(--ink-3);">暂无数据</div>'
+  return `
+    <div class="mb-4 flex items-center gap-2">
+      <i data-lucide="git-branch" style="width:18px; height:18px; color:var(--brand);"></i>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">行业资金流向 · 共 ${data.length} 条</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table style="width:100%; border-collapse:collapse; font-size:var(--text-caption);">
+        <thead>
+          <tr style="background:var(--surface); color:var(--ink-3);">
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">行业</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">涨跌幅</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">流入</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">流出</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">净额</th>
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">领涨股</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map((d) => {
+            const ch = fmtChange(d.changePercent)
+            return `
+              <tr style="border-bottom:1px solid var(--line);" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--bg)'">
+                <td style="padding:var(--s-3); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(d.name)}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-medium); color:${ch.color};">${ch.text}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--state-error);">${escHtml(d.inflow || '--')}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--state-success);">${escHtml(d.outflow || '--')}</td>
+                <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${d.netColor};">${escHtml(d.netAmount)}</td>
+                <td style="padding:var(--s-3); color:var(--ink-2);">${escHtml(d.leadingStock || '--')}</td>
+              </tr>
+            `
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
+const HISTORY_KEY = 'td_market_hot_history'
+const REMOTE_HISTORY_CACHE = {}
+
+function loadHistory() {
+  return lsGetJSON(HISTORY_KEY, {})
+}
+
+function saveHistory(history) {
+  lsSetJSON(HISTORY_KEY, history)
+}
+
+function saveToHistory(data) {
+  if (!data || !data.date) return
+  const history = loadHistory()
+  history[data.date] = data
+  const dates = Object.keys(history).sort().reverse()
+  if (dates.length > 90) {
+    dates.slice(90).forEach((d) => delete history[d])
+  }
+  saveHistory(history)
+}
+
+function getLocalHistoryDates() {
+  const history = loadHistory()
+  return Object.keys(history).sort().reverse()
+}
+
+function getLocalHistoryData(date) {
+  const history = loadHistory()
+  return history[date] || null
+}
+
+async function fetchRemoteHistoryIndex() {
+  try {
+    const base = import.meta.env.BASE_URL || '/'
+    const url = base + 'hotspot-history/index.json?t=' + Date.now()
+    const resp = await fetch(url)
+    if (!resp.ok) return []
+    const data = await resp.json()
+    return Array.isArray(data) ? data : []
+  } catch (e) {
+    return []
+  }
+}
+
+async function fetchRemoteHistoryData(date) {
+  if (REMOTE_HISTORY_CACHE[date]) return REMOTE_HISTORY_CACHE[date]
+  try {
+    const base = import.meta.env.BASE_URL || '/'
+    const url = base + 'hotspot-history/' + date + '.json?t=' + Date.now()
+    const resp = await fetch(url)
+    if (!resp.ok) return null
+    const data = await resp.json()
+    REMOTE_HISTORY_CACHE[date] = data
+    saveToHistory(data)
+    return data
+  } catch (e) {
+    return null
+  }
+}
+
+async function getAllHistoryDates() {
+  const localDates = getLocalHistoryDates()
+  const remoteDates = await fetchRemoteHistoryIndex()
+  const merged = [...new Set([...localDates, ...remoteDates])]
+  return merged.sort().reverse()
+}
+
+async function getHistoryDataByDate(date) {
+  const local = getLocalHistoryData(date)
+  if (local) return local
+  return await fetchRemoteHistoryData(date)
+}
+
 export function createMarketHotPage(root) {
   let activeTab = 'rank'
-  let importedData = loadHotData()
-  let remoteData = null
+  let currentData = null
+  let currentViewDate = null
   let remoteFetching = false
   let autoFetchTimer = null
   let expandedRows = new Set()
+  let lastFetchedAt = null
+  let historyDatesCache = []
+  let loadingHistory = false
 
   async function fetchRemoteData() {
     if (remoteFetching) return
@@ -292,7 +541,11 @@ export function createMarketHotPage(root) {
       if (!resp.ok) return
       const data = await resp.json()
       if (data && (data.concepts?.length || data.financeNews?.length || data.stockNews?.length)) {
-        remoteData = data
+        currentData = data
+        currentViewDate = data.date || todayStr()
+        lastFetchedAt = new Date()
+        saveToHistory(data)
+        await refreshHistoryDates()
         render()
       }
     } catch (e) {
@@ -314,28 +567,96 @@ export function createMarketHotPage(root) {
     }
   }
 
+  async function refreshHistoryDates() {
+    if (loadingHistory) return
+    loadingHistory = true
+    try {
+      historyDatesCache = await getAllHistoryDates()
+    } finally {
+      loadingHistory = false
+    }
+  }
+
+  function loadLatestFromHistory() {
+    const dates = getLocalHistoryDates()
+    if (dates.length > 0) {
+      const data = getLocalHistoryData(dates[0])
+      if (data) {
+        currentData = data
+        currentViewDate = dates[0]
+      }
+    }
+    historyDatesCache = getLocalHistoryDates()
+    refreshHistoryDates().then(() => render())
+  }
+
+  async function switchToDate(date) {
+    const data = await getHistoryDataByDate(date)
+    if (data) {
+      currentData = data
+      currentViewDate = date
+      render()
+      showToast('已切换到 ' + date + ' 的数据')
+    } else {
+      showToast('该日期暂无数据')
+    }
+  }
+
+  function switchToLatest() {
+    if (lastFetchedAt && currentData) {
+      currentViewDate = currentData.date || todayStr()
+      render()
+      return
+    }
+    fetchRemoteData()
+  }
+
   function getConcepts() {
-    const src = remoteData || importedData
+    const src = currentData
     return src?.concepts?.length > 0 ? src.concepts : SAMPLE_CONCEPTS
   }
   function getFinanceNews() {
-    const src = remoteData || importedData
+    const src = currentData
     return src?.financeNews?.length > 0 ? src.financeNews : SAMPLE_FINANCE_NEWS
   }
   function getStockNews() {
-    const src = remoteData || importedData
+    const src = currentData
     return src?.stockNews?.length > 0 ? src.stockNews : SAMPLE_STOCK_NEWS
   }
-  function getDataDate() {
-    const src = remoteData || importedData
-    return src?.date || null
+  function getIndices() {
+    const src = currentData
+    return src?.indices?.length > 0 ? src.indices : []
   }
-  function hasImportedData() {
-    const src = remoteData || importedData
+  function getSentiment() {
+    const src = currentData
+    return src?.sentiment?.length > 0 ? src.sentiment : []
+  }
+  function getLimitUp() {
+    const src = currentData
+    return src?.limitUp?.length > 0 ? src.limitUp : []
+  }
+  function getLimitDown() {
+    const src = currentData
+    return src?.limitDown?.length > 0 ? src.limitDown : []
+  }
+  function getETF() {
+    const src = currentData
+    return src?.etf?.length > 0 ? src.etf : []
+  }
+  function getIndustryFlow() {
+    const src = currentData
+    return src?.industryFlow?.length > 0 ? src.industryFlow : []
+  }
+  function getDataDate() {
+    return currentViewDate || null
+  }
+  function hasData() {
+    const src = currentData
     return !!(src && (src.concepts?.length || src.financeNews?.length || src.stockNews?.length))
   }
-  function isRemoteData() {
-    return !!remoteData
+  function isViewingLatest() {
+    if (!currentData || !currentData.date || !lastFetchedAt) return false
+    return currentViewDate === currentData.date
   }
 
   function render() {
@@ -343,46 +664,89 @@ export function createMarketHotPage(root) {
     const financeNews = getFinanceNews()
     const stockNews = getStockNews()
     const dataDate = getDataDate()
-    const isImported = hasImportedData()
-    const isRemote = isRemoteData()
+    const hasValidData = hasData()
+    const viewingLatest = isViewingLatest()
+    const historyDates = historyDatesCache.length > 0 ? historyDatesCache : getLocalHistoryDates()
+    const fetchTimeStr = lastFetchedAt
+      ? lastFetchedAt.getHours().toString().padStart(2, '0') + ':' + lastFetchedAt.getMinutes().toString().padStart(2, '0')
+      : null
 
     root.innerHTML = `
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
           <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">大盘热点</h2>
-          ${isRemote ? '<span style="font-size:var(--text-caption); color:var(--brand); background:var(--brand-muted); padding:2px 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:4px;"><i data-lucide="wifi" style="width:10px; height:10px;"></i>自动同步</span>' : isImported ? '<span style="font-size:var(--text-caption); color:var(--state-success); background:var(--state-success-bg); padding:2px 8px; border-radius:var(--r-pill);">已导入数据</span>' : ''}
-        </div>
-        <div class="flex items-center gap-3">
-          <span style="font-size:var(--text-caption); color:var(--ink-3); display:inline-flex; align-items:center; gap:4px;">
-            <i data-lucide="info" style="width:12px; height:12px;"></i>
-            ${dataDate ? '数据日期: ' + dataDate : '示例数据'}
+          <span style="font-size:var(--text-caption); color:var(--brand); background:var(--brand-muted); padding:2px 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:4px;">
+            <i data-lucide="wifi" style="width:10px; height:10px;"></i>
+            自动同步
           </span>
-          <button id="import-data-btn" class="flex items-center gap-2 px-3 h-8" style="background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-caption); font-weight:var(--weight-medium); cursor:pointer;">
-            <i data-lucide="upload" style="width:14px; height:14px;"></i>
-            导入数据
-          </button>
-          ${isImported ? `
-            <button id="clear-data-btn" class="flex items-center gap-2 px-3 h-8" style="background:var(--surface); color:var(--state-error); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-caption); font-weight:var(--weight-medium); cursor:pointer;">
-              <i data-lucide="trash-2" style="width:12px; height:12px;"></i>
-              清空
-            </button>
+          ${viewingLatest && fetchTimeStr ? '<span style="font-size:var(--text-caption); color:var(--ink-3);">上次更新 ' + fetchTimeStr + '</span>' : ''}
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          ${historyDates.length > 0 ? `
+            <div class="flex items-center gap-2">
+              <label style="font-size:var(--text-caption); color:var(--ink-3); white-space:nowrap;">历史数据</label>
+              <select id="history-select" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:4px 8px; font-size:var(--text-caption); color:var(--ink); outline:none; cursor:pointer; font-family:var(--font-primary);">
+                <option value="latest" ${viewingLatest ? 'selected' : ''}>最新数据</option>
+                ${historyDates.map((d) => `<option value="${escHtml(d)}" ${currentViewDate === d ? 'selected' : ''}>${escHtml(d)}</option>`).join('')}
+              </select>
+            </div>
           ` : ''}
+          <span style="font-size:var(--text-caption); color:var(--ink-3); display:inline-flex; align-items:center; gap:4px;">
+            <i data-lucide="calendar" style="width:12px; height:12px;"></i>
+            ${dataDate ? dataDate : '示例数据'}
+          </span>
+          <button id="refresh-btn" class="flex items-center gap-2 px-3 h-8" style="background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-caption); font-weight:var(--weight-medium); cursor:pointer;">
+            <i data-lucide="refresh-cw" style="width:14px; height:14px;"></i>
+            刷新
+          </button>
         </div>
       </div>
 
-      <div class="flex gap-2 mb-6 p-1" style="background:var(--surface); border-radius:var(--r-md); width:fit-content;">
-        <button id="tab-rank" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="rank" style="${activeTab === 'rank' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'}">
-          <i data-lucide="trending-up" style="width:14px; height:14px; margin-right:6px;"></i>
-          新闻热点
-        </button>
-        <button id="tab-finance" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="finance" style="${activeTab === 'finance' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'}">
-          <i data-lucide="newspaper" style="width:14px; height:14px; margin-right:6px;"></i>
-          财经新闻
-        </button>
+      <div class="mb-6" style="overflow-x:auto;">
+        <div class="flex gap-2 p-1" style="background:var(--surface); border-radius:var(--r-md); width:fit-content;">
+          <button id="tab-rank" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="rank" style="${activeTab === 'rank' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="trending-up" style="width:14px; height:14px; margin-right:6px;"></i>
+            新闻热点
+          </button>
+          <button id="tab-finance" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="finance" style="${activeTab === 'finance' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="newspaper" style="width:14px; height:14px; margin-right:6px;"></i>
+            财经新闻
+          </button>
+          <button id="tab-indices" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="indices" style="${activeTab === 'indices' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="bar-chart-3" style="width:14px; height:14px; margin-right:6px;"></i>
+            指数行情
+          </button>
+          <button id="tab-sentiment" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="sentiment" style="${activeTab === 'sentiment' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="activity" style="width:14px; height:14px; margin-right:6px;"></i>
+            市场情绪
+          </button>
+          <button id="tab-limitUp" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="limitUp" style="${activeTab === 'limitUp' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="chevrons-up" style="width:14px; height:14px; margin-right:6px;"></i>
+            涨停明细
+          </button>
+          <button id="tab-limitDown" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="limitDown" style="${activeTab === 'limitDown' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="chevrons-down" style="width:14px; height:14px; margin-right:6px;"></i>
+            跌停明细
+          </button>
+          <button id="tab-etf" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="etf" style="${activeTab === 'etf' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="layers" style="width:14px; height:14px; margin-right:6px;"></i>
+            ETF
+          </button>
+          <button id="tab-industryFlow" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="industryFlow" style="${activeTab === 'industryFlow' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="git-branch" style="width:14px; height:14px; margin-right:6px;"></i>
+            行业资金
+          </button>
+        </div>
       </div>
 
       ${activeTab === 'rank' ? renderConceptWithNews(concepts, stockNews) : ''}
       ${activeTab === 'finance' ? renderFinanceNews(financeNews) : ''}
+      ${activeTab === 'indices' ? renderIndices(getIndices()) : ''}
+      ${activeTab === 'sentiment' ? renderSentiment(getSentiment()) : ''}
+      ${activeTab === 'limitUp' ? renderLimitList(getLimitUp(), 'up') : ''}
+      ${activeTab === 'limitDown' ? renderLimitList(getLimitDown(), 'down') : ''}
+      ${activeTab === 'etf' ? renderETF(getETF()) : ''}
+      ${activeTab === 'industryFlow' ? renderIndustryFlow(getIndustryFlow()) : ''}
     `
     refreshIcons()
     bindEvents()
@@ -417,108 +781,22 @@ export function createMarketHotPage(root) {
       })
     })
 
-    const importBtn = root.querySelector('#import-data-btn')
-    if (importBtn) importBtn.addEventListener('click', openImportDialog)
-
-    const clearBtn = root.querySelector('#clear-data-btn')
-    if (clearBtn) clearBtn.addEventListener('click', () => {
-      if (confirm('确认清空导入的数据？将恢复为示例数据。')) {
-        importedData = null
-        saveHotData(null)
-        render()
-        showToast('已清空')
-      }
+    const refreshBtn = root.querySelector('#refresh-btn')
+    if (refreshBtn) refreshBtn.addEventListener('click', () => {
+      fetchRemoteData()
+      showToast('正在刷新...')
     })
-  }
 
-  let importDialogEl = null
-  let importOverlayEl = null
-
-  function openImportDialog() {
-    closeImportDialog()
-    importOverlayEl = document.createElement('div')
-    importOverlayEl.style.cssText = 'position:fixed; inset:0; z-index:99; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; padding:16px;'
-    importOverlayEl.addEventListener('click', (e) => { if (e.target === importOverlayEl) closeImportDialog() })
-
-    importDialogEl = document.createElement('div')
-    importDialogEl.style.cssText = `background:var(--bg); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow-float); padding:var(--s-5) var(--s-6); width:min(640px, 100%); max-height:90vh; overflow-y:auto;`
-    importDialogEl.innerHTML = `
-      <div class="flex items-center justify-between mb-4">
-        <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink);">导入大盘热点数据</h3>
-        <button id="close-import-dialog" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px;">
-          <i data-lucide="x" style="width:16px; height:16px;"></i>
-        </button>
-      </div>
-      <div style="margin-bottom:var(--s-4); padding:var(--s-3); background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm);">
-        <p style="font-size:var(--text-caption); color:var(--ink-2); line-height:var(--leading-body);">
-          将数据 JSON 粘贴到下方文本框。格式：
-          <code style="background:var(--bg); padding:1px 4px; border-radius:3px; display:block; margin-top:4px;">{ "concepts": [...], "financeNews": [...], "stockNews": [...] }</code>
-        </p>
-      </div>
-      <textarea id="import-json-text" rows="10" placeholder="在此粘贴 JSON 数据..." style="width:100%; font-family:var(--font-mono); font-size:12px; padding:var(--s-3); border:1px solid var(--line); border-radius:var(--r-sm); background:var(--surface); color:var(--ink); resize:vertical;"></textarea>
-      <div class="flex items-center gap-2 justify-end pt-3">
-        <button id="cancel-import-dialog" class="btn-secondary">取消</button>
-        <button id="confirm-import-dialog" class="btn-primary">解析并导入</button>
-      </div>
-    `
-    importOverlayEl.appendChild(importDialogEl)
-    document.body.appendChild(importOverlayEl)
-    refreshIcons()
-
-    importDialogEl.querySelector('#close-import-dialog').addEventListener('click', closeImportDialog)
-    importDialogEl.querySelector('#cancel-import-dialog').addEventListener('click', closeImportDialog)
-    importDialogEl.querySelector('#confirm-import-dialog').addEventListener('click', () => {
-      const text = importDialogEl.querySelector('#import-json-text').value.trim()
-      if (!text) { showToast('请粘贴数据'); return }
-      try {
-        const parsed = tryParseImport(text)
-        if (!parsed) { showToast('数据格式无法识别'); return }
-        importedData = parsed
-        saveHotData(importedData)
-        closeImportDialog()
-        render()
-        showToast('数据导入成功')
-      } catch (e) {
-        showToast('解析失败: ' + e.message)
-      }
-    })
-  }
-
-  function tryParseImport(text) {
-    try {
-      const obj = JSON.parse(text)
-      return normalizeData(obj)
-    } catch (e) {}
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (jsonMatch) {
-      try {
-        const obj = JSON.parse(jsonMatch[0])
-        return normalizeData(obj)
-      } catch (e) {}
-    }
-    return null
-  }
-
-  function normalizeData(obj) {
-    if (obj.md_report || obj.stdout_tail) {
-      if (obj.stdout_tail) {
-        const extracted = extractFromText(obj.stdout_tail)
-        if (extracted) return extracted
-      }
-      return { concepts: [], financeNews: [], stockNews: [], date: todayStr() }
-    }
-    const concepts = obj.concepts || obj.sectors || obj.hotSectors || []
-    const financeNews = obj.financeNews || obj.news || obj.articles || []
-    const stockNews = obj.stockNews || obj.stockArticles || obj.singleStockNews || []
-    const date = obj.date || obj.reportDate || todayStr()
-    if (concepts.length === 0 && financeNews.length === 0 && stockNews.length === 0) {
-      return null
-    }
-    return {
-      concepts: concepts.map(normalizeConcept),
-      financeNews: financeNews.map(normalizeFinanceNews),
-      stockNews: stockNews.map(normalizeStockNews),
-      date
+    const historySelect = root.querySelector('#history-select')
+    if (historySelect) {
+      historySelect.addEventListener('change', () => {
+        const value = historySelect.value
+        if (value === 'latest') {
+          switchToLatest()
+        } else {
+          switchToDate(value)
+        }
+      })
     }
   }
 
@@ -527,93 +805,14 @@ export function createMarketHotPage(root) {
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
   }
 
-  function normalizeConcept(c) {
-    return {
-      name: c.name || c.conceptName || '未知',
-      index: c.index || c.conceptIndex || 0,
-      changePercent: c.changePercent || c.change || c.pctChange || 0,
-      inflow: c.inflow || c.inflowAmount || '0',
-      outflow: c.outflow || c.outflowAmount || '0',
-      netAmount: c.netAmount || c.netNet || '0',
-      netColor: (c.netAmount && parseFloat(c.netAmount) < 0) ? 'var(--state-success)' : 'var(--state-error)',
-      stockCount: c.stockCount || c.count || 0,
-      leadingStock: c.leadingStock || c.leaderName || '--',
-      leadingCode: c.leadingCode || c.leaderCode || '',
-      leadingChange: c.leadingChange || c.leaderChange || 0,
-      leadingPrice: c.leadingPrice || c.leaderPrice || 0
-    }
-  }
-
-  function normalizeFinanceNews(n) {
-    return {
-      title: n.title || n.headline || '无标题',
-      summary: n.summary || n.digest || n.description || '',
-      time: n.time || n.publishTime || n.date || '',
-      source: n.source || n.origin || '未知来源',
-      link: n.link || n.url || '#'
-    }
-  }
-
-  function normalizeStockNews(n) {
-    return {
-      stockName: n.stockName || n.name || '未知',
-      stockCode: n.stockCode || n.code || '',
-      concept: n.concept || n.sector || '',
-      title: n.title || n.headline || '无标题',
-      time: n.time || n.publishTime || n.date || '',
-      source: n.source || n.origin || '未知来源',
-      link: n.link || n.url || '#',
-      change: n.change ?? n.changePercent ?? n.leadingChange ?? null
-    }
-  }
-
-  function extractFromText(text) {
-    const concepts = []
-    const conceptSection = text.match(/概念板块[^\n]*\n([\s\S]*?)(?=\n\n|\n##|\n财经|\n$)/)
-    if (conceptSection) {
-      const lines = conceptSection[1].split('\n').filter(l => l.trim())
-      lines.forEach((line, i) => {
-        if (i < 20 && line.includes('|')) {
-          const parts = line.split('|').map(p => p.trim()).filter(Boolean)
-          if (parts.length >= 3 && isNaN(parseFloat(parts[0]))) {
-            concepts.push({
-              name: parts[0],
-              index: parseFloat(parts[1]) || 0,
-              changePercent: parseFloat(parts[2]) || 0,
-              inflow: parts[3] || '0',
-              outflow: parts[4] || '0',
-              netAmount: parts[5] || '0',
-              netColor: (parts[5] && parts[5].includes('-')) ? 'var(--state-success)' : 'var(--state-error)',
-              stockCount: parseInt(parts[6]) || 0,
-              leadingStock: parts[7] || '--',
-              leadingCode: '',
-              leadingChange: parseFloat(parts[8]) || 0,
-              leadingPrice: parseFloat(parts[9]) || 0
-            })
-          }
-        }
-      })
-    }
-    if (concepts.length) {
-      return { concepts, financeNews: [], stockNews: [], date: todayStr() }
-    }
-    return null
-  }
-
-  function closeImportDialog() {
-    if (importOverlayEl && importOverlayEl.parentNode) importOverlayEl.parentNode.removeChild(importOverlayEl)
-    importOverlayEl = null
-    importDialogEl = null
-  }
-
   return {
     mount() {
+      loadLatestFromHistory()
       render()
       startAutoFetch()
     },
     unmount() {
       stopAutoFetch()
-      closeImportDialog()
     }
   }
 }
