@@ -8,7 +8,7 @@ function getStockUrl(code, name) {
   if (code) {
     return 'https://stockpage.10jqka.com.cn/' + code + '/'
   }
-  return 'https://www.10jqka.com.cn/search/?keyword=' + encodeURIComponent(name)
+  return 'https://so.eastmoney.com/web/s?keyword=' + encodeURIComponent(name)
 }
 
 const R_UNIT = 1000
