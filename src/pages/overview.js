@@ -2,7 +2,7 @@
 
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
-import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { lsGet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, DATA_EVENTS } from '../utils/events.js'
 
 const SAMPLE_GOAL = null
@@ -47,10 +47,22 @@ export function createOverviewPage(root) {
     // 动态计算所有数据
     const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
-    const riskData = lsGetJSON(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
+    const riskData = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
     const totalFund = parseFloat(riskData) || 0
     const stockValue = holdings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
-    const totalAsset = totalFund // 总资产 = 账户总金额（与风控页一致）
+    // 可用资金（独立跟踪）
+    const availStr = lsGet(STORAGE_KEYS.availableFund, '')
+    const available = availStr === '' ? totalFund : (parseFloat(availStr) || 0)
+    // 当前总资产 = 股票市值 + 可用资金
+    const totalAsset = stockValue + available
+    // 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
+    const monthlyPnl = holdings.reduce((sum, h) => {
+      const qty = parseFloat(h.quantity) || 0
+      if (qty <= 0) return sum
+      const buyPrice = parseFloat(h.buyPrice) || 0
+      const curPrice = parseFloat(h.currentPrice) || 0
+      return sum + (curPrice - buyPrice) * qty
+    }, 0)
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
 
     // 本月买入股数：累加交易记录里的 actualPnl（已改为买入股数）
@@ -111,11 +123,19 @@ export function createOverviewPage(root) {
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
-            <span style="font-size:var(--text-caption); color:var(--ink-3);">本月买入股数</span>
-            <i data-lucide="trending-up" style="width:14px; height:14px; color:var(--state-success);"></i>
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">当前总资产</span>
+            <i data-lucide="coins" style="width:14px; height:14px; color:var(--brand);"></i>
           </div>
-          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${trades.length === 0 ? '--' : monthlyShares.toLocaleString('zh-CN') + '股'}</div>
-          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">${monthPrefix} 累计</div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${totalAsset > 0 ? totalAsset.toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '元' : '--'}</div>
+          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">市值 ${stockValue > 0 ? stockValue.toLocaleString('zh-CN', { maximumFractionDigits: 0 }) : '--'} + 可用 ${available > 0 ? available.toLocaleString('zh-CN', { maximumFractionDigits: 0 }) : '--'}</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
+          <div class="flex items-center justify-between mb-2">
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">本月累计盈亏</span>
+            <i data-lucide="arrow-down-up" style="width:14px; height:14px; color:${monthlyPnl > 0 ? 'var(--price-up)' : monthlyPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'};"></i>
+          </div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:${monthlyPnl > 0 ? 'var(--price-up)' : monthlyPnl < 0 ? 'var(--price-down)' : 'var(--ink)'}; white-space:nowrap; font-variant-numeric:tabular-nums;">${holdings.length === 0 ? '--' : (monthlyPnl >= 0 ? '+' : '') + monthlyPnl.toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '元'}</div>
+          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">${holdings.length === 0 ? '暂无持仓' : '持仓盈亏合计'}</div>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
@@ -136,16 +156,6 @@ export function createOverviewPage(root) {
           </div>
           <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${completed.length === 0 ? '--' : streak + '笔'}</div>
           <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">目标 20笔</div>
-        </div>
-        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
-          <div class="flex items-center justify-between mb-2">
-            <span style="font-size:var(--text-caption); color:var(--ink-3);">当前状态</span>
-            <i data-lucide="shield" style="width:14px; height:14px; color:var(--state-success);"></i>
-          </div>
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 whitespace-nowrap" style="font-size:var(--text-body); font-weight:var(--weight-medium); border-radius:var(--r-md); background:var(--state-success-bg); color:var(--state-success);">
-            <span style="width:6px;height:6px;border-radius:50%;background:var(--state-success);display:inline-block;"></span>
-            正常交易中
-          </span>
         </div>
       </div>
 

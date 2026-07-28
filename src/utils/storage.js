@@ -42,5 +42,6 @@ export const STORAGE_KEYS = {
   tradeRecords: 'td_trade_records_v1',
   holdings: 'td_holdings_v1',
   riskCtrl: 'td_risk_ctrl_',
+  availableFund: 'td_available_fund',
   theme: 'td_theme'
 }

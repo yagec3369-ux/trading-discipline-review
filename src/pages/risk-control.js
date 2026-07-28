@@ -75,9 +75,34 @@ export function createRiskControlPage(root) {
   // Local state mirror of inputs for recalculation
   const state = {
     totalFund: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, '120000'),
+    availableFund: lsGet(STORAGE_KEYS.availableFund, ''),
     monthlyPnl: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.monthlyPnl, ''),
     compliantCount: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.compliantCount, '0'),
     recoveryStatus: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.recoveryStatus, 'active')
+  }
+
+  // 可用资金初始化：若未设置过，默认等于账户总金额
+  function getAvailableFund() {
+    if (state.availableFund === '' || state.availableFund === null || state.availableFund === undefined) {
+      return parseFloat(state.totalFund) || 0
+    }
+    return parseFloat(state.availableFund) || 0
+  }
+  function setAvailableFund(val) {
+    state.availableFund = String(val)
+    lsSet(STORAGE_KEYS.availableFund, String(val))
+  }
+
+  // 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
+  function calcMonthlyPnl() {
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    return holdings.reduce((sum, h) => {
+      const qty = parseFloat(h.quantity) || 0
+      if (qty <= 0) return sum
+      const buyPrice = parseFloat(h.buyPrice) || 0
+      const curPrice = parseFloat(h.currentPrice) || 0
+      return sum + (curPrice - buyPrice) * qty
+    }, 0)
   }
 
   function render() {
@@ -103,9 +128,10 @@ export function createRiskControlPage(root) {
           ${overviewCard('账户总金额', 'landmark', '元', 'rc-total-fund', true, state.totalFund)}
           ${overviewCard('股票市值', 'trending-up', '元', 'rc-stock-value', false)}
           ${overviewCard('可用资金', 'wallet', '元', 'rc-available', false)}
+          ${overviewCard('亏损的钱', 'trending-down', '元', 'rc-loss-amount', false)}
           ${overviewCard('当前总资产', 'coins', '元', 'rc-total-asset', false)}
+          ${overviewCard('本月累计盈亏', 'arrow-down-up', '元', 'rc-monthly-pnl', false)}
           ${positionCard()}
-          ${overviewCard('本月累计盈亏', 'arrow-down-up', '元', 'rc-monthly-pnl', true, state.monthlyPnl, '正数盈/负数亏')}
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5); margin-top:var(--s-4);">
           <h4 style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); margin-bottom:var(--s-4);">资金转入/转出</h4>
@@ -235,7 +261,6 @@ export function createRiskControlPage(root) {
     bindEvents()
     // Initial calc
     recalcDerived()
-    updatePnlColor()
     updateRecovery()
     runAllChecks()
   }
@@ -299,16 +324,8 @@ export function createRiskControlPage(root) {
   }
 
   function bindEvents() {
-    // Editable field bindings
-    bindField('rc-total-fund', FIELD_KEYS.totalFund, () => {
-      recalcDerived()
-      runAllChecks()
-      emit(DATA_EVENTS.RISK_CTRL_CHANGED)
-    })
-    bindField('rc-monthly-pnl', FIELD_KEYS.monthlyPnl, () => {
-      updatePnlColor()
-      runAllChecks()
-    })
+    // 账户总金额编辑（差额同步到可用资金）
+    bindTotalFundField()
 
     // Checklist row toggles
     root.querySelectorAll('.checklist-row').forEach((row) => {
@@ -342,7 +359,7 @@ export function createRiskControlPage(root) {
       })
     })
 
-    // Transfer in
+    // Transfer in — 账户总金额和可用资金同时增加
     root.querySelector('#btn-transfer-in')?.addEventListener('click', () => {
       const input = root.querySelector('#rc-transfer-in')
       const amount = parseFloat(input.value) || 0
@@ -353,6 +370,7 @@ export function createRiskControlPage(root) {
       const newTotal = (parseFloat(state.totalFund) || 0) + amount
       state.totalFund = String(newTotal)
       lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(newTotal))
+      setAvailableFund(getAvailableFund() + amount)
       const inputEl = root.querySelector('#rc-total-fund')
       if (inputEl) inputEl.value = String(newTotal)
       input.value = ''
@@ -361,7 +379,7 @@ export function createRiskControlPage(root) {
       showSaveStatus('资金转入成功')
     })
 
-    // Transfer out
+    // Transfer out — 账户总金额和可用资金同时减少
     root.querySelector('#btn-transfer-out')?.addEventListener('click', () => {
       const input = root.querySelector('#rc-transfer-out')
       const amount = parseFloat(input.value) || 0
@@ -369,16 +387,15 @@ export function createRiskControlPage(root) {
         showSaveStatus('请输入有效金额', 'error')
         return
       }
-      const currentTotal = parseFloat(state.totalFund) || 0
-      const stockValue = getHoldingsValue()
-      const available = currentTotal - stockValue
+      const available = getAvailableFund()
       if (amount > available) {
         showSaveStatus(`转出金额不能超过可用资金（${available.toFixed(2)}元）`, 'error')
         return
       }
-      const newTotal = currentTotal - amount
+      const newTotal = (parseFloat(state.totalFund) || 0) - amount
       state.totalFund = String(newTotal)
       lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(newTotal))
+      setAvailableFund(available - amount)
       const inputEl = root.querySelector('#rc-total-fund')
       if (inputEl) inputEl.value = String(newTotal)
       input.value = ''
@@ -469,25 +486,54 @@ export function createRiskControlPage(root) {
     })
   }
 
+  // 绑定账户总金额编辑：差额同步到可用资金（视为资金转入/转出）
+  function bindTotalFundField() {
+    const el = root.querySelector('#rc-total-fund')
+    if (!el) return
+    el.addEventListener('input', () => {
+      const oldFund = parseFloat(state.totalFund) || 0
+      const newFund = parseFloat(el.value) || 0
+      const delta = newFund - oldFund
+      state.totalFund = el.value
+      lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, el.value)
+      // 差额同步到可用资金
+      if (delta !== 0) {
+        const newAvail = getAvailableFund() + delta
+        setAvailableFund(newAvail)
+      }
+      showSaveStatus()
+      recalcDerived()
+      runAllChecks()
+      emit(DATA_EVENTS.RISK_CTRL_CHANGED)
+    })
+  }
+
   function recalcDerived() {
-    // 1. 账户总金额（锚定值，可编辑）
+    // 1. 账户总金额（锚定值，可编辑，含已实现亏损）
     const totalFund = parseFloat(state.totalFund) || 0
-    // 2. 股票总市值（根据持仓情况统计：Σ 数量 × 现价）
+    // 2. 股票总市值 = Σ(持仓数 × 现价)，自动更新
     const stockValue = getHoldingsValue()
-    // 3. 可用资金 = 账户总金额 - 股票总市值
-    const available = totalFund - stockValue
+    // 3. 可用资金（独立跟踪，买入减少/卖出增加）
+    const available = getAvailableFund()
     // 4. 当前总资产 = 股票市值 + 可用资金
     const totalAsset = stockValue + available
-    // 5. 总仓位占比 = 股票市值 / 当前总资产
+    // 5. 亏损的钱 = 账户总金额 - 当前总资产 = 账户总金额 - 股票市值 - 可用资金
+    const lossAmount = totalFund - totalAsset
+    // 6. 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
+    const monthlyPnl = calcMonthlyPnl()
+    // 7. 总仓位占比 = 股票市值 / 当前总资产
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
 
     const stockValueEl = root.querySelector('#rc-stock-value')
     const availableEl = root.querySelector('#rc-available')
+    const lossEl = root.querySelector('#rc-loss-amount')
     const totalAssetEl = root.querySelector('#rc-total-asset')
+    const monthlyPnlEl = root.querySelector('#rc-monthly-pnl')
     const positionPctEl = root.querySelector('#rc-position-pct')
     const positionBarEl = root.querySelector('#rc-position-bar')
 
     const fmt = (v) => v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
+    const fmtSigned = (v) => (v >= 0 ? '+' : '') + v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
     const hasData = totalFund > 0 || stockValue > 0
 
     if (stockValueEl) {
@@ -496,8 +542,16 @@ export function createRiskControlPage(root) {
     if (availableEl) {
       availableEl.textContent = hasData ? fmt(available) : '--'
     }
+    if (lossEl) {
+      lossEl.textContent = hasData ? fmtSigned(lossAmount) : '--'
+      lossEl.style.color = lossAmount > 0 ? 'var(--price-down)' : lossAmount < 0 ? 'var(--price-up)' : 'var(--ink-3)'
+    }
     if (totalAssetEl) {
       totalAssetEl.textContent = hasData ? fmt(totalAsset) : '--'
+    }
+    if (monthlyPnlEl) {
+      monthlyPnlEl.textContent = hasData ? fmtSigned(monthlyPnl) : '--'
+      monthlyPnlEl.style.color = monthlyPnl > 0 ? 'var(--price-up)' : monthlyPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'
     }
 
     if (positionPctEl && positionBarEl) {
@@ -613,7 +667,7 @@ export function createRiskControlPage(root) {
   function runAllChecks() {
     const dailyData = getDailyReviewData()
     const totalFund = parseFloat(state.totalFund) || 0
-    const monthlyPnl = parseFloat(state.monthlyPnl) || 0
+    const monthlyPnl = calcMonthlyPnl()
     const trades = getTradeRecords()
     const states = ['pending', 'pending', 'pending', 'pending', 'pending', 'pending']
 
