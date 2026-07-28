@@ -270,15 +270,15 @@ export function createExecutionPage(root) {
         </div>
 
         <div class="flex items-center gap-2 px-4 sm:px-5 py-3 flex-wrap">
-          <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; ${canAct ? `background:${l.legType === 'buy' ? 'var(--state-error)' : 'var(--state-success)'}; color:#fff; cursor:pointer;` : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; opacity:0.5;'} display:inline-flex; align-items:center; gap:4px;">
+          <button class="exec-leg-btn" data-action="executed" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; ${canAct ? `background:${l.legType === 'buy' ? 'var(--state-error)' : 'var(--state-success)'}; color:#fff; cursor:pointer;` : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed;'} display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="check" style="width:12px; height:12px;"></i>
             已${l.actionLabel}
           </button>
-          <button class="exec-leg-btn" data-action="cancelled" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; ${canAct ? 'background:var(--state-info); color:#fff; cursor:pointer;' : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; opacity:0.5;'} display:inline-flex; align-items:center; gap:4px;">
+          <button class="exec-leg-btn" data-action="cancelled" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:none; ${canAct ? 'background:var(--state-info); color:#fff; cursor:pointer;' : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed;'} display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="x" style="width:12px; height:12px;"></i>
             取消
           </button>
-          <button class="exec-leg-btn" data-action="discarded" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:1px solid var(--line); ${canAct ? 'background:transparent; color:var(--ink-3); cursor:pointer;' : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; opacity:0.5;'} display:inline-flex; align-items:center; gap:4px;">
+          <button class="exec-leg-btn" data-action="discarded" data-leg-id="${escHtml(l.id)}" data-plan-id="${escHtml(p.id)}" data-leg-type="${l.legType}" ${canAct ? '' : 'disabled'} style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:6px 14px; border-radius:var(--r-sm); border:1px solid var(--line); ${canAct ? 'background:transparent; color:var(--ink-3); cursor:pointer;' : 'background:var(--surface-2); color:var(--ink-3); cursor:not-allowed; border-color:var(--surface-2);'} display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="archive" style="width:12px; height:12px;"></i>
             弃用
           </button>

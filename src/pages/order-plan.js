@@ -143,6 +143,12 @@ export function createOrderPlanPage(root) {
                   <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">预期收益</span>
                   <span style="font-size:var(--text-body); color:var(--state-error); font-weight:var(--weight-semibold);">${p.expectedGainNR || 0}R = ${(p.expectedGainNR || 0) * R_UNIT}元</span>
                 </div>
+                ${p.operationType === 't0' ? `
+                <div>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">做T收入</span>
+                  <span style="font-size:var(--text-body); color:var(--state-error); font-weight:var(--weight-semibold);">${p.t0Income ? Number(p.t0Income).toLocaleString() + '元' : '--'}</span>
+                </div>
+                ` : ''}
                 <div>
                   <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">最大亏损</span>
                   <span style="font-size:var(--text-body); color:var(--state-success); font-weight:var(--weight-semibold);">${p.maxLossNR || 0}R = ${(p.maxLossNR || 0) * R_UNIT}元</span>
@@ -447,6 +453,13 @@ export function createOrderPlanPage(root) {
           <div style="font-size:var(--text-caption); font-weight:var(--weight-semibold); color:var(--ink-3); margin-bottom:var(--s-3); display:flex; align-items:center; gap:6px;">
             <i data-lucide="shield-alert" style="width:14px; height:14px;"></i>风险收益
           </div>
+          <div id="t0-income-row" class="grid grid-cols-1 gap-3 mb-3" style="display:none;">
+            <div>
+              <label style="font-size:var(--text-caption); color:var(--state-error); display:block; margin-bottom:4px;">做T收入（元）</label>
+              <input type="number" id="plan-t0-income" class="field-input" style="width:100%;" placeholder="500" min="0" step="0.01" value="${editItem && editItem.t0Income ? editItem.t0Income : ''}">
+              <span style="font-size:var(--text-caption); color:var(--ink-3);">卖出金额 - 买入金额</span>
+            </div>
+          </div>
           <div class="grid grid-cols-3 gap-3">
             <div>
               <label style="font-size:var(--text-caption); color:var(--state-error); display:block; margin-bottom:4px;">预期收益（元）</label>
@@ -550,22 +563,26 @@ export function createOrderPlanPage(root) {
       const sellFields = dialogEl.querySelectorAll('.sell-field')
       const buyInputs = [buyPriceInput, buySharesInput]
       const sellInputs = [sellPriceInput, sellSharesInput]
+      const t0IncomeRow = dialogEl.querySelector('#t0-income-row')
 
       if (op === 'buy') {
         buySection.style.opacity = '1'
         sellSection.style.opacity = '0.35'
         buyInputs.forEach((el) => { el.disabled = false; el.style.background = '' })
         sellInputs.forEach((el) => { el.disabled = true; el.style.background = 'var(--surface-2)' })
+        if (t0IncomeRow) t0IncomeRow.style.display = 'none'
       } else if (op === 'sell') {
         buySection.style.opacity = '0.35'
         sellSection.style.opacity = '1'
         buyInputs.forEach((el) => { el.disabled = true; el.style.background = 'var(--surface-2)' })
         sellInputs.forEach((el) => { el.disabled = false; el.style.background = '' })
+        if (t0IncomeRow) t0IncomeRow.style.display = 'none'
       } else {
         buySection.style.opacity = '1'
         sellSection.style.opacity = '1'
         buyInputs.forEach((el) => { el.disabled = false; el.style.background = '' })
         sellInputs.forEach((el) => { el.disabled = false; el.style.background = '' })
+        if (t0IncomeRow) t0IncomeRow.style.display = ''
       }
       updateNrMetrics()
     }
@@ -621,6 +638,8 @@ export function createOrderPlanPage(root) {
       const maxLossAmount = parseFloat(nrLossInput.value) || 0
       const expectedGainNR = R_UNIT > 0 ? +(expectedGainAmount / R_UNIT).toFixed(2) : 0
       const maxLossNR = R_UNIT > 0 ? +(maxLossAmount / R_UNIT).toFixed(2) : 0
+      const t0IncomeInput = dialogEl.querySelector('#plan-t0-income')
+      const t0Income = operationType === 't0' ? (parseFloat(t0IncomeInput.value) || 0) : 0
 
       if (!name || !code) { showToast('请填写股票名称和代码'); return }
       if (operationType === 'buy') {
@@ -638,7 +657,8 @@ export function createOrderPlanPage(root) {
         sellPrice: parseFloat(sellPrice) || 0,
         sellShares: parseInt(sellShares) || 0,
         sellAmount: parseFloat(sellAmount) || 0,
-        dailyClose: parseFloat(dailyClose) || 0
+        dailyClose: parseFloat(dailyClose) || 0,
+        t0Income
       }
 
       if (editItem) {
