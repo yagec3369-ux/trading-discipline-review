@@ -123,6 +123,7 @@ export function createRiskControlPage(root) {
           ${overviewCard('当前总资产', 'coins', '元', 'rc-total-asset', false)}
           ${overviewCard('本月累计盈亏', 'arrow-down-up', '元', 'rc-monthly-pnl', false)}
           ${positionCard()}
+          ${holdingDetailCard()}
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5); margin-top:var(--s-4);">
           <h4 style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); margin-bottom:var(--s-4);">资金转入/转出</h4>
@@ -292,6 +293,148 @@ export function createRiskControlPage(root) {
         </div>
       </div>
     `
+  }
+
+  function holdingDetailCard() {
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    const activeHoldings = holdings.filter((h) => !h.archived && parseFloat(h.quantity) > 0)
+    if (activeHoldings.length === 0) {
+      return `
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5);">
+          <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">持仓明细</label>
+          <p style="font-size:var(--text-caption); color:var(--ink-3);">暂无持仓数据</p>
+        </div>
+      `
+    }
+    const totalFund = parseFloat(state.totalFund) || 0
+    const stockValue = activeHoldings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
+    const totalAsset = stockValue + (totalFund - stockValue + calcTodayPnl())
+    const fmt = (v) => v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
+    const fmtSigned = (v) => (v >= 0 ? '+' : '') + v.toFixed(2)
+
+    const rows = activeHoldings.map((h) => {
+      const qty = parseFloat(h.quantity) || 0
+      const buyPrice = parseFloat(h.buyPrice) || 0
+      const curPrice = parseFloat(h.currentPrice) || 0
+      const marketVal = qty * curPrice
+      const pnl = (curPrice - buyPrice) * qty
+      const pnlPct = buyPrice > 0 ? ((curPrice - buyPrice) / buyPrice * 100) : 0
+      const positionPct = totalAsset > 0 ? (marketVal / totalAsset * 100) : 0
+      const pnlColor = pnl >= 0 ? 'var(--price-up)' : 'var(--price-down)'
+      const alertColor = positionPct > 20 ? 'var(--state-error)' : positionPct > 15 ? 'var(--state-warning)' : 'var(--ink-3)'
+      return `
+        <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 4px; font-size:var(--text-body); color:var(--ink); font-weight:var(--weight-medium);">${escHtml(h.name)}</td>
+          <td style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(h.code)}</td>
+          <td style="padding:8px 4px; font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); text-align:right;">${fmt(buyPrice)}</td>
+          <td style="padding:8px 4px; font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); text-align:right;" id="rc-curprice-${h.id}">${curPrice > 0 ? fmt(curPrice) : '--'}</td>
+          <td style="padding:8px 4px; font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); text-align:right;">${qty}</td>
+          <td style="padding:8px 4px; font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); text-align:right;">${fmt(marketVal)}</td>
+          <td style="padding:8px 4px; font-size:var(--text-body); color:${alertColor}; font-weight:var(--weight-medium); text-align:right;">${positionPct.toFixed(1)}%</td>
+          <td style="padding:8px 4px; font-size:var(--text-body); color:${pnlColor}; font-family:var(--font-mono); text-align:right;">${fmtSigned(pnl)}</td>
+          <td style="padding:8px 4px; font-size:var(--text-caption); color:${pnlColor}; text-align:right;">${fmtSigned(pnlPct)}%</td>
+        </tr>
+      `
+    }).join('')
+
+    return `
+      <div id="rc-holding-detail-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5); grid-column: 1 / -1;">
+        <div class="flex items-center justify-between mb-3">
+          <label style="font-size:var(--text-caption); color:var(--ink-3);">持仓明细</label>
+          <span style="font-size:var(--text-caption); color:var(--ink-3);">共 ${activeHoldings.length} 只</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; min-width:700px;">
+            <thead>
+              <tr style="border-bottom:2px solid var(--line);">
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:left; font-weight:var(--weight-medium);">名称</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:left; font-weight:var(--weight-medium);">代码</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">成本价</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">现价</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">持仓数</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">市值</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">仓位占比</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">盈亏</th>
+                <th style="padding:8px 4px; font-size:var(--text-caption); color:var(--ink-3); text-align:right; font-weight:var(--weight-medium);">盈亏%</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    `
+  }
+
+  function updateHoldingDetail() {
+    const card = root.querySelector('#rc-holding-detail-card')
+    if (!card) {
+      const newCard = holdingDetailCard()
+      const positionCard = root.querySelector('#rc-position-pct')?.closest('.relative')
+      if (positionCard && positionCard.parentNode) {
+        positionCard.parentNode.insertAdjacentHTML('beforeend', newCard)
+      }
+      return
+    }
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    const activeHoldings = holdings.filter((h) => !h.archived && parseFloat(h.quantity) > 0)
+    if (activeHoldings.length === 0) {
+      card.innerHTML = `<div class="flex items-center justify-between mb-3">
+        <label style="font-size:var(--text-caption); color:var(--ink-3);">持仓明细</label>
+      </div><p style="font-size:var(--text-caption); color:var(--ink-3);">暂无持仓数据</p>`
+      return
+    }
+    const totalFund = parseFloat(state.totalFund) || 0
+    const stockValue = activeHoldings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
+    const totalAsset = stockValue + (totalFund - stockValue + calcTodayPnl())
+    const fmt = (v) => v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
+    const fmtSigned = (v) => (v >= 0 ? '+' : '') + v.toFixed(2)
+
+    activeHoldings.forEach((h) => {
+      const el = root.querySelector(`#rc-curprice-${h.id}`)
+      if (el) {
+        const curPrice = parseFloat(h.currentPrice) || 0
+        el.textContent = curPrice > 0 ? fmt(curPrice) : '--'
+      }
+    })
+
+    const nameCells = card.querySelectorAll('td:nth-child(1)')
+    const codeCells = card.querySelectorAll('td:nth-child(2)')
+    const priceCells = card.querySelectorAll('td:nth-child(3)')
+    const qtyCells = card.querySelectorAll('td:nth-child(5)')
+    const marketValCells = card.querySelectorAll('td:nth-child(6)')
+    const posPctCells = card.querySelectorAll('td:nth-child(7)')
+    const pnlCells = card.querySelectorAll('td:nth-child(8)')
+    const pnlPctCells = card.querySelectorAll('td:nth-child(9)')
+
+    activeHoldings.forEach((h, i) => {
+      const qty = parseFloat(h.quantity) || 0
+      const buyPrice = parseFloat(h.buyPrice) || 0
+      const curPrice = parseFloat(h.currentPrice) || 0
+      const marketVal = qty * curPrice
+      const pnl = (curPrice - buyPrice) * qty
+      const pnlPct = buyPrice > 0 ? ((curPrice - buyPrice) / buyPrice * 100) : 0
+      const positionPct = totalAsset > 0 ? (marketVal / totalAsset * 100) : 0
+      const pnlColor = pnl >= 0 ? 'var(--price-up)' : 'var(--price-down)'
+      const alertColor = positionPct > 20 ? 'var(--state-error)' : positionPct > 15 ? 'var(--state-warning)' : 'var(--ink-3)'
+
+      if (nameCells[i]) nameCells[i].textContent = h.name
+      if (codeCells[i]) codeCells[i].textContent = h.code
+      if (priceCells[i]) priceCells[i].textContent = buyPrice > 0 ? fmt(buyPrice) : '--'
+      if (qtyCells[i]) qtyCells[i].textContent = qty
+      if (marketValCells[i]) marketValCells[i].textContent = marketVal > 0 ? fmt(marketVal) : '--'
+      if (posPctCells[i]) {
+        posPctCells[i].textContent = positionPct.toFixed(1) + '%'
+        posPctCells[i].style.color = alertColor
+      }
+      if (pnlCells[i]) {
+        pnlCells[i].textContent = fmtSigned(pnl)
+        pnlCells[i].style.color = pnlColor
+      }
+      if (pnlPctCells[i]) {
+        pnlPctCells[i].textContent = fmtSigned(pnlPct) + '%'
+        pnlPctCells[i].style.color = pnlColor
+      }
+    })
   }
 
   function checklistItemHTML(def, idx) {
@@ -564,6 +707,8 @@ export function createRiskControlPage(root) {
         positionBarEl.style.width = '0%'
       }
     }
+
+    updateHoldingDetail()
   }
 
   function updatePnlColor() {
@@ -656,6 +801,9 @@ export function createRiskControlPage(root) {
     const dailyData = getDailyReviewData()
     const totalFund = parseFloat(state.totalFund) || 0
     const monthlyPnl = calcMonthlyPnl()
+    const todayPnl = calcTodayPnl()
+    const stockValue = getHoldingsValue()
+    const totalAsset = stockValue + (totalFund - stockValue + todayPnl)
     const trades = getTradeRecords()
     const states = ['pending', 'pending', 'pending', 'pending', 'pending', 'pending']
 
@@ -714,9 +862,33 @@ export function createRiskControlPage(root) {
       setChecklistStatus(itemIdx, status, detail)
     })
 
-    // Item 4: 单只持仓超过20% — pending (requires per-stock position value)
-    states[3] = 'pending'
-    setChecklistStatus(3, 'pending', '需录入各股票仓位后自动检测')
+    // Item 4: 单只持仓超过20%
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    const activeHoldings = holdings.filter((h) => !h.archived && parseFloat(h.quantity) > 0)
+    if (activeHoldings.length > 0 && totalAsset > 0) {
+      const overPosition = activeHoldings.filter((h) => {
+        const marketVal = (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0)
+        return (marketVal / totalAsset) > 0.20
+      })
+      if (overPosition.length > 0) {
+        states[3] = 'triggered'
+        const detailText = overPosition.map((h) => {
+          const marketVal = (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0)
+          const pct = (marketVal / totalAsset * 100).toFixed(1)
+          return `${h.name} ${pct}%`
+        }).join('、')
+        setChecklistStatus(3, 'triggered', `以下个股仓位超过20%：${detailText}`)
+      } else {
+        states[3] = 'safe'
+        setChecklistStatus(3, 'safe', '所有个股仓位均在20%以下')
+      }
+    } else if (activeHoldings.length === 0) {
+      states[3] = 'pending'
+      setChecklistStatus(3, 'pending', '暂无持仓数据')
+    } else {
+      states[3] = 'pending'
+      setChecklistStatus(3, 'pending', '请先填写账户总金额')
+    }
 
     // Update circuit breaker banner
     updateCircuitBanner(states)
