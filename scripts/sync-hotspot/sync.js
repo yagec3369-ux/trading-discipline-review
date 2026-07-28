@@ -113,14 +113,36 @@ function dedupNews(news) {
 }
 
 // 通用 sheet 解析
+const SHEET_ALIASES = {
+  '热点概念榜': ['热点概念', '概念排行', '概念榜', '概念'],
+  '财经新闻': ['财经', '新闻'],
+  '个股新闻': ['个股', '股票新闻'],
+  '指数行情': ['指数', '大盘指数', '主要指数'],
+  '市场情绪': ['情绪', '市场情绪指标', '情绪指标'],
+  '涨停明细': ['涨停', '涨停板', '涨停股'],
+  '跌停明细': ['跌停', '跌停板', '跌停股'],
+  'ETF': ['etf', 'ETF基金', '基金'],
+  '行业资金流': ['行业资金', '资金流向', '行业资金流向', '资金流', '行业流向']
+}
+
 function parseSheet(wb, sheetName, mapFn) {
-  // 模糊匹配 sheet 名
-  const actualName = wb.SheetNames.find((s) => s.includes(sheetName) || sheetName.includes(s))
+  // 模糊匹配 sheet 名（含别名）
+  const aliases = SHEET_ALIASES[sheetName] || []
+  const allNames = [sheetName, ...aliases]
+  let actualName = null
+  for (const s of wb.SheetNames) {
+    const sLower = s.toLowerCase()
+    if (allNames.some((n) => sLower.includes(n.toLowerCase()) || n.toLowerCase().includes(sLower))) {
+      actualName = s
+      break
+    }
+  }
   const sheet = wb.Sheets[actualName || sheetName]
   if (!sheet) {
-    console.log(`  [跳过] sheet "${sheetName}" 不存在`)
+    console.log(`  [跳过] sheet "${sheetName}" 不存在 (已有sheets: ${wb.SheetNames.join(', ')})`)
     return []
   }
+  console.log(`  [匹配] "${sheetName}" → "${actualName}"`)
   const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
   const result = rows.filter((r) => {
     // 过滤空行：至少有一个非空字段
