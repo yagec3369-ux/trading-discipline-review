@@ -556,6 +556,7 @@ export function createOrderPlanPage(root) {
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入价</label>
                   <input type="number" id="plan-buy-price" class="field-input buy-field" style="width:100%;" placeholder="47.09" step="0.01" value="${editItem ? (editItem.buyPrice || '') : ''}">
+                  <span id="buy-price-pct" style="font-size:11px; color:var(--ink-3);">--</span>
                 </div>
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">股数</label>
@@ -575,6 +576,7 @@ export function createOrderPlanPage(root) {
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">卖出价</label>
                   <input type="number" id="plan-sell-price" class="field-input sell-field" style="width:100%;" placeholder="50.00" step="0.01" value="${editItem ? (editItem.sellPrice || '') : ''}">
+                  <span id="sell-price-pct" style="font-size:11px; color:var(--ink-3);">--</span>
                 </div>
                 <div>
                   <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">股数</label>
@@ -637,6 +639,7 @@ export function createOrderPlanPage(root) {
     const sellPriceInput = dialogEl.querySelector('#plan-sell-price')
     const sellSharesInput = dialogEl.querySelector('#plan-sell-shares')
     const sellAmountInput = dialogEl.querySelector('#plan-sell-amount')
+    const dailyCloseInput = dialogEl.querySelector('#plan-daily-close')
 
     function getTotalAmount() {
       const op = operationSelect.value
@@ -660,6 +663,34 @@ export function createOrderPlanPage(root) {
 
     function updateBuyAmount() { calcAmount(buyPriceInput, buySharesInput, buyAmountInput) }
     function updateSellAmount() { calcAmount(sellPriceInput, sellSharesInput, sellAmountInput) }
+
+    function updatePricePct() {
+      const dailyClose = parseFloat(dailyCloseInput.value) || 0
+      const buyPrice = parseFloat(buyPriceInput.value) || 0
+      const sellPrice = parseFloat(sellPriceInput.value) || 0
+      const buyPctEl = dialogEl.querySelector('#buy-price-pct')
+      const sellPctEl = dialogEl.querySelector('#sell-price-pct')
+
+      if (dailyClose > 0 && buyPrice > 0) {
+        const pct = ((buyPrice - dailyClose) / dailyClose) * 100
+        const sign = pct >= 0 ? '+' : ''
+        buyPctEl.textContent = `vs现价 ${sign}${pct.toFixed(2)}%`
+        buyPctEl.style.color = pct > 0 ? 'var(--price-up)' : pct < 0 ? 'var(--price-down)' : 'var(--ink-3)'
+      } else {
+        buyPctEl.textContent = '--'
+        buyPctEl.style.color = 'var(--ink-3)'
+      }
+
+      if (dailyClose > 0 && sellPrice > 0) {
+        const pct = ((sellPrice - dailyClose) / dailyClose) * 100
+        const sign = pct >= 0 ? '+' : ''
+        sellPctEl.textContent = `vs现价 ${sign}${pct.toFixed(2)}%`
+        sellPctEl.style.color = pct > 0 ? 'var(--price-up)' : pct < 0 ? 'var(--price-down)' : 'var(--ink-3)'
+      } else {
+        sellPctEl.textContent = '--'
+        sellPctEl.style.color = 'var(--ink-3)'
+      }
+    }
 
     function updatePriceFields() {
       const op = operationSelect.value
@@ -710,14 +741,16 @@ export function createOrderPlanPage(root) {
     }
 
     operationSelect.addEventListener('change', updatePriceFields)
-    buyPriceInput.addEventListener('input', updateBuyAmount)
+    buyPriceInput.addEventListener('input', () => { updateBuyAmount(); updatePricePct() })
     buySharesInput.addEventListener('input', updateBuyAmount)
-    sellPriceInput.addEventListener('input', updateSellAmount)
+    sellPriceInput.addEventListener('input', () => { updateSellAmount(); updatePricePct() })
     sellSharesInput.addEventListener('input', updateSellAmount)
+    dailyCloseInput.addEventListener('input', updatePricePct)
     nrExpInput.addEventListener('input', updateNrMetrics)
     nrLossInput.addEventListener('input', updateNrMetrics)
     updatePriceFields()
     updateNrMetrics()
+    updatePricePct()
 
     dialogEl.querySelector('#close-plan-dialog').addEventListener('click', closeDialog)
     dialogEl.querySelector('#cancel-plan-dialog').addEventListener('click', closeDialog)
