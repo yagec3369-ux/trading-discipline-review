@@ -58,16 +58,10 @@ export function createOverviewPage(root) {
       const curPrice = parseFloat(h.currentPrice) || 0
       return sum + (curPrice - buyPrice) * qty
     }, 0)
-    // 可用资金 = 账户总金额 - 持仓总成本
-    // 优先从交易记录现金流水计算；若无交易记录（手动录入持仓），回退到持仓成本价
-    const totalBuyAmount = trades.filter(t => t.type === 'buy').reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
-    const totalSellAmount = trades.filter(t => t.type === 'sell').reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
+    // 可用资金 = 账户总金额 - Σ(成本价 × 持仓数量)
+    // 公式推导：账户总金额 - 股票市值(现价) - 浮亏 + 浮盈 = 账户总金额 - Σ(成本价×数量)
     const totalHoldingCost = holdings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
-    // 有交易记录时用交易流水，否则用持仓成本
-    const hasTradeFlow = trades.length > 0 && (totalBuyAmount > 0 || totalSellAmount > 0)
-    const available = hasTradeFlow
-      ? (totalFund - totalBuyAmount + totalSellAmount)
-      : (totalFund - totalHoldingCost)
+    const available = totalFund - totalHoldingCost
     // 当前总资产 = 股票市值 + 可用资金
     const totalAsset = stockValue + available
     // 累计盈亏 = 当前总资产 - 账户总金额

@@ -458,17 +458,17 @@ export function createExecutionPage(root) {
 
     const actionLabels = { executed: '已执行', cancelled: '取消', discarded: '弃用' }
 
+    // 先保存计划状态到 storage，确保后续事件监听者能读到最新状态
+    savePlansAndNotify()
+
     if (action === 'executed') {
-      // 先执行交易记录和持仓更新（依赖 plan 的完整数据）
+      // 再执行交易记录和持仓更新
       createTradeRecordFromPlan(plan, legType)
     }
 
-    // 再保存计划状态到 storage
-    savePlansAndNotify()
-
     showToast(legType === 'buy' ? '买入记录已标记为「' + actionLabels[action] + '」' : '卖出记录已标记为「' + actionLabels[action] + '」')
     
-    // 重新加载最新数据后再渲染，防止闭包中的旧数据覆盖
+    // 重新加载最新数据后再渲染
     plans = loadPlans()
     render()
   }

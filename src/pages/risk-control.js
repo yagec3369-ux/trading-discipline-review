@@ -96,18 +96,10 @@ export function createRiskControlPage(root) {
     return calcTodayPnl()
   }
 
-  // 可用资金 = 账户总金额 - 持仓总成本
-  // 优先从交易记录现金流水计算；若无交易记录（手动录入持仓），回退到持仓成本价
+  // 可用资金 = 账户总金额 - Σ(成本价 × 持仓数量)
+  // 公式推导：账户总金额 - 股票市值(现价) - 浮亏 + 浮盈 = 账户总金额 - Σ(成本价×数量)
   function calcAvailableFund() {
     const totalFund = parseFloat(state.totalFund) || 0
-    const trades = getTradeRecords()
-    const totalBuy = trades.filter(t => t.type === 'buy').reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
-    const totalSell = trades.filter(t => t.type === 'sell').reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
-    const hasTradeFlow = trades.length > 0 && (totalBuy > 0 || totalSell > 0)
-    if (hasTradeFlow) {
-      return totalFund - totalBuy + totalSell
-    }
-    // 回退：用持仓成本价计算
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     const totalHoldingCost = holdings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
     return totalFund - totalHoldingCost
