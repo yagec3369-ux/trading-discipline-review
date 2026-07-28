@@ -6,14 +6,9 @@ import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 
 function getStockUrl(code, name) {
   if (code) {
-    const prefix = code.substring(0, 3)
-    let market = 'sh'
-    if (['000', '001', '002', '003', '300', '301'].includes(prefix)) market = 'sz'
-    else if (['600', '601', '603', '605', '688'].includes(prefix)) market = 'sh'
-    else if (['8xx', '4xx', '83', '87', '43', '88', '89'].some((p) => code.startsWith(p))) market = 'bj'
-    return 'https://quote.eastmoney.com/' + market + code + '.html'
+    return 'https://stockpage.10jqka.com.cn/' + code + '/'
   }
-  return 'https://so.eastmoney.com/web/s?keyword=' + encodeURIComponent(name)
+  return 'https://www.10jqka.com.cn/search/?keyword=' + encodeURIComponent(name)
 }
 
 const R_UNIT = 1000
@@ -232,7 +227,7 @@ function renderConceptWithNews(concepts, stockNews) {
                 return `
                   <div style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) 0; border-bottom:1px solid var(--line);">
                     <div style="display:flex; flex-direction:column; min-width:100px;">
-                      <a href="${getStockUrl(escHtml(n.stockCode), escHtml(n.stockName))}" target="_blank" rel="noopener" class="stock-name-link" data-stock-code="${escHtml(n.stockCode)}" data-stock-name="${escHtml(n.stockName)}" title="在东方财富查看 ${escHtml(n.stockName)} 的K线图" style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand); text-decoration:none; cursor:pointer;">${escHtml(n.stockName)}</a>
+                      <a href="${getStockUrl(escHtml(n.stockCode), escHtml(n.stockName))}" target="_blank" rel="noopener" class="stock-name-link" data-stock-code="${escHtml(n.stockCode)}" data-stock-name="${escHtml(n.stockName)}" title="在同花顺查看 ${escHtml(n.stockName)} 行情" style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand); text-decoration:none; cursor:pointer;">${escHtml(n.stockName)}</a>
                       <span style="font-size:11px; color:${nChange.color}; font-weight:var(--weight-medium);">${nChange.text}</span>
                     </div>
                     ${link !== '#' ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="flex:1; font-size:var(--text-body); color:var(--ink); text-decoration:none; line-height:1.4;${'text-decoration:none;'}" onmouseenter="this.style.color='var(--brand)'" onmouseleave="this.style.color='var(--ink)'">${escHtml(n.title)} <i data-lucide="external-link" style="width:11px; height:11px; display:inline; vertical-align:middle;"></i></a>` : `<span style="flex:1; font-size:var(--text-body); color:var(--ink-2); line-height:1.4;">${escHtml(n.title)}</span>`}
@@ -834,12 +829,7 @@ export function createMarketHotPage(root) {
 
     root.querySelectorAll('.stock-name-link').forEach((link) => {
       link.addEventListener('click', (e) => {
-        e.preventDefault()
         e.stopPropagation()
-        const code = link.getAttribute('data-stock-code') || ''
-        const name = link.getAttribute('data-stock-name') || ''
-        const url = getStockUrl(code, name)
-        window.open(url, '_blank', 'noopener')
       })
       link.addEventListener('mouseenter', () => {
         link.style.textDecoration = 'underline'
