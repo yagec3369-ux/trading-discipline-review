@@ -96,6 +96,21 @@ export function createRiskControlPage(root) {
     return calcTodayPnl()
   }
 
+  // 可用资金 = 账户总金额 - Σ 所有买入金额 + Σ 所有卖出金额
+  // 基于交易记录现金流水，不依赖持仓成本价
+  function calcAvailableFund() {
+    const totalFund = parseFloat(state.totalFund) || 0
+    const trades = getTradeRecords()
+    const totalBuy = trades.filter(t => t.type === 'buy').reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
+    const totalSell = trades.filter(t => t.type === 'sell').reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
+    return totalFund - totalBuy + totalSell
+  }
+
+  // 当前总资产 = 股票市值 + 可用资金
+  function calcTotalAsset() {
+    return getHoldingsValue() + calcAvailableFund()
+  }
+
   function render() {
     root.innerHTML = `
       <!-- Circuit breaker banner -->
@@ -306,9 +321,8 @@ export function createRiskControlPage(root) {
         </div>
       `
     }
-    const totalFund = parseFloat(state.totalFund) || 0
     const stockValue = activeHoldings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
-    const totalAsset = stockValue + (totalFund - stockValue + calcTodayPnl())
+    const totalAsset = calcTotalAsset()
     const fmt = (v) => v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
     const fmtSigned = (v) => (v >= 0 ? '+' : '') + v.toFixed(2)
 
@@ -383,9 +397,8 @@ export function createRiskControlPage(root) {
       </div><p style="font-size:var(--text-caption); color:var(--ink-3);">暂无持仓数据</p>`
       return
     }
-    const totalFund = parseFloat(state.totalFund) || 0
     const stockValue = activeHoldings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
-    const totalAsset = stockValue + (totalFund - stockValue + calcTodayPnl())
+    const totalAsset = calcTotalAsset()
     const fmt = (v) => v.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
     const fmtSigned = (v) => (v >= 0 ? '+' : '') + v.toFixed(2)
 
@@ -644,12 +657,12 @@ export function createRiskControlPage(root) {
     const totalFund = parseFloat(state.totalFund) || 0
     // 2. 股票总市值 = Σ(持仓数 × 现价)
     const stockValue = getHoldingsValue()
-    // 3. 盈亏今日（自动计算）
+    // 3. 盈亏今日（持仓浮动盈亏）
     const todayPnl = calcTodayPnl()
-    // 4. 可用资金 = 账户总金额 - 股票市值 + 盈亏今日
-    const available = totalFund - stockValue + todayPnl
+    // 4. 可用资金 = 账户总金额 - Σ 买入金额 + Σ 卖出金额
+    const available = calcAvailableFund()
     // 5. 当前总资产 = 股票市值 + 可用资金
-    const totalAsset = stockValue + available
+    const totalAsset = calcTotalAsset()
     // 6. 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
     const monthlyPnl = calcMonthlyPnl()
     // 7. 总仓位占比 = 股票市值 / 当前总资产
@@ -803,7 +816,7 @@ export function createRiskControlPage(root) {
     const monthlyPnl = calcMonthlyPnl()
     const todayPnl = calcTodayPnl()
     const stockValue = getHoldingsValue()
-    const totalAsset = stockValue + (totalFund - stockValue + todayPnl)
+    const totalAsset = calcTotalAsset()
     const trades = getTradeRecords()
     const states = ['pending', 'pending', 'pending', 'pending', 'pending', 'pending']
 
