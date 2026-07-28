@@ -2,94 +2,94 @@
   "subjective": [],
   "auto": [
     {
-      "id": "auto_finance_9_1785276962011",
-      "title": "半年报密集披露 多家上市公司业绩超预期",
-      "content": "进入半年报披露季，部分行业龙头公司业绩表现亮眼",
-      "tag": "earnings",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2001-07-28T16:45:00.000Z"
-    },
-    {
-      "id": "auto_stock_4_1785276962011",
-      "title": "万科拟回购100亿元股份 彰显发展信心",
-      "content": "房地产",
-      "tag": "news",
-      "stockCode": "000002",
-      "confidence": 0.6,
-      "createdAt": "2001-07-28T15:00:00.000Z"
-    },
-    {
-      "id": "auto_finance_8_1785276962011",
-      "title": "新能源产业政策再加码 多部门联合发布支持意见",
-      "content": "支持新能源汽车、光伏、储能等产业高质量发展",
+      "id": "auto_finance_9_1785280997280",
+      "title": "证监会就完善上市公司退市制度征求意见",
+      "content": "进一步优化退市指标，简化退市流程，强化退市监管，保护中小投资者合法权益。",
       "tag": "policy",
       "stockCode": "",
       "confidence": 0.6,
-      "createdAt": "2001-07-28T14:00:00.000Z"
+      "createdAt": "2026-07-28T14:00:00.000Z"
     },
     {
-      "id": "auto_stock_3_1785276962011",
-      "title": "阳光电源签50亿海外储能大单 海外业务持续突破",
+      "id": "auto_stock_4_1785280997280",
+      "title": "长江存储NAND Flash产品中标三大服务器厂商集采订单",
+      "content": "存储芯片",
+      "tag": "announcement",
+      "stockCode": "603000",
+      "confidence": 0.6,
+      "createdAt": "2026-07-28T13:20:00.000Z"
+    },
+    {
+      "id": "auto_stock_3_1785280997280",
+      "title": "隆基绿能控股股东拟减持不超2%公司股份",
       "content": "光伏储能",
-      "tag": "news",
-      "stockCode": "300274",
-      "confidence": 0.8,
-      "createdAt": "2001-07-28T13:30:00.000Z"
-    },
-    {
-      "id": "auto_finance_7_1785276962011",
-      "title": "沪深两市成交额突破1.5万亿 北向资金净流入超200亿",
-      "content": "A股市场持续放量，外资大幅流入，市场情绪回暖",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2001-07-28T11:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_2_1785276962011",
-      "title": "讯飞星火大模型V5.0发布 多项能力超越GPT-4",
-      "content": "人工智能",
-      "tag": "news",
-      "stockCode": "002230",
+      "tag": "reduction",
+      "stockCode": "601012",
       "confidence": 0.6,
-      "createdAt": "2001-07-28T11:00:00.000Z"
+      "createdAt": "2026-07-28T11:15:00.000Z"
     },
     {
-      "id": "auto_stock_1_1785276962011",
-      "title": "中际旭创上半年净利润同比增长150% 光模块需求旺盛",
-      "content": "CPO概念",
-      "tag": "news",
-      "stockCode": "300308",
-      "confidence": 0.9,
-      "createdAt": "2001-07-28T10:30:00.000Z"
-    },
-    {
-      "id": "auto_finance_6_1785276962011",
-      "title": "国务院印发数字中国建设整体布局规划",
-      "content": "规划提出要全面提升数字中国建设的整体性、系统性、协同性",
-      "tag": "policy",
-      "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2001-07-28T10:15:00.000Z"
-    },
-    {
-      "id": "auto_finance_5_1785276962011",
-      "title": "央行宣布降准0.5个百分点 释放长期资金约1万亿元",
-      "content": "中国人民银行决定于下调金融机构存款准备金率，支持实体经济发展",
-      "tag": "policy",
-      "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2001-07-28T09:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_0_1785276962011",
-      "title": "比亚迪第500万辆新能源汽车下线 创全球新纪录",
-      "content": "新能源汽车",
+      "id": "auto_stock_2_1785280997280",
+      "title": "比亚迪上半年净利润同比增长85% 海外销量超30万辆",
+      "content": "新能源车",
       "tag": "news",
       "stockCode": "002594",
       "confidence": 0.6,
-      "createdAt": "2001-07-28T09:00:00.000Z"
+      "createdAt": "2026-07-28T10:30:00.000Z"
+    },
+    {
+      "id": "auto_finance_8_1785280997280",
+      "title": "行业轮动加速 机构建议关注业绩确定性主线",
+      "content": "二季度财报密集披露期，市场风格切换明显，基金经理建议从题材炒作转向业绩兑现。",
+      "tag": "earnings",
+      "stockCode": "",
+      "confidence": 0.6,
+      "createdAt": "2026-07-28T10:20:00.000Z"
+    },
+    {
+      "id": "auto_stock_1_1785280997280",
+      "title": "埃斯顿与特斯拉签署人形机器人零部件供应框架协议",
+      "content": "机器人",
+      "tag": "news",
+      "stockCode": "002747",
+      "confidence": 0.9,
+      "createdAt": "2026-07-28T09:45:00.000Z"
+    },
+    {
+      "id": "auto_finance_7_1785280997280",
+      "title": "A股三大指数集体高开 算力板块领涨",
+      "content": "沪指涨0.32%，深成指涨0.58%，创业板指涨0.81%，AI算力、半导体板块涨幅居前。",
+      "tag": "market",
+      "stockCode": "",
+      "confidence": 0.9,
+      "createdAt": "2026-07-28T09:35:00.000Z"
+    },
+    {
+      "id": "auto_finance_6_1785280997280",
+      "title": "央行今日开展3000亿元7天期逆回购操作 净投放2500亿",
+      "content": "央行公开市场操作力度加大，维护银行体系流动性合理充裕，市场利率稳中趋降。",
+      "tag": "policy",
+      "stockCode": "",
+      "confidence": 0.6,
+      "createdAt": "2026-07-28T09:15:00.000Z"
+    },
+    {
+      "id": "auto_stock_0_1785280997280",
+      "title": "寒武纪发布新一代思元AI推理芯片 性能提升3倍",
+      "content": "AI算力",
+      "tag": "news",
+      "stockCode": "688256",
+      "confidence": 0.6,
+      "createdAt": "2026-07-28T09:00:00.000Z"
+    },
+    {
+      "id": "auto_finance_5_1785280997280",
+      "title": "国务院印发数字经济高质量发展规划 2026-2030",
+      "content": "规划提出到2030年数字经济核心产业增加值占GDP比重达到15%，重点支持AI、集成电路、量子信息等领域。",
+      "tag": "policy",
+      "stockCode": "",
+      "confidence": 0.6,
+      "createdAt": "2026-07-28T08:30:00.000Z"
     }
   ]
 }
