@@ -5,6 +5,7 @@ import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 import { fetchStockQuotes } from '../utils/stock-quote.js'
+import { getPendingStockFilter, clearPendingStockFilter } from '../components/layout.js'
 
 const DAILY_QUESTIONS = [
   '今日操作是否在计划内？',
@@ -83,6 +84,7 @@ export function createPositionCheckPage(root) {
   }
 
   function render() {
+    const filter = getPendingStockFilter()
     const activeHoldings = holdings.filter((h) => !h.archived)
     const archivedHoldings = holdings.filter((h) => h.archived)
 
@@ -112,7 +114,7 @@ export function createPositionCheckPage(root) {
         </div>
       ` : `
         <div id="holdings-list" class="flex flex-col gap-4">
-          ${activeHoldings.map((h) => stockCardHTML(h)).join('')}
+          ${activeHoldings.map((h) => stockCardHTML(h, filter)).join('')}
         </div>
       `}
 
@@ -132,13 +134,17 @@ export function createPositionCheckPage(root) {
     bindEvents()
   }
 
-  function stockCardHTML(h) {
+  function stockCardHTML(h, filter) {
     const today = todayStr()
     const todayCheck = h.checks && h.checks.date === today ? h.checks : null
     const historyList = (h.reviewHistory || []).slice(-10).reverse()
     const submitted = todayCheck && todayCheck.submitted
     const canSubmit = todayCheck && todayCheck.checks.every((c) => c.answer !== null)
     const expanded = h.expanded !== false
+    const isFilteredMatch = !!(filter && (
+      (filter.code && h.code === filter.code) ||
+      (filter.name && h.name === filter.name)
+    ))
 
     const { pnl, pnlPct, pnlColor } = calcPnl(h.buyPrice, h.currentPrice, h.quantity)
     const qty = parseFloat(h.quantity) || 0
@@ -151,7 +157,7 @@ export function createPositionCheckPage(root) {
     const scoreColor = score >= 6 ? 'var(--state-success)' : score >= 4 ? 'var(--state-warning)' : 'var(--state-error)'
 
     return `
-      <div class="stock-card" data-id="${h.id}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;">
+      <div class="stock-card" data-id="${h.id}" style="background:var(--surface); border:1px solid ${isFilteredMatch ? 'var(--brand)' : 'var(--line)'}; box-shadow:${isFilteredMatch ? '0 0 0 3px var(--brand-muted)' : 'none'}; border-radius:var(--r-md); overflow:hidden; transition:box-shadow 0.2s, border-color 0.2s;">
         <div class="stock-card-header flex items-center justify-between px-4 sm:px-5 py-3" style="cursor:pointer; user-select:none; border-bottom:1px solid var(--line);">
           <div class="flex items-center gap-3 min-w-0 flex-1 flex-wrap">
             <i class="expand-chevron" data-lucide="chevron-right" style="width:16px; height:16px; color:var(--ink-3); transition:transform 0.2s; transform:rotate(${expanded ? '90deg' : '0deg'}); flex-shrink:0;"></i>
@@ -751,7 +757,34 @@ export function createPositionCheckPage(root) {
       }
       on(DATA_EVENTS.HOLDINGS_CHANGED, _holdingsListener)
       on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _holdingsListener)
+
+      const filter = getPendingStockFilter()
+      let matchedId = null
+      if (filter) {
+        const matched = holdings.find((h) => !h.archived && (
+          (filter.code && h.code === filter.code) ||
+          (filter.name && h.name === filter.name)
+        ))
+        if (matched) {
+          matched.expanded = true
+          matchedId = matched.id
+          saveHoldings()
+          showToast('已定位到 ' + matched.name)
+        } else {
+          showToast('"' + (filter.name || filter.code) + '" 不在当前持仓中')
+        }
+      }
+
       render()
+      if (filter) clearPendingStockFilter()
+      if (matchedId) {
+        setTimeout(() => {
+          const card = root.querySelector(`.stock-card[data-id="${matchedId}"]`)
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }, 50)
+      }
       // 进入页面时自动刷新一次现价
       refreshQuotes()
       startAutoRefresh()

@@ -3,6 +3,7 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { navigateTo } from '../components/layout.js'
 
 const R_UNIT = 1000
 
@@ -220,7 +221,7 @@ function renderConceptWithNews(concepts, stockNews) {
                 return `
                   <div style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) 0; border-bottom:1px solid var(--line);">
                     <div style="display:flex; flex-direction:column; min-width:100px;">
-                      <span style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand);">${escHtml(n.stockName)}</span>
+                      <a href="javascript:void(0)" class="stock-name-link" data-stock-code="${escHtml(n.stockCode)}" data-stock-name="${escHtml(n.stockName)}" style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand); text-decoration:none; cursor:pointer;">${escHtml(n.stockName)}</a>
                       <span style="font-size:11px; color:${nChange.color}; font-weight:var(--weight-medium);">${nChange.text}</span>
                     </div>
                     ${link !== '#' ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="flex:1; font-size:var(--text-body); color:var(--ink); text-decoration:none; line-height:1.4;${'text-decoration:none;'}" onmouseenter="this.style.color='var(--brand)'" onmouseleave="this.style.color='var(--ink)'">${escHtml(n.title)} <i data-lucide="external-link" style="width:11px; height:11px; display:inline; vertical-align:middle;"></i></a>` : `<span style="flex:1; font-size:var(--text-body); color:var(--ink-2); line-height:1.4;">${escHtml(n.title)}</span>`}
@@ -817,6 +818,22 @@ export function createMarketHotPage(root) {
         activeTab = btn.getAttribute('data-tab')
         expandedRows.clear()
         render()
+      })
+    })
+
+    root.querySelectorAll('.stock-name-link').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const code = link.getAttribute('data-stock-code') || ''
+        const name = link.getAttribute('data-stock-name') || ''
+        navigateTo('position', { stockCode: code, stockName: name })
+      })
+      link.addEventListener('mouseenter', () => {
+        link.style.textDecoration = 'underline'
+      })
+      link.addEventListener('mouseleave', () => {
+        link.style.textDecoration = 'none'
       })
     })
 
