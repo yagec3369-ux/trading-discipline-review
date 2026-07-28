@@ -63,8 +63,16 @@ function parseExcel(filePath) {
   console.log('Sheet 列表:', wb.SheetNames.join(', '))
 
   const concepts = parseSheet(wb, '热点概念榜', parseConcept)
-  const financeNews = parseSheet(wb, '财经新闻', (r) => parseNews(r, 'finance'))
-  const stockNews = parseSheet(wb, '个股新闻', (r) => parseNews(r, 'stock'))
+  const financeNewsRaw = parseSheet(wb, '财经新闻', (r) => parseNews(r, 'finance'))
+  const stockNewsRaw = parseSheet(wb, '个股新闻', (r) => parseNews(r, 'stock'))
+  const financeNews = dedupNews(financeNewsRaw)
+  const stockNews = dedupNews(stockNewsRaw)
+  if (financeNewsRaw.length !== financeNews.length) {
+    console.log(`  [去重] 财经新闻 ${financeNewsRaw.length} → ${financeNews.length} 条`)
+  }
+  if (stockNewsRaw.length !== stockNews.length) {
+    console.log(`  [去重] 个股新闻 ${stockNewsRaw.length} → ${stockNews.length} 条`)
+  }
   const indices = parseSheet(wb, '指数行情', parseIndex)
   const sentiment = parseSheet(wb, '市场情绪', parseSentiment)
   const limitUp = parseSheet(wb, '涨停明细', (r) => parseLimit(r, 'up'))
@@ -90,6 +98,18 @@ function parseExcel(filePath) {
     date: dateStr,
     updatedAt: new Date().toISOString()
   }
+}
+
+// 按标题去重（个股新闻同时按股票名+标题去重）
+function dedupNews(news) {
+  if (!Array.isArray(news) || news.length === 0) return []
+  const seen = new Set()
+  return news.filter((n) => {
+    const key = n.stockName ? (n.stockName + '|' + n.title) : n.title
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
 }
 
 // 通用 sheet 解析

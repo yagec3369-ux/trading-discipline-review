@@ -617,11 +617,27 @@ export function createMarketHotPage(root) {
   }
   function getFinanceNews() {
     const src = currentData
-    return src?.financeNews?.length > 0 ? src.financeNews : SAMPLE_FINANCE_NEWS
+    const news = src?.financeNews?.length > 0 ? src.financeNews : SAMPLE_FINANCE_NEWS
+    // 前端去重保险：按标题去重
+    const seen = new Set()
+    return news.filter((n) => {
+      const key = n.title || ''
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
   }
   function getStockNews() {
     const src = currentData
-    return src?.stockNews?.length > 0 ? src.stockNews : SAMPLE_STOCK_NEWS
+    const news = src?.stockNews?.length > 0 ? src.stockNews : SAMPLE_STOCK_NEWS
+    // 前端去重保险：按 股票名+标题 去重
+    const seen = new Set()
+    return news.filter((n) => {
+      const key = (n.stockName || '') + '|' + (n.title || '')
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
   }
   function getIndices() {
     const src = currentData
