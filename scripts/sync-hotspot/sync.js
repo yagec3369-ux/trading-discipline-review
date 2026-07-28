@@ -1,6 +1,5 @@
 // 读取 workbuddy 生成的热点 Excel，转成网页端可用的 JSON，推送到 GitHub
-// 用法: node scripts/sync-hotspot/sync.js [--push] [--dry]
-//       默认读取 /workspace/stock_hotspot/reports/ 下的热点 Excel
+// 用法: node scripts/sync-hotspot/sync.js --reportsDir="C:\Users\admin\WorkBuddy\..." [--push] [--dry]
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -14,16 +13,16 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
   return acc
 }, {})
 
-const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || '/workspace/stock_hotspot/reports'
+const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || path.resolve(process.cwd(), 'stock_hotspot/reports')
 const PUSH = args.push || false
 const DRY = args.dry || false
 const OUTPUT_PATH = path.resolve(process.cwd(), 'public/market-hot.json')
-const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
 const LOGIC_LIBRARY_PATH = path.resolve(process.cwd(), 'public/logic-library.json')
+const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
 
 if (!REPORTS_DIR) {
-  console.error('错误: 请通过 --reportsDir 指定热点数据文件夹路径')
-  console.error('示例: node scripts/sync-hotspot/sync.js --reportsDir="/workspace/stock_hotspot/reports" --push')
+  console.error('错误: 请通过 --reportsDir 指定 workbuddy reports 文件夹路径')
+  console.error('示例: node scripts/sync-hotspot/sync.js --reportsDir="C:\\Users\\admin\\WorkBuddy\\2026-05-13-task-7\\stock_hotspot\\reports" --push')
   process.exit(1)
 }
 
@@ -65,36 +64,21 @@ function parseExcel(filePath) {
   console.log('Sheet 列表:', wb.SheetNames.join(', '))
 
   const concepts = parseSheet(wb, '热点概念榜', parseConcept)
-  const financeNewsRaw = parseSheet(wb, '财经新闻', (r) => parseNews(r, 'finance'))
-  const stockNewsRaw = parseSheet(wb, '个股新闻', (r) => parseNews(r, 'stock'))
-  const financeNews = dedupNews(financeNewsRaw)
-  const stockNews = dedupNews(stockNewsRaw)
-  if (financeNewsRaw.length !== financeNews.length) {
-    console.log(`  [去重] 财经新闻 ${financeNewsRaw.length} → ${financeNews.length} 条`)
-  }
-  if (stockNewsRaw.length !== stockNews.length) {
-    console.log(`  [去重] 个股新闻 ${stockNewsRaw.length} → ${stockNews.length} 条`)
-  }
+  const financeNews = parseSheet(wb, '财经新闻', (r) => parseNews(r, 'finance'))
+  const stockNews = parseSheet(wb, '个股新闻', (r) => parseNews(r, 'stock'))
   const indices = parseSheet(wb, '指数行情', parseIndex)
   const sentiment = parseSheet(wb, '市场情绪', parseSentiment)
   const limitUp = parseSheet(wb, '涨停明细', (r) => parseLimit(r, 'up'))
   const limitDown = parseSheet(wb, '跌停明细', (r) => parseLimit(r, 'down'))
-  const etf = parseSheet(wb, 'ETF成交额', parseETF)
+  const etf = parseSheet(wb, 'ETF', parseETF)
   const industryFlow = parseSheet(wb, '行业资金流', parseIndustryFlow)
-  const fundScale = parseSheet(wb, '基金规模变化', parseFundScale)
-
-  // 构建 股票名→{code, change} 映射，填充缺失的股票代码和涨跌幅
-  const infoMap = buildStockInfoMap(wb)
-
-  // 为每个概念附加 Top3 领涨股列表
-  attachTopStocks(wb, concepts)
 
   const dateMatch = path.basename(filePath).match(/(\d{8})/)
   const dateStr = dateMatch
     ? dateMatch[1].replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')
     : new Date().toISOString().slice(0, 10)
 
-  const data = {
+  return {
     concepts,
     financeNews,
     stockNews,
@@ -104,231 +88,20 @@ function parseExcel(filePath) {
     limitDown,
     etf,
     industryFlow,
-    fundScale,
     date: dateStr,
     updatedAt: new Date().toISOString()
   }
-
-  fillStockInfo(data, infoMap)
-
-  return data
-}
-
-// 从"概念领涨股Top3" sheet 提取每个概念的前3名领涨股，附加到 concepts 数据
-function attachTopStocks(wb, concepts) {
-  const aliases = ['概念领涨股Top3', '领涨股Top3', '领涨股', '概念领涨', '领涨股排行', 'Top3', 'top3']
-  let topSheetName = null
-  for (const s of wb.SheetNames) {
-    const sLower = s.toLowerCase()
-    if (aliases.some((a) => sLower.includes(a.toLowerCase()) || a.toLowerCase().includes(sLower))) {
-      topSheetName = s
-      break
-    }
-  }
-  if (!topSheetName) {
-    console.log('  [跳过] 未找到"概念领涨股Top3" sheet，仅使用领涨股第1名')
-    return
-  }
-
-  const sheet = wb.Sheets[topSheetName]
-  const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
-  console.log(`  [匹配] 领涨股Top3 sheet → "${topSheetName}", ${rows.length} 行`)
-
-  // 构建 概念名 → [{name, code, change}] 映射
-  const conceptTopMap = new Map()
-  for (const r of rows) {
-    const conceptName = col(r, '概念名称', '概念', '板块名称', '板块', '所属概念')
-    if (!conceptName) continue
-    const stocks = []
-    for (let i = 1; i <= 3; i++) {
-      const name = col(r, `领涨股${i}`, `股票${i}`, `个股${i}`, i === 1 ? '领涨股' : '', i === 1 ? '股票名称' : '', i === 1 ? '名称' : '')
-      const code = col(r, `领涨股${i}代码`, `股票${i}代码`, `代码${i}`, i === 1 ? '股票代码' : '', i === 1 ? '代码' : '')
-      const change = colNum(r, `领涨股${i}涨跌幅`, `股票${i}涨跌幅`, `涨跌幅${i}`, i === 1 ? '涨跌幅' : '', i === 1 ? '涨幅' : '')
-      if (name) stocks.push({ name, code, change })
-    }
-    if (stocks.length > 0) {
-      conceptTopMap.set(conceptName, stocks)
-    }
-  }
-
-  // 附加到 concepts
-  let attached = 0
-  for (const c of concepts) {
-    if (conceptTopMap.has(c.name)) {
-      c.topStocks = conceptTopMap.get(c.name)
-      attached++
-    } else if (c.leadingStock) {
-      // 兜底：没有 Top3 数据，至少用 leadingStock
-      c.topStocks = [{ name: c.leadingStock, code: c.leadingCode, change: c.leadingChange }]
-    }
-  }
-  console.log(`  [附加] Top3 领涨股 ${attached}/${concepts.length} 个概念`)
-}
-
-// 从"概念领涨股Top3"等 sheet 构建 股票名→{code, change} 映射
-function buildStockInfoMap(wb) {
-  const map = new Map()
-  // 尝试匹配 "概念领涨股Top3" 及类似 sheet
-  const aliases = ['概念领涨股Top3', '领涨股Top3', '领涨股', '概念领涨', '领涨股排行', 'Top3', 'top3']
-  let matched = false
-  for (const s of wb.SheetNames) {
-    const sLower = s.toLowerCase()
-    if (aliases.some((a) => sLower.includes(a.toLowerCase()) || a.toLowerCase().includes(sLower))) {
-      const sheet = wb.Sheets[s]
-      const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
-      console.log(`  [匹配] 领涨股 sheet → "${s}", ${rows.length} 行`)
-      console.log(`  [列名] ${Object.keys(rows[0] || {}).join(', ')}`)
-      let rowMatched = false
-      for (const r of rows) {
-        rowMatched = false
-        // 宽格式：每行可能有多只股票（领涨股1/领涨股2/领涨股3）
-        for (let i = 1; i <= 3; i++) {
-          const name = col(r, `领涨股${i}`, `股票${i}`, `个股${i}`, i === 1 ? '领涨股' : '', i === 1 ? '股票名称' : '', i === 1 ? '名称' : '')
-          const code = col(r, `领涨股${i}代码`, `股票${i}代码`, `代码${i}`, i === 1 ? '股票代码' : '', i === 1 ? '代码' : '')
-          const change = colNum(r, `领涨股${i}涨跌幅`, `股票${i}涨跌幅`, `涨跌幅${i}`, i === 1 ? '涨跌幅' : '', i === 1 ? '涨幅' : '')
-          if (name && code) {
-            map.set(name, { code, change })
-            rowMatched = true
-          }
-        }
-        // 兜底：本行未匹配到，直接找所有含"名称"和"代码"的列对
-        if (!rowMatched) {
-          const keys = Object.keys(r)
-          const nameKeys = keys.filter((k) => /名称|股票|个股|领涨/.test(k))
-          const codeKeys = keys.filter((k) => /代码|证券代码/.test(k))
-          for (const nk of nameKeys) {
-            for (const ck of codeKeys) {
-              if (r[nk] && r[ck]) {
-                const nm = String(r[nk]).trim()
-                const cd = String(r[ck]).trim()
-                // 尝试找对应的涨跌幅列
-                const suffix = nk.replace(/.*名称|.*股票|.*个股|.*领涨/, '').replace(/[^0-9]/g, '')
-                const ckSuffix = ck.replace(/.*代码|.*证券代码/, '').replace(/[^0-9]/g, '')
-                const changeKey = suffix ? `涨跌幅${suffix}` : '涨跌幅'
-                const chg = colNum(r, changeKey, '涨跌幅', '涨幅')
-                if (!map.has(nm)) {
-                  map.set(nm, { code: cd, change: chg })
-                }
-              }
-            }
-          }
-        }
-      }
-      matched = true
-      break
-    }
-  }
-  if (!matched) {
-    console.log('  [跳过] 未找到"概念领涨股Top3"类 sheet')
-  }
-  // 也从涨停/跌停明细中补充映射
-  for (const sheetName of ['涨停明细', '跌停明细']) {
-    const aliases2 = SHEET_ALIASES[sheetName] || []
-    const allNames = [sheetName, ...aliases2]
-    let actualName = null
-    for (const s of wb.SheetNames) {
-      const sLower = s.toLowerCase()
-      if (allNames.some((n) => sLower.includes(n.toLowerCase()) || n.toLowerCase().includes(sLower))) {
-        actualName = s
-        break
-      }
-    }
-    const sheet = wb.Sheets[actualName || sheetName]
-    if (sheet) {
-      const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
-      for (const r of rows) {
-        const name = col(r, '股票名称', '名称')
-        const code = col(r, '股票代码', '代码')
-        const change = colNum(r, '涨跌幅', '涨幅', '跌幅')
-        if (name && code && !map.has(name)) {
-          map.set(name, { code, change })
-        }
-      }
-    }
-  }
-  console.log(`  [映射] 股票名→信息映射共 ${map.size} 条`)
-  return map
-}
-
-// 用映射填充缺失的股票代码和涨跌幅
-function fillStockInfo(data, infoMap) {
-  if (!infoMap || infoMap.size === 0) return data
-  let filledCode = 0, filledChange = 0, filledLeadCode = 0
-  // 填充 stockNews 的 stockCode 和 change
-  for (const n of data.stockNews) {
-    if (n.stockName && infoMap.has(n.stockName)) {
-      const info = infoMap.get(n.stockName)
-      if (!n.stockCode && info.code) {
-        n.stockCode = info.code
-        filledCode++
-      }
-      if (n.change === undefined && info.change) {
-        n.change = info.change
-        filledChange++
-      }
-    }
-  }
-  // 填充 concepts 的 leadingCode
-  for (const c of data.concepts) {
-    if (!c.leadingCode && c.leadingStock && infoMap.has(c.leadingStock)) {
-      const info = infoMap.get(c.leadingStock)
-      if (info.code) {
-        c.leadingCode = info.code
-        filledLeadCode++
-      }
-    }
-  }
-  if (filledCode > 0) console.log(`  [填充] 个股新闻 stockCode ${filledCode} 条`)
-  if (filledChange > 0) console.log(`  [填充] 个股新闻 涨跌幅 ${filledChange} 条`)
-  if (filledLeadCode > 0) console.log(`  [填充] 概念 leadingCode ${filledLeadCode} 条`)
-  return data
-}
-
-// 按标题去重（个股新闻同时按股票名+标题去重）
-function dedupNews(news) {
-  if (!Array.isArray(news) || news.length === 0) return []
-  const seen = new Set()
-  return news.filter((n) => {
-    const key = n.stockName ? (n.stockName + '|' + n.title) : n.title
-    if (seen.has(key)) return false
-    seen.add(key)
-    return true
-  })
 }
 
 // 通用 sheet 解析
-const SHEET_ALIASES = {
-  '热点概念榜': ['热点概念', '概念排行', '概念榜', '概念'],
-  '财经新闻': ['财经', '新闻'],
-  '个股新闻': ['个股', '股票新闻'],
-  '指数行情': ['指数', '大盘指数', '主要指数'],
-  '市场情绪': ['情绪', '市场情绪指标', '情绪指标'],
-  '涨停明细': ['涨停', '涨停板', '涨停股'],
-  '跌停明细': ['跌停', '跌停板', '跌停股'],
-  'ETF': ['ETF成交额', 'ETF净值排行', 'etf', 'ETF基金', 'etf成交额'],
-  'ETF成交额': ['ETF净值排行', 'etf', 'ETF基金'],
-  '行业资金流': ['行业资金', '资金流向', '行业资金流向', '资金流', '行业流向'],
-  '基金规模变化': ['基金规模', '规模变化', '基金变化']
-}
-
 function parseSheet(wb, sheetName, mapFn) {
-  // 模糊匹配 sheet 名（含别名）
-  const aliases = SHEET_ALIASES[sheetName] || []
-  const allNames = [sheetName, ...aliases]
-  let actualName = null
-  for (const s of wb.SheetNames) {
-    const sLower = s.toLowerCase()
-    if (allNames.some((n) => sLower.includes(n.toLowerCase()) || n.toLowerCase().includes(sLower))) {
-      actualName = s
-      break
-    }
-  }
+  // 模糊匹配 sheet 名
+  const actualName = wb.SheetNames.find((s) => s.includes(sheetName) || sheetName.includes(s))
   const sheet = wb.Sheets[actualName || sheetName]
   if (!sheet) {
-    console.log(`  [跳过] sheet "${sheetName}" 不存在 (已有sheets: ${wb.SheetNames.join(', ')})`)
+    console.log(`  [跳过] sheet "${sheetName}" 不存在`)
     return []
   }
-  console.log(`  [匹配] "${sheetName}" → "${actualName}"`)
   const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
   const result = rows.filter((r) => {
     // 过滤空行：至少有一个非空字段
@@ -433,33 +206,17 @@ function parseLimit(r, type) {
 }
 
 function parseETF(r) {
-  const name = col(r, '名称', 'ETF名称', '基金名称', '基金简称')
+  const name = col(r, '名称', 'ETF名称', '基金名称')
   if (!name) return null
   const change = colNum(r, '涨跌幅', '涨幅')
   return {
     name,
-    code: col(r, '代码', '基金代码', 'ETF代码'),
-    price: colNum(r, '最新价', '价格', '净值', '单位净值'),
+    code: col(r, '代码', '基金代码'),
+    price: colNum(r, '最新价', '价格', '净值'),
     change,
-    turnover: col(r, '成交额', '金额', '成交金额'),
-    netAmount: col(r, '净流入', '净额', '资金净流入', '主力净流入'),
+    turnover: col(r, '成交额', '金额'),
+    netAmount: col(r, '净流入', '净额', '资金净流入'),
     changeColor: change < 0 ? 'var(--state-success)' : 'var(--state-error)'
-  }
-}
-
-function parseFundScale(r) {
-  const name = col(r, '基金名称', '基金简称', '名称')
-  if (!name) return null
-  const scale = colNum(r, '最新规模', '规模', '基金规模')
-  return {
-    name,
-    code: col(r, '基金代码', '代码'),
-    scale,
-    scaleStr: col(r, '最新规模', '规模', '基金规模'),
-    change: col(r, '规模变化', '变化', '变动'),
-    changePct: colNum(r, '变化率', '涨跌幅', '变化幅度'),
-    type: col(r, '基金类型', '类型'),
-    changeColor: colNum(r, '变化率', '涨跌幅', '变化幅度') < 0 ? 'var(--state-success)' : 'var(--state-error)'
   }
 }
 
@@ -480,155 +237,91 @@ function parseIndustryFlow(r) {
   }
 }
 
-function generateLogicLibrary(currentData) {
-  const stockMap = new Map()
+function buildLogicLibrary(data) {
+  const autoLogic = []
+  let idCounter = 0
+  const now = new Date().toISOString()
 
-  function processData(data) {
-    if (!data || !data.concepts || !data.stockNews) return
-    const date = data.date || ''
-
-    for (const concept of data.concepts) {
-      // 遍历 Top3 领涨股，前3都算上榜
-      const topStocks = concept.topStocks && concept.topStocks.length > 0
-        ? concept.topStocks
-        : (concept.leadingStock ? [{ name: concept.leadingStock, code: concept.leadingCode, change: concept.leadingChange }] : [])
-
-      for (const ts of topStocks) {
-        const stockName = ts.name
-        if (!stockName) continue
-
-        if (!stockMap.has(stockName)) {
-          stockMap.set(stockName, {
-            name: stockName,
-            code: ts.code || '',
-            tags: [],
-            tagCounts: {},
-            appearances: []
-          })
-        }
-        const entry = stockMap.get(stockName)
-
-        if (ts.code && !entry.code) {
-          entry.code = ts.code
-        }
-
-        // 概念标签计数：同一概念上榜多次则 +1
-        if (!entry.tagCounts[concept.name]) {
-          entry.tagCounts[concept.name] = 0
-        }
-        entry.tagCounts[concept.name]++
-
-        const relatedNews = data.stockNews.filter(
-          (n) => n.stockName === stockName
-        )
-        let bestNews = null
-        if (relatedNews.length > 0) {
-          const conceptNews = relatedNews.find(
-            (n) => n.concept && n.concept.includes(concept.name)
-          )
-          if (conceptNews) {
-            bestNews = conceptNews
-          } else {
-            const newsWithConcept = relatedNews.find((n) => n.concept)
-            bestNews = newsWithConcept || relatedNews[0]
-          }
-        }
-
-        const change = ts.change || 0
-        const newsTitle = bestNews ? bestNews.title : ''
-        // 按 日期+新闻标题 融合：同日同标题的多个概念合并为一条
-        const existing = entry.appearances.find(
-          (a) => a.date === date && a.newsTitle === newsTitle
-        )
-        if (existing) {
-          if (!existing.concepts.some((c) => c.name === concept.name)) {
-            existing.concepts.push({ name: concept.name, conceptChange: concept.changePercent })
-          }
-        } else {
-          entry.appearances.push({
-            date,
-            newsTitle,
-            concepts: [{ name: concept.name, conceptChange: concept.changePercent }],
-            change,
-            news: bestNews
-              ? {
-                  title: bestNews.title,
-                  time: bestNews.time,
-                  source: bestNews.source,
-                  link: bestNews.link,
-                  concept: bestNews.concept
-                }
-              : null
-          })
-        }
-      }
+  // 安全时间解析：Excel 序列号 / 字符串 / 数字都兼容
+  function safeISO(t) {
+    if (!t) return now
+    if (typeof t === 'number') {
+      // Excel 日期序列号（1900 开始）粗略转换
+      const d = new Date(Date.UTC(1899, 11, 30 + t))
+      if (!isNaN(d.getTime())) return d.toISOString()
     }
-
-    for (const news of data.stockNews) {
-      if (!news.stockName) continue
-      if (!stockMap.has(news.stockName)) {
-        stockMap.set(news.stockName, {
-          name: news.stockName,
-          code: news.stockCode || '',
-          tags: [],
-          tagCounts: {},
-          appearances: []
-        })
-      }
-      const entry = stockMap.get(news.stockName)
-      if (news.stockCode && !entry.code) {
-        entry.code = news.stockCode
-      }
-    }
+    const s = String(t).trim()
+    // 处理 "2026-07-28 10:16:43" 形式
+    const d = new Date(s.replace(' ', 'T'))
+    if (!isNaN(d.getTime())) return d.toISOString()
+    const d2 = new Date(s)
+    if (!isNaN(d2.getTime())) return d2.toISOString()
+    return now
   }
 
-  if (fs.existsSync(HISTORY_DIR)) {
-    const files = fs
-      .readdirSync(HISTORY_DIR)
-      .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
-      .sort()
-    for (const file of files) {
-      try {
-        const data = JSON.parse(
-          fs.readFileSync(path.join(HISTORY_DIR, file), 'utf-8')
-        )
-        processData(data)
-      } catch (e) {}
-    }
+  // 个股新闻 → 自动逻辑库
+  for (const n of data.stockNews || []) {
+    const title = n.title || ''
+    // 根据标题关键词打标
+    let tag = 'news'
+    if (/公告|决议|离任|中标|采购|合同|转债|修正/.test(title)) tag = 'announcement'
+    else if (/减持|套现|质押|平仓/.test(title)) tag = 'reduction'
+    else if (/板块|走强|异动|拉升|涨停|震荡/.test(title)) tag = 'rotation'
+    else if (/政策|利好|扶持|补贴|规划|十四五|国务院|发改委|央行|证监会/.test(title)) tag = 'policy'
+    else if (/财报|业绩|亏损|盈利|预增|预减|半年报|一季报|年报/.test(title)) tag = 'earnings'
+    else if (/行业|产业|协会/.test(title)) tag = 'industry'
+    else if (/大盘|市场|A股|沪指|上证|创业板/.test(title)) tag = 'market'
+
+    // 来源可信度映射
+    let confidence = 0.6
+    if (/证券日报|中国证券报|上海证券报|证券时报/.test(n.source || '')) confidence = 0.9
+    else if (/财联社|第一财经|南方财经|21世纪/.test(n.source || '')) confidence = 0.8
+    else if (/东方财富/.test(n.source || '')) confidence = 0.7
+
+    autoLogic.push({
+      id: 'auto_stock_' + (idCounter++) + '_' + Date.now(),
+      title: title,
+      content: [n.concept, n.summary || ''].filter(Boolean).join(' - ') || title,
+      tag,
+      stockCode: n.stockCode || '',
+      confidence,
+      createdAt: safeISO(n.time)
+    })
   }
 
-  const logicData = {
-    generatedAt: new Date().toISOString(),
-    totalStocks: stockMap.size,
-    stocks: Array.from(stockMap.values())
-      .map((s) => {
-        // 将 tagCounts 转为 tags 数组：[{name, count}]
-        const tags = Object.entries(s.tagCounts || {})
-          .map(([name, count]) => ({ name, count }))
-          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
-        return {
-          name: s.name,
-          code: s.code,
-          tags,
-          appearances: s.appearances.sort((a, b) => {
-            if (a.date !== b.date) return b.date.localeCompare(a.date)
-            return (b.concepts[0]?.conceptChange || 0) - (a.concepts[0]?.conceptChange || 0)
-          })
-        }
-      })
-      .sort((a, b) => {
-        if (b.appearances.length !== a.appearances.length) {
-          return b.appearances.length - a.appearances.length
-        }
-        return b.appearances[0]?.date.localeCompare(a.appearances[0]?.date || '')
-      })
+  // 财经新闻 → 自动逻辑库
+  for (const n of data.financeNews || []) {
+    const title = n.title || ''
+    let tag = 'news'
+    if (/政策|利好|扶持|补贴|规划|十四五|国务院|发改委|央行|证监会|降准|降息|LPR/.test(title)) tag = 'policy'
+    else if (/财报|业绩|亏损|盈利|GDP|CPI|PPI|PMI|经济数据/.test(title)) tag = 'earnings'
+    else if (/行业|产业|协会|新能源|半导体|AI|医药|消费|地产|金融/.test(title)) tag = 'industry'
+    else if (/大盘|市场|A股|沪指|上证|创业板|指数|收评|午评/.test(title)) tag = 'market'
+    else if (/板块|轮动|热点|主线|风格切换/.test(title)) tag = 'rotation'
+
+    let confidence = 0.6
+    if (/证券日报|中国证券报|上海证券报|证券时报/.test(n.source || '')) confidence = 0.9
+    else if (/财联社|第一财经|南方财经|21世纪/.test(n.source || '')) confidence = 0.8
+    else if (/东方财富/.test(n.source || '')) confidence = 0.7
+
+    autoLogic.push({
+      id: 'auto_finance_' + (idCounter++) + '_' + Date.now(),
+      title: title,
+      content: n.summary || title,
+      tag,
+      stockCode: '',
+      confidence,
+      createdAt: safeISO(n.time)
+    })
   }
 
-  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(logicData, null, 2), 'utf-8')
-  console.log(`\n逻辑库已生成: ${LOGIC_LIBRARY_PATH}`)
-  console.log(`  关注股票 ${logicData.totalStocks} 只, 累计 ${logicData.stocks.reduce((s, st) => s + st.appearances.length, 0)} 次上榜`)
+  // 按时间倒序
+  autoLogic.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
 
-  return logicData
+  return {
+    subjective: [],
+    auto: autoLogic
+  }
 }
 
 function main() {
@@ -641,8 +334,11 @@ function main() {
   console.log(`  指数行情 ${data.indices.length} 条, 市场情绪 ${data.sentiment.length} 条`)
   console.log(`  涨停 ${data.limitUp.length} 条, 跌停 ${data.limitDown.length} 条`)
   console.log(`  ETF ${data.etf.length} 条, 行业资金流 ${data.industryFlow.length} 条`)
-  console.log(`  基金规模 ${data.fundScale.length} 条`)
   console.log('数据日期:', data.date)
+
+  // 构建逻辑库
+  const logicLibrary = buildLogicLibrary(data)
+  console.log(`\n逻辑库: 自动 ${logicLibrary.auto.length} 条, 主观 ${logicLibrary.subjective.length} 条`)
 
   if (DRY) {
     console.log('\n[dry-run] 输出 JSON 预览:')
@@ -652,12 +348,18 @@ function main() {
         console.log(JSON.stringify(v.slice(0, 2), null, 2))
       }
     }
+    console.log('\n逻辑库 auto (前2条):')
+    console.log(JSON.stringify(logicLibrary.auto.slice(0, 2), null, 2))
     return
   }
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true })
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(data, null, 2), 'utf-8')
   console.log('\n已写入:', OUTPUT_PATH)
+
+  // 写入逻辑库 JSON
+  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(logicLibrary, null, 2), 'utf-8')
+  console.log('已写入:', LOGIC_LIBRARY_PATH)
 
   // 保存每日历史数据
   const historyFile = path.join(HISTORY_DIR, data.date + '.json')
@@ -680,13 +382,18 @@ function main() {
     console.log('历史索引已更新')
   }
 
-  generateLogicLibrary(data)
-
   if (PUSH) {
     try {
-      execSync('git pull --rebase origin main', { stdio: 'inherit' })
-      execSync('git add public/market-hot.json public/hotspot-history/ public/logic-library.json', { stdio: 'inherit' })
+      console.log('\n[1/4] git pull --rebase 同步远端...')
+      execSync('git pull --rebase --autostash origin main', { stdio: 'inherit' })
+
+      console.log('\n[2/4] git add 添加变更文件...')
+      execSync('git add public/market-hot.json public/logic-library.json public/hotspot-history/', { stdio: 'inherit' })
+
+      console.log('\n[3/4] git commit 提交...')
       execSync(`git commit -m "chore: 更新热点数据 ${data.date}"`, { stdio: 'inherit' })
+
+      console.log('\n[4/4] git push 推送到远端...')
       execSync('git push origin main', { stdio: 'inherit' })
       console.log('\n已推送到 GitHub!')
     } catch (e) {
