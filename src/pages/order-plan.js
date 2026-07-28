@@ -3,16 +3,6 @@ import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
-const DAILY_QUESTIONS = [
-  '今日操作是否在计划内？',
-  '是否严格执行了止损纪律？',
-  '是否避免了追涨杀跌？',
-  '仓位是否符合风控要求？',
-  '情绪状态是否稳定？',
-  '是否有未经计划的临时操作？',
-  '是否完成了逻辑判断记录？'
-]
-
 const R_UNIT = 1000
 
 function getTotalFund() {
@@ -34,10 +24,6 @@ function loadPlans() {
 
 function savePlans(plans) {
   lsSetJSON(STORAGE_KEYS.plans, plans)
-}
-
-function makeEmptyChecks() {
-  return DAILY_QUESTIONS.map(() => ({ answer: null, reason: '' }))
 }
 
 export function createOrderPlanPage(root) {
@@ -86,10 +72,7 @@ export function createOrderPlanPage(root) {
 
   function planCardHTML(p) {
     const today = todayStr()
-    const todayCheck = p.checks && p.checks.date === today ? p.checks : null
     const historyList = (p.history || []).slice(-10).reverse()
-    const canSubmit = todayCheck && todayCheck.checks.every((c) => c.answer !== null)
-    const submitted = todayCheck && todayCheck.submitted
     const expanded = p.expanded !== false
 
     const opColor = p.operationType === 'sell' ? 'var(--state-success)' : p.operationType === 't0' ? 'var(--state-warning)' : 'var(--state-error)'
@@ -171,28 +154,16 @@ export function createOrderPlanPage(root) {
               </div>
             </div>
 
-            <!-- Daily checks -->
-            <div class="mb-4">
-              <div class="flex items-center justify-between mb-3">
-                <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink); display:flex; align-items:center; gap:6px;">
-                  <i data-lucide="clipboard-check" style="width:14px; height:14px; color:var(--brand);"></i>
-                  今日纪律检查
-                </span>
-                ${submitted ? '<span style="font-size:var(--text-caption); color:var(--state-success); display:flex; align-items:center; gap:4px;"><i data-lucide="check-circle" style="width:12px; height:12px;"></i>已提交</span>' : ''}
-              </div>
-              ${renderCheckList(p, todayCheck, submitted)}
-            </div>
-
             <!-- Review notes -->
             <div class="mb-4">
               <label style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink); display:flex; align-items:center; gap:6px; margin-bottom:8px;">
                 <i data-lucide="file-text" style="width:14px; height:14px; color:var(--brand);"></i>
                 今日复盘总结
               </label>
-              <textarea class="review-notes-input" data-id="${p.id}" rows="3" placeholder="记录今日操作心得、情绪变化、改进方向..." style="width:100%; font-size:var(--text-body); padding:var(--s-2) var(--s-3); resize:vertical; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--bg); color:var(--ink);">${escHtml(p.reviewNotes || '')}</textarea>
+              <textarea class="review-notes-input" data-id="${p.id}" rows="3" placeholder="记录今日操作心得、情绪变化、改进方向..." style="width:100%; font-size:var(--text-body); padding:var(--s-2) var(--s-3); border:1px solid var(--line); border-radius:var(--r-sm); background:var(--bg); color:var(--ink); overflow:hidden; resize:none; min-height:60px;">${escHtml(p.reviewNotes || '')}</textarea>
             </div>
 
-            <!-- Submit / Logic buttons -->
+            <!-- Logic buttons -->
             <div class="flex items-center justify-between gap-3 flex-wrap mb-4">
               <div class="flex items-center gap-2">
                 <button class="logic-valid-btn" data-id="${p.id}" style="background:${p.logicStatus === 'valid' ? 'var(--state-success)' : 'var(--surface-2)'}; color:${p.logicStatus === 'valid' ? 'white' : 'var(--ink-3)'}; font-weight:var(--weight-medium); border:none; border-radius:var(--r-sm); padding:var(--s-2) var(--s-4); cursor:pointer; display:flex; align-items:center; gap:4px;">
@@ -204,10 +175,6 @@ export function createOrderPlanPage(root) {
                   逻辑失效
                 </button>
               </div>
-              <button class="submit-checks-btn" data-id="${p.id}" ${!canSubmit ? 'disabled' : ''} style="background:${canSubmit ? 'var(--brand)' : 'var(--surface-2)'}; color:${canSubmit ? 'var(--brand-ink)' : 'var(--ink-3)'}; font-weight:var(--weight-medium); border:none; border-radius:var(--r-sm); padding:var(--s-2) var(--s-4); cursor:${canSubmit ? 'pointer' : 'not-allowed'}; display:flex; align-items:center; gap:4px;">
-                <i data-lucide="send" style="width:14px; height:14px;"></i>
-                ${submitted ? '已提交' : '提交检查'}
-              </button>
             </div>
 
             <!-- History -->
@@ -234,40 +201,6 @@ export function createOrderPlanPage(root) {
             ` : ''}
           </div>
         </div>
-      </div>
-    `
-  }
-
-  function renderCheckList(p, todayCheck, submitted) {
-    const checks = todayCheck ? todayCheck.checks : (p.checks && p.checks.date === todayStr() ? p.checks.checks : makeEmptyChecks())
-    const readonly = submitted
-
-    return `
-      <div class="qa-list" data-id="${p.id}">
-        ${DAILY_QUESTIONS.map((q, i) => {
-          const c = checks[i] || { answer: null, reason: '' }
-          const yesActive = c.answer === true ? 'yes-active' : ''
-          const noActive = c.answer === false ? 'no-active' : ''
-          const disabledCls = readonly ? 'qa-disabled' : ''
-          return `
-            <div class="qa-item ${disabledCls}" data-qidx="${i}" data-id="${p.id}" style="${i < DAILY_QUESTIONS.length - 1 ? 'border-bottom:1px solid var(--line);' : ''}">
-              <div class="flex items-center justify-between gap-4 py-2.5">
-                <span style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${q}</span>
-                <div class="flex items-center gap-2 shrink-0">
-                  <button class="qa-pill yes-btn ${yesActive} ${readonly ? 'qa-readonly' : ''}" data-value="yes" data-qidx="${i}" data-id="${p.id}" ${readonly ? 'disabled' : ''}>是</button>
-                  <button class="qa-pill no-btn ${noActive} ${readonly ? 'qa-readonly' : ''}" data-value="no" data-qidx="${i}" data-id="${p.id}" ${readonly ? 'disabled' : ''}>否</button>
-                </div>
-              </div>
-              ${!readonly ? `
-                <div class="qa-reason-container" data-qidx="${i}" data-id="${p.id}" style="max-height:${c.answer === false ? '200px' : '0px'}; overflow:hidden; transition:max-height 0.3s ease;">
-                  <div style="padding:0 0 var(--s-2) 0;">
-                    <textarea class="qa-reason-input" data-qidx="${i}" data-id="${p.id}" rows="1" placeholder="请说明原因..." style="width:100%; resize:vertical; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--bg); color:var(--ink); font-size:var(--text-body); padding:var(--s-2);">${escHtml(c.reason || '')}</textarea>
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-          `
-        }).join('')}
       </div>
     `
   }
@@ -349,29 +282,13 @@ export function createOrderPlanPage(root) {
       })
     })
 
-    // Q&A pills
-    root.querySelectorAll('.qa-item').forEach((item) => {
-      const id = item.getAttribute('data-id')
-      const qidx = parseInt(item.getAttribute('data-qidx'), 10)
-      const yesBtn = item.querySelector('.yes-btn')
-      const noBtn = item.querySelector('.no-btn')
-
-      if (yesBtn) {
-        yesBtn.addEventListener('click', (e) => {
-          e.stopPropagation()
-          updateCheckAnswer(id, qidx, true)
-        })
-      }
-      if (noBtn) {
-        noBtn.addEventListener('click', (e) => {
-          e.stopPropagation()
-          updateCheckAnswer(id, qidx, false)
-        })
-      }
-    })
-
-    // Review notes
+    // Review notes — 自适应高度
     root.querySelectorAll('.review-notes-input').forEach((ta) => {
+      const autoResize = () => {
+        ta.style.height = 'auto'
+        ta.style.height = ta.scrollHeight + 'px'
+      }
+      autoResize()
       ta.addEventListener('input', () => {
         const id = ta.getAttribute('data-id')
         const p = plans.find((pl) => pl.id === id)
@@ -379,20 +296,7 @@ export function createOrderPlanPage(root) {
           p.reviewNotes = ta.value
           autoSave()
         }
-      })
-    })
-
-    // Reason inputs
-    root.querySelectorAll('.qa-reason-input').forEach((ta) => {
-      ta.addEventListener('input', () => {
-        const id = ta.getAttribute('data-id')
-        const qidx = parseInt(ta.getAttribute('data-qidx'), 10)
-        const p = plans.find((pl) => pl.id === id)
-        if (p) {
-          ensureTodayCheck(p)
-          p.checks.checks[qidx].reason = ta.value
-          autoSave()
-        }
+        autoResize()
       })
     })
 
@@ -420,33 +324,6 @@ export function createOrderPlanPage(root) {
       })
     })
 
-    // Submit checks
-    root.querySelectorAll('.submit-checks-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id')
-        const p = plans.find((pl) => pl.id === id)
-        if (!p) return
-        ensureTodayCheck(p)
-        if (!p.checks.checks.every((c) => c.answer !== null)) {
-          showToast('请完成所有检查项')
-          return
-        }
-        if (p.checks.submitted) return
-        p.checks.submitted = true
-        p.checks.submittedAt = new Date().toISOString()
-        if (!p.history) p.history = []
-        p.history.push({
-          date: p.checks.date,
-          checks: p.checks.checks.map((c) => ({ ...c })),
-          notes: p.reviewNotes || '',
-          submittedAt: p.checks.submittedAt
-        })
-        savePlans(plans)
-        showToast('检查已提交')
-        render()
-      })
-    })
-
     // History click
     root.querySelectorAll('.history-item').forEach((item) => {
       item.addEventListener('click', () => {
@@ -464,31 +341,6 @@ export function createOrderPlanPage(root) {
     on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
       // no need to rerender, data reads on demand
     })
-  }
-
-  function ensureTodayCheck(p) {
-    const today = todayStr()
-    if (!p.checks || p.checks.date !== today) {
-      p.checks = {
-        date: today,
-        checks: makeEmptyChecks(),
-        submitted: false,
-        submittedAt: null
-      }
-    }
-    if (!p.checks.checks || p.checks.checks.length !== DAILY_QUESTIONS.length) {
-      p.checks.checks = makeEmptyChecks()
-    }
-  }
-
-  function updateCheckAnswer(planId, qidx, answer) {
-    const p = plans.find((pl) => pl.id === planId)
-    if (!p) return
-    ensureTodayCheck(p)
-    if (p.checks.submitted) return
-    p.checks.checks[qidx].answer = answer
-    savePlans(plans)
-    render()
   }
 
   function autoSave() {
