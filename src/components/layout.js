@@ -65,27 +65,10 @@ function findGroupByTab(tabId) {
   return TAB_GROUPS.find((g) => g.tabs.some((t) => t.id === tabId))
 }
 
-let pendingStockFilter = null
-
-export function getPendingStockFilter() {
-  return pendingStockFilter
-}
-
-export function clearPendingStockFilter() {
-  pendingStockFilter = null
-}
-
 export function navigateTo(tabId, opts = {}) {
   if (!ALL_TABS.some((t) => t.id === tabId)) tabId = 'overview'
   if (tabId === currentTab && !opts.force) return
   currentTab = tabId
-
-  if (opts.stockCode || opts.stockName) {
-    pendingStockFilter = {
-      code: opts.stockCode || '',
-      name: opts.stockName || ''
-    }
-  }
 
   if (location.hash !== '#' + tabId) {
     history.replaceState(null, '', '#' + tabId)
