@@ -335,10 +335,12 @@ export function createPositionCheckPage(root) {
     try {
       const quotes = await fetchStockQuotes(activeCodes)
       let updated = 0
+      const now = Date.now()
       holdings.forEach((h) => {
         if (h.code && quotes[h.code]) {
           h.currentPrice = quotes[h.code].price
           h.priceChangePct = quotes[h.code].changePct
+          h.priceUpdatedAt = now
           updated++
         }
       })

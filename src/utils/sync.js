@@ -39,6 +39,10 @@ function exportAllData() {
 // Import data into localStorage
 function importAllData(data) {
   if (!data || typeof data !== 'object') return
+
+  // 保留本地 holdings 的现价和更新时间
+  const localHoldings = getLocalHoldings()
+
   // Clear old data first (except token/gist id)
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i)
@@ -46,14 +50,65 @@ function importAllData(data) {
       localStorage.removeItem(key)
     }
   }
+
   // Import new data
   for (const [key, value] of Object.entries(data)) {
     if (typeof value === 'object') {
-      localStorage.setItem(key, JSON.stringify(value))
+      if (key === 'td_holdings_v1' && Array.isArray(value)) {
+        // 合并 holdings：保留本地更新的现价
+        const merged = mergeHoldingsWithLocal(value, localHoldings)
+        localStorage.setItem(key, JSON.stringify(merged))
+      } else {
+        localStorage.setItem(key, JSON.stringify(value))
+      }
     } else {
       localStorage.setItem(key, String(value))
     }
   }
+}
+
+// 获取本地 holdings（用于保留现价）
+function getLocalHoldings() {
+  try {
+    const raw = localStorage.getItem('td_holdings_v1')
+    if (!raw) return []
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
+// 合并 holdings：保留本地更新的现价
+function mergeHoldingsWithLocal(remoteHoldings, localHoldings) {
+  if (!Array.isArray(localHoldings) || localHoldings.length === 0) {
+    return remoteHoldings
+  }
+
+  const localMap = {}
+  localHoldings.forEach(h => {
+    if (h && h.id) {
+      localMap[h.id] = h
+    }
+  })
+
+  return remoteHoldings.map(remote => {
+    const local = localMap[remote.id]
+    if (!local) return remote
+
+    // 如果本地有更新的现价（priceUpdatedAt 更新），保留本地的
+    const localUpdatedAt = local.priceUpdatedAt || 0
+    const remoteUpdatedAt = remote.priceUpdatedAt || 0
+
+    if (localUpdatedAt >= remoteUpdatedAt && local.currentPrice) {
+      return {
+        ...remote,
+        currentPrice: local.currentPrice,
+        priceUpdatedAt: localUpdatedAt
+      }
+    }
+
+    return remote
+  })
 }
 
 // Create a new Gist or update existing one
