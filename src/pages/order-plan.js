@@ -212,17 +212,58 @@ export function createOrderPlanPage(root) {
   }
 
   function archivedRowHTML(p) {
+    const buyPrice = p.buyPrice || ''
+    const buyShares = p.buyShares || ''
+    const sellPrice = p.sellPrice || ''
+    const sellShares = p.sellShares || ''
+    const opType = p.operationType || 'buy'
+    // 只有做 T（同时有买入和卖出）才显示收入
+    const isT0 = opType === 't0' || (buyPrice && sellPrice)
+    const buyAmount = (parseFloat(buyPrice) || 0) * (parseInt(buyShares, 10) || 0)
+    const sellAmount = (parseFloat(sellPrice) || 0) * (parseInt(sellShares, 10) || 0)
+    const income = isT0 ? (sellAmount - buyAmount) : null
+
     return `
-      <div class="archived-row flex items-center justify-between px-4 py-2" style="background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm);">
-        <div class="flex items-center gap-3">
-          <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink);">${escHtml(p.name)}</span>
-          <span style="font-size:var(--text-caption); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(p.code)}</span>
-          <span style="font-size:var(--text-caption); color:var(--ink-3);">归档于 ${p.archivedAt ? p.archivedAt.slice(0, 10) : '--'}</span>
+      <div class="archived-row px-4 py-3" style="background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm);">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <div class="flex items-center gap-3">
+            <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink);">${escHtml(p.name)}</span>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(p.code)}</span>
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">归档于 ${p.archivedAt ? p.archivedAt.slice(0, 10) : '--'}</span>
+          </div>
+          <button class="unarchive-plan-btn" data-id="${p.id}" style="background:none; border:none; cursor:pointer; color:var(--brand); font-size:var(--text-caption); display:flex; align-items:center; gap:4px;">
+            <i data-lucide="rotate-ccw" style="width:12px; height:12px;"></i>
+            恢复
+          </button>
         </div>
-        <button class="unarchive-plan-btn" data-id="${p.id}" style="background:none; border:none; cursor:pointer; color:var(--brand); font-size:var(--text-caption); display:flex; align-items:center; gap:4px;">
-          <i data-lucide="rotate-ccw" style="width:12px; height:12px;"></i>
-          恢复
-        </button>
+        <div class="flex items-center gap-4 flex-wrap" style="font-size:var(--text-caption);">
+          ${buyPrice ? `
+            <div class="flex items-center gap-1">
+              <span style="color:var(--ink-3);">买入价</span>
+              <span style="color:var(--state-error); font-weight:var(--weight-medium); font-family:var(--font-mono);">${escHtml(buyPrice)}</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span style="color:var(--ink-3);">买入量</span>
+              <span style="color:var(--ink); font-family:var(--font-mono);">${escHtml(buyShares)}</span>
+            </div>
+          ` : ''}
+          ${sellPrice ? `
+            <div class="flex items-center gap-1">
+              <span style="color:var(--ink-3);">卖出价</span>
+              <span style="color:var(--state-success); font-weight:var(--weight-medium); font-family:var(--font-mono);">${escHtml(sellPrice)}</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span style="color:var(--ink-3);">卖出量</span>
+              <span style="color:var(--ink); font-family:var(--font-mono);">${escHtml(sellShares)}</span>
+            </div>
+          ` : ''}
+          ${income !== null ? `
+            <div class="flex items-center gap-1" style="margin-left:auto;">
+              <span style="color:var(--ink-3);">收入</span>
+              <span style="color:${income >= 0 ? 'var(--state-error)' : 'var(--state-success)'}; font-weight:var(--weight-semibold); font-family:var(--font-mono);">${income >= 0 ? '+' : ''}${income.toFixed(2)}</span>
+            </div>
+          ` : ''}
+        </div>
       </div>
     `
   }
