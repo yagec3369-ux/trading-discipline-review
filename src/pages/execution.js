@@ -589,7 +589,8 @@ export function createExecutionPage(root) {
           if (existing) {
             const oldQty = parseInt(existing.quantity, 10) || 0
             const oldCost = parseFloat(existing.buyPrice) || 0
-            // 加权平均成本 = (原成本 × 原数量 + 本次买入价 × 本次数量) / 总数量
+            // 新成本 = (原成本×原数量 + 买入价×买入数量 - 卖出价×卖出数量) / 总数量
+            // 本次为纯买入，卖出数量为 0
             const totalQty = oldQty + qty
             if (totalQty > 0) {
               existing.buyPrice = ((oldCost * oldQty) + (buyPrice * qty)) / totalQty
@@ -609,10 +610,21 @@ export function createExecutionPage(root) {
           }
         } else if (type === 'sell' && plan.sellShares) {
           const qty = parseInt(plan.sellShares, 10) || 0
+          const sellPrice = parseFloat(plan.sellPrice) || 0
           if (existing) {
-            existing.quantity = Math.max(0, (parseInt(existing.quantity, 10) || 0) - qty)
+            const oldQty = parseInt(existing.quantity, 10) || 0
+            const oldCost = parseFloat(existing.buyPrice) || 0
+            // 新成本 = (原成本×原数量 - 卖出价×卖出数量) / 总数量
+            // 本次为纯卖出，买入数量为 0
+            const totalQty = oldQty - qty
+            if (totalQty > 0) {
+              existing.buyPrice = ((oldCost * oldQty) - (sellPrice * qty)) / totalQty
+            } else if (totalQty === 0) {
+              // 全部卖出，清仓保留成本价记录
+              existing.buyPrice = oldCost
+            }
+            existing.quantity = Math.max(0, totalQty)
             existing.currentPrice = plan.sellPrice || existing.currentPrice
-            // 卖出不影响成本价
           }
         }
       }
