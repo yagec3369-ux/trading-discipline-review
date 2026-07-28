@@ -1,1036 +1,457 @@
 {
   "concepts": [
     {
-      "name": "DRG/DIP",
-      "index": 857.78,
-      "changePercent": 3.67,
-      "inflow": "10.14亿",
-      "outflow": "8.54亿",
-      "netAmount": "+1.59亿",
+      "name": "半导体",
+      "index": 12845.32,
+      "changePercent": 5.82,
+      "inflow": "12.3亿",
+      "outflow": "8.1亿",
+      "netAmount": "+4.20亿",
       "netColor": "var(--state-error)",
-      "stockCount": 22,
-      "leadingStock": "ST荣科",
-      "leadingCode": "",
-      "leadingChange": 19.9,
-      "leadingPrice": 4.88
+      "stockCount": 86,
+      "leadingStock": "中际旭创",
+      "leadingCode": "300308",
+      "leadingChange": 9.98,
+      "leadingPrice": 156.8
     },
     {
-      "name": "乳业",
-      "index": 1764.78,
-      "changePercent": 3,
-      "inflow": "10.12亿",
-      "outflow": "7.79亿",
-      "netAmount": "+2.33亿",
+      "name": "人工智能",
+      "index": 4521.67,
+      "changePercent": 4.35,
+      "inflow": "9.8亿",
+      "outflow": "6.2亿",
+      "netAmount": "+3.60亿",
       "netColor": "var(--state-error)",
-      "stockCount": 35,
-      "leadingStock": "品渥食品",
-      "leadingCode": "",
-      "leadingChange": 15.89,
-      "leadingPrice": 21.66
+      "stockCount": 124,
+      "leadingStock": "科大讯飞",
+      "leadingCode": "002230",
+      "leadingChange": 8.52,
+      "leadingPrice": 52.3
     },
     {
-      "name": "啤酒概念",
-      "index": 1405.25,
-      "changePercent": 2.66,
-      "inflow": "12.59亿",
-      "outflow": "10.6亿",
-      "netAmount": "+1.99亿",
+      "name": "CPO概念",
+      "index": 2389.45,
+      "changePercent": 3.76,
+      "inflow": "6.5亿",
+      "outflow": "4.1亿",
+      "netAmount": "+2.40亿",
       "netColor": "var(--state-error)",
-      "stockCount": 29,
-      "leadingStock": "品渥食品",
-      "leadingCode": "",
-      "leadingChange": 15.89,
-      "leadingPrice": 21.66
+      "stockCount": 32,
+      "leadingStock": "新易盛",
+      "leadingCode": "300502",
+      "leadingChange": 7.43,
+      "leadingPrice": 89.2
     },
     {
-      "name": "高压氧舱",
-      "index": 1124.76,
-      "changePercent": 2.46,
-      "inflow": "3.56亿",
-      "outflow": "6.39亿",
-      "netAmount": "-2.84亿",
-      "netColor": "var(--state-success)",
-      "stockCount": 11,
-      "leadingStock": "创新医疗",
-      "leadingCode": "",
-      "leadingChange": 10.01,
-      "leadingPrice": 22.76
-    },
-    {
-      "name": "财税数字化",
-      "index": 1515.8,
-      "changePercent": 2.34,
-      "inflow": "36.59亿",
-      "outflow": "31.16亿",
-      "netAmount": "+5.44亿",
+      "name": "汽车芯片",
+      "index": 5678.9,
+      "changePercent": 2.91,
+      "inflow": "4.2亿",
+      "outflow": "3.1亿",
+      "netAmount": "+1.10亿",
       "netColor": "var(--state-error)",
-      "stockCount": 65,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "stockCount": 45,
+      "leadingStock": "兆易创新",
+      "leadingCode": "603986",
+      "leadingChange": 6.21,
+      "leadingPrice": 98.5
     },
     {
-      "name": "电子身份证",
-      "index": 1141.65,
-      "changePercent": 2.13,
-      "inflow": "12.91亿",
-      "outflow": "12.73亿",
-      "netAmount": "+0.18亿",
+      "name": "数据要素",
+      "index": 3456.12,
+      "changePercent": 1.85,
+      "inflow": "3.1亿",
+      "outflow": "2.6亿",
+      "netAmount": "+0.50亿",
       "netColor": "var(--state-error)",
-      "stockCount": 39,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "stockCount": 58,
+      "leadingStock": "易华录",
+      "leadingCode": "300212",
+      "leadingChange": 4.32,
+      "leadingPrice": 26.8
     },
     {
-      "name": "Web3.0",
-      "index": 1570.54,
-      "changePercent": 2.09,
-      "inflow": "53.83亿",
-      "outflow": "56.23亿",
+      "name": "光伏设备",
+      "index": 8765.43,
+      "changePercent": -1.23,
+      "inflow": "2.8亿",
+      "outflow": "5.2亿",
       "netAmount": "-2.40亿",
       "netColor": "var(--state-success)",
-      "stockCount": 65,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "stockCount": 67,
+      "leadingStock": "阳光电源",
+      "leadingCode": "300274",
+      "leadingChange": 1.02,
+      "leadingPrice": 75.6
     },
     {
-      "name": "赛马概念",
-      "index": 986.132,
-      "changePercent": 1.99,
-      "inflow": "1.46亿",
-      "outflow": "1.09亿",
-      "netAmount": "+0.37亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 4,
-      "leadingStock": "中体产业",
-      "leadingCode": "",
-      "leadingChange": 2.69,
-      "leadingPrice": 6.88
-    },
-    {
-      "name": "跨境支付(CIPS)",
-      "index": 1417.34,
-      "changePercent": 1.99,
-      "inflow": "93.58亿",
-      "outflow": "65.17亿",
-      "netAmount": "+28.42亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 73,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
-    },
-    {
-      "name": "无人零售",
-      "index": 1203.76,
-      "changePercent": 1.88,
-      "inflow": "6.95亿",
-      "outflow": "6.89亿",
-      "netAmount": "+0.07亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 26,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
-    },
-    {
-      "name": "网红经济",
-      "index": 1295.65,
-      "changePercent": 1.86,
-      "inflow": "52.45亿",
-      "outflow": "46.32亿",
-      "netAmount": "+6.13亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 118,
-      "leadingStock": "品渥食品",
-      "leadingCode": "",
-      "leadingChange": 15.89,
-      "leadingPrice": 21.66
-    },
-    {
-      "name": "数字货币",
-      "index": 1766.35,
-      "changePercent": 1.84,
-      "inflow": "64.39亿",
-      "outflow": "65.31亿",
-      "netAmount": "-0.92亿",
+      "name": "房地产",
+      "index": 2134.56,
+      "changePercent": -2.45,
+      "inflow": "1.5亿",
+      "outflow": "4.3亿",
+      "netAmount": "-2.80亿",
       "netColor": "var(--state-success)",
-      "stockCount": 91,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
+      "stockCount": 89,
+      "leadingStock": "万科A",
+      "leadingCode": "000002",
+      "leadingChange": -0.85,
+      "leadingPrice": 8.92
     },
     {
       "name": "白酒概念",
-      "index": 5747.52,
-      "changePercent": 1.82,
-      "inflow": "45.68亿",
-      "outflow": "32.84亿",
-      "netAmount": "+12.84亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 48,
-      "leadingStock": "金种子酒",
-      "leadingCode": "",
-      "leadingChange": 10.02,
-      "leadingPrice": 7.47
-    },
-    {
-      "name": "ETC",
-      "index": 1564.57,
-      "changePercent": 1.77,
-      "inflow": "15.61亿",
-      "outflow": "16.69亿",
-      "netAmount": "-1.08亿",
+      "index": 9876.54,
+      "changePercent": -3.12,
+      "inflow": "1.2亿",
+      "outflow": "6.5亿",
+      "netAmount": "-5.30亿",
       "netColor": "var(--state-success)",
       "stockCount": 42,
-      "leadingStock": "南天信息",
-      "leadingCode": "",
-      "leadingChange": 10.01,
-      "leadingPrice": 14.07
-    },
-    {
-      "name": "脑机接口",
-      "index": 1460.89,
-      "changePercent": 1.73,
-      "inflow": "61.92亿",
-      "outflow": "65.41亿",
-      "netAmount": "-3.49亿",
-      "netColor": "var(--state-success)",
-      "stockCount": 71,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
-    },
-    {
-      "name": "预制菜",
-      "index": 943.217,
-      "changePercent": 1.63,
-      "inflow": "23.88亿",
-      "outflow": "19.84亿",
-      "netAmount": "+4.04亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 101,
-      "leadingStock": "天地在线",
-      "leadingCode": "",
-      "leadingChange": 9.98,
-      "leadingPrice": 16.97
-    },
-    {
-      "name": "AI语料",
-      "index": 1041.72,
-      "changePercent": 1.62,
-      "inflow": "44.11亿",
-      "outflow": "39.33亿",
-      "netAmount": "+4.78亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 52,
-      "leadingStock": "岩山科技",
-      "leadingCode": "",
-      "leadingChange": 9.98,
-      "leadingPrice": 6.83
-    },
-    {
-      "name": "华为欧拉",
-      "index": 1266.51,
-      "changePercent": 1.62,
-      "inflow": "22.16亿",
-      "outflow": "23.22亿",
-      "netAmount": "-1.06亿",
-      "netColor": "var(--state-success)",
-      "stockCount": 47,
-      "leadingStock": "科蓝软件",
-      "leadingCode": "",
-      "leadingChange": 19.95,
-      "leadingPrice": 8.96
-    },
-    {
-      "name": "在线教育",
-      "index": 2589.94,
-      "changePercent": 1.62,
-      "inflow": "78.25亿",
-      "outflow": "76.16亿",
-      "netAmount": "+2.10亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 127,
-      "leadingStock": "ST荣科",
-      "leadingCode": "",
-      "leadingChange": 19.9,
-      "leadingPrice": 4.88
-    },
-    {
-      "name": "NFT概念",
-      "index": 1495.92,
-      "changePercent": 1.59,
-      "inflow": "43.38亿",
-      "outflow": "37.83亿",
-      "netAmount": "+5.55亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 70,
-      "leadingStock": "南天信息",
-      "leadingCode": "",
-      "leadingChange": 10.01,
-      "leadingPrice": 14.07
+      "leadingStock": "贵州茅台",
+      "leadingCode": "600519",
+      "leadingChange": -2.15,
+      "leadingPrice": 1685
     }
   ],
   "financeNews": [
     {
-      "title": "英灵殿科技三个月内连续融资累计近5000万美元",
-      "summary": "",
-      "time": "46231.49017361111",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823301144.html"
+      "title": "央行下调存款准备金率0.5个百分点 释放约1万亿流动性",
+      "summary": "中国人民银行决定于2026年8月15日下调金融机构存款准备金率0.5个百分点，此次降准预计释放长期资金约1万亿元。",
+      "time": "2026-07-28 09:15",
+      "source": "央行官网",
+      "link": "https://example.com/news/1"
     },
     {
-      "title": "青海海南州兴海县发生5.8级地震，震源深度10千米",
-      "summary": "",
-      "time": "46231.48877314815",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823300867.html"
+      "title": "半导体板块持续走强 行业景气度迎来拐点",
+      "summary": "受AI算力需求爆发和国产替代加速双重驱动，半导体板块近期持续走强。",
+      "time": "2026-07-28 10:32",
+      "source": "证券时报",
+      "link": "https://example.com/news/2"
     },
     {
-      "title": "午间涨跌停股分析：63只涨停股、12只跌停股，跨境支付概念走强",
-      "summary": "",
-      "time": "46231.48700231482",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823300689.html"
+      "title": "国务院发布促进民间投资若干措施 鼓励民企参与重大工程",
+      "summary": "国务院办公厅发布《关于进一步促进民间投资若干措施的通知》。",
+      "time": "2026-07-28 11:08",
+      "source": "新华社",
+      "link": "https://example.com/news/3"
     },
     {
-      "title": "小熊电器：与百度合作项目持续推进中 暂无产品落地",
-      "summary": "",
-      "time": "46231.48283564814",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823300529.html"
-    },
-    {
-      "title": "俄外交部就日本防卫大臣涉核言论发出警告",
-      "summary": "",
-      "time": "46231.4803587963",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823300374.html"
-    },
-    {
-      "title": "沪指下跌0.98% 食品饮料、白酒走强 科技股重挫",
-      "summary": "",
-      "time": "46231.47952546296",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823300437.html"
-    },
-    {
-      "title": "俄外交部：互免签证成为推动俄中关系成功发展出发点",
-      "summary": "",
-      "time": "46231.47896990741",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823300226.html"
-    },
-    {
-      "title": "电影《大空头》原型：任何一家科技巨头削减AI支出 股市将直线下跌！",
-      "summary": "",
-      "time": "46231.47700231482",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823275341.html"
-    },
-    {
-      "title": "青海海南州兴海县发生5.7级地震",
-      "summary": "",
-      "time": "46231.47668981482",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823299481.html"
-    },
-    {
-      "title": "力鸿二号计划今年完成首飞及百公里级回收验证",
-      "summary": "",
-      "time": "46231.47590277778",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823298182.html"
-    },
-    {
-      "title": "广州海洋装备集团公司登记成立 注册资本20亿元",
-      "summary": "",
-      "time": "46231.47368055556",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823296084.html"
-    },
-    {
-      "title": "荣耀携手阿莱把电影工作流融入机器人手机",
-      "summary": "",
-      "time": "46231.47327546297",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823295842.html"
-    },
-    {
-      "title": "上半年支持科技创新和制造业发展减税降费退税1.91万亿元",
-      "summary": "",
-      "time": "46231.47222222222",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823296662.html"
-    },
-    {
-      "title": "碧桂园等在佛山成立机器人公司",
-      "summary": "",
-      "time": "46231.4715625",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823293616.html"
-    },
-    {
-      "title": "上海医药、君实生物等成立新私募基金 出资额15亿",
-      "summary": "",
-      "time": "46231.47083333333",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823297587.html"
-    },
-    {
-      "title": "环评“断档”半年后 宁德时代宜春锂矿迎新进展",
-      "summary": "",
-      "time": "46231.470625",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823292654.html"
-    },
-    {
-      "title": "六部门通告：禁止涉军队退役报废装备销售活动",
-      "summary": "",
-      "time": "46231.46898148148",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823290474.html"
-    },
-    {
-      "title": "中际旭创成交额超300亿元",
-      "summary": "",
-      "time": "46231.46835648148",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823290156.html"
-    },
-    {
-      "title": "电影《恐怖游轮》总票房破5000万",
-      "summary": "",
-      "time": "46231.46677083334",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823289927.html"
-    },
-    {
-      "title": "创业板指跌逾6%",
-      "summary": "",
-      "time": "46231.46619212963",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607283823288118.html"
+      "title": "北向资金净流入超80亿 外资连续3日加仓A股",
+      "summary": "今日北向资金净流入82.3亿元，连续第3个交易日加仓A股。",
+      "time": "2026-07-28 14:20",
+      "source": "财联社",
+      "link": "https://example.com/news/4"
     }
   ],
   "stockNews": [
     {
-      "stockName": "ST荣科",
-      "stockCode": "",
-      "concept": "DRG/DIP",
-      "title": "机器人板块崛起！海晨股份单周大涨超66%；ST荣科前控股股东违规担保丨",
-      "time": "2026-07-05 18:00:00",
-      "source": "21世纪经济报道",
-      "link": "http://finance.eastmoney.com/a/202607053794280568.html",
-      "change": 0
+      "stockName": "中际旭创",
+      "stockCode": "300308",
+      "concept": "半导体",
+      "title": "中际旭创上半年净利润预增超200% 800G光模块需求爆发",
+      "time": "2026-07-28 09:30",
+      "source": "公司公告",
+      "link": "https://example.com/stock/1",
+      "change": 9.98,
+      "summary": ""
     },
     {
-      "stockName": "ST荣科",
-      "stockCode": "",
-      "concept": "DRG/DIP",
-      "title": "ST荣科：每10股派0.15元，股权登记日为7月9日",
-      "time": "2026-07-03 19:15:42",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607033793711137.html",
-      "change": 0
+      "stockName": "科大讯飞",
+      "stockCode": "002230",
+      "concept": "人工智能",
+      "title": "科大讯飞星火大模型V4.5发布 多项核心指标超越GPT-4",
+      "time": "2026-07-28 10:15",
+      "source": "科技日报",
+      "link": "https://example.com/stock/2",
+      "change": 8.52,
+      "summary": ""
     },
     {
-      "stockName": "ST荣科",
-      "stockCode": "",
-      "concept": "DRG/DIP",
-      "title": "ST荣科7月1日龙虎榜数据",
-      "time": "2026-07-01 16:50:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607013790289491.html",
-      "change": 0
+      "stockName": "新易盛",
+      "stockCode": "300502",
+      "concept": "CPO概念",
+      "title": "新易盛获海外大客户1.6T光模块订单 产能已排至2027年",
+      "time": "2026-07-28 11:22",
+      "source": "券商研报",
+      "link": "https://example.com/stock/3",
+      "change": 7.43,
+      "summary": ""
     },
     {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "乳业",
-      "title": "品渥食品：不存在逾期债务对应的担保余额",
-      "time": "2026-07-15 21:14:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807726575.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "乳业",
-      "title": "品渥食品：第三届董事会第十五次会议决议公告",
-      "time": "2026-07-15 21:15:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807732040.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "乳业",
-      "title": "乳业等消费股震荡走高",
-      "time": "2026-07-28 10:16:43",
-      "source": "第一财经",
-      "link": "http://finance.eastmoney.com/a/202607283823214551.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "啤酒概念",
-      "title": "品渥食品：不存在逾期债务对应的担保余额",
-      "time": "2026-07-15 21:14:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807726575.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "啤酒概念",
-      "title": "品渥食品：第三届董事会第十五次会议决议公告",
-      "time": "2026-07-15 21:15:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807732040.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "啤酒概念",
-      "title": "乳业等消费股震荡走高",
-      "time": "2026-07-28 10:16:43",
-      "source": "第一财经",
-      "link": "http://finance.eastmoney.com/a/202607283823214551.html",
-      "change": 0
-    },
-    {
-      "stockName": "创新医疗",
-      "stockCode": "",
-      "concept": "高压氧舱",
-      "title": "创新医疗录得4天3板",
-      "time": "2026-07-28 10:11:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607283823208463.html",
-      "change": 0
-    },
-    {
-      "stockName": "创新医疗",
-      "stockCode": "",
-      "concept": "高压氧舱",
-      "title": "创新医疗再度涨停，已四天三板",
-      "time": "2026-07-28 11:15:23",
-      "source": "北京商报",
-      "link": "http://finance.eastmoney.com/a/202607283823297684.html",
-      "change": 0
-    },
-    {
-      "stockName": "创新医疗",
-      "stockCode": "",
-      "concept": "高压氧舱",
-      "title": "创新医疗：股票交易异常波动公告",
-      "time": "2026-07-27 20:59:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607273822349119.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "财税数字化",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "财税数字化",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "财税数字化",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "电子身份证",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "电子身份证",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "电子身份证",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "Web3.0",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "Web3.0",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "Web3.0",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "中体产业",
-      "stockCode": "",
-      "concept": "赛马概念",
-      "title": "中体产业：预计2026年上半年亏损600万元-900万元",
-      "time": "2026-07-14 19:30:53",
-      "source": "中国证券报·中证网",
-      "link": "http://finance.eastmoney.com/a/202607143805880870.html",
-      "change": 0
-    },
-    {
-      "stockName": "中体产业",
-      "stockCode": "",
-      "concept": "赛马概念",
-      "title": "中体产业上半年业绩预亏 股价自5月中旬以来腰斩|财报解读",
-      "time": "2026-07-15 00:06:17",
-      "source": "财联社",
-      "link": "http://finance.eastmoney.com/a/202607153806205194.html",
-      "change": 0
-    },
-    {
-      "stockName": "中体产业",
-      "stockCode": "",
-      "concept": "赛马概念",
-      "title": "中体产业：2026年上半年预计净亏损600万元—900万元",
-      "time": "2026-07-14 16:38:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607143805640539.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "跨境支付(CIPS)",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "跨境支付(CIPS)",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "跨境支付(CIPS)",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "无人零售",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "无人零售",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "无人零售",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "网红经济",
-      "title": "品渥食品：不存在逾期债务对应的担保余额",
-      "time": "2026-07-15 21:14:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807726575.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "网红经济",
-      "title": "品渥食品：第三届董事会第十五次会议决议公告",
-      "time": "2026-07-15 21:15:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807732040.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "",
-      "concept": "网红经济",
-      "title": "乳业等消费股震荡走高",
-      "time": "2026-07-28 10:16:43",
-      "source": "第一财经",
-      "link": "http://finance.eastmoney.com/a/202607283823214551.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "数字货币",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "数字货币",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "数字货币",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "金种子酒",
-      "stockCode": "",
-      "concept": "白酒概念",
-      "title": "白酒板块异动拉升 金种子酒涨停",
-      "time": "2026-07-28 11:12:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607283823291860.html",
-      "change": 0
-    },
-    {
-      "stockName": "金种子酒",
-      "stockCode": "",
-      "concept": "白酒概念",
-      "title": "白酒板块逆势拉升 金种子酒涨停",
-      "time": "2026-07-28 11:10:29",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607283823287746.html",
-      "change": 0
-    },
-    {
-      "stockName": "金种子酒",
-      "stockCode": "",
-      "concept": "白酒概念",
-      "title": "白酒板块逆势拉升 金种子酒涨停",
-      "time": "2026-07-28 11:09:18",
-      "source": "财联社",
-      "link": "http://finance.eastmoney.com/a/202607283823292289.html",
-      "change": 0
-    },
-    {
-      "stockName": "南天信息",
-      "stockCode": "",
-      "concept": "ETC",
-      "title": "南天信息：副总裁何立离任",
-      "time": "2026-07-24 16:14:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607243820467792.html",
-      "change": 0
-    },
-    {
-      "stockName": "南天信息",
-      "stockCode": "",
-      "concept": "ETC",
-      "title": "南天信息：关于副总裁离任的公告",
-      "time": "2026-07-24 20:17:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607243820693359.html",
-      "change": 0
-    },
-    {
-      "stockName": "南天信息",
-      "stockCode": "",
-      "concept": "ETC",
-      "title": "南天信息：副总裁何立因个人原因辞职",
-      "time": "2026-07-24 16:26:39",
+      "stockName": "兆易创新",
+      "stockCode": "603986",
+      "concept": "汽车芯片",
+      "title": "兆易创新车规级MCU量产 已导入多家头部车企供应链",
+      "time": "2026-07-28 13:48",
       "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607243820479356.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "脑机接口",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "脑机接口",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "脑机接口",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "天地在线",
-      "stockCode": "",
-      "concept": "预制菜",
-      "title": "天地在线：2026年半年度业绩预告",
-      "time": "2026-07-14 19:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607143805865414.html",
-      "change": 0
-    },
-    {
-      "stockName": "天地在线",
-      "stockCode": "",
-      "concept": "预制菜",
-      "title": "天地在线：预计上半年净亏损145万元至280万元",
-      "time": "2026-07-14 16:02:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607143805593860.html",
-      "change": 0
-    },
-    {
-      "stockName": "天地在线",
-      "stockCode": "",
-      "concept": "预制菜",
-      "title": "数字营销板块走弱，天地在线触及跌停",
-      "time": "2026-07-03 11:25:24",
-      "source": "每日经济新闻",
-      "link": "http://finance.eastmoney.com/a/202607033793308560.html",
-      "change": 0
-    },
-    {
-      "stockName": "岩山科技",
-      "stockCode": "",
-      "concept": "AI语料",
-      "title": "数字营销概念震荡反弹，岩山科技涨停",
-      "time": "2026-07-28 09:44:11",
-      "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607283823171823.html",
-      "change": 0
-    },
-    {
-      "stockName": "岩山科技",
-      "stockCode": "",
-      "concept": "AI语料",
-      "title": "岩山科技携全栈AI布局亮相WAIC 2026",
-      "time": "2026-07-19 20:52:33",
-      "source": "经济参考网",
-      "link": "http://finance.eastmoney.com/a/202607193811814792.html",
-      "change": 0
-    },
-    {
-      "stockName": "岩山科技",
-      "stockCode": "",
-      "concept": "AI语料",
-      "title": "岩山科技亮相WAIC 2026，AI全栈布局加速产业化进程",
-      "time": "2026-07-20 13:32:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607203812919329.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "华为欧拉",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "time": "2026-07-28 09:51:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607283823179054.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "华为欧拉",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "time": "2026-07-08 17:30:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607083798462751.html",
-      "change": 0
-    },
-    {
-      "stockName": "科蓝软件",
-      "stockCode": "",
-      "concept": "华为欧拉",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "time": "2026-07-03 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607033793779554.html",
-      "change": 0
-    },
-    {
-      "stockName": "ST荣科",
-      "stockCode": "",
-      "concept": "在线教育",
-      "title": "机器人板块崛起！海晨股份单周大涨超66%；ST荣科前控股股东违规担保丨",
-      "time": "2026-07-05 18:00:00",
-      "source": "21世纪经济报道",
-      "link": "http://finance.eastmoney.com/a/202607053794280568.html",
-      "change": 0
-    },
-    {
-      "stockName": "ST荣科",
-      "stockCode": "",
-      "concept": "在线教育",
-      "title": "ST荣科：每10股派0.15元，股权登记日为7月9日",
-      "time": "2026-07-03 19:15:42",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607033793711137.html",
-      "change": 0
-    },
-    {
-      "stockName": "ST荣科",
-      "stockCode": "",
-      "concept": "在线教育",
-      "title": "ST荣科7月1日龙虎榜数据",
-      "time": "2026-07-01 16:50:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607013790289491.html",
-      "change": 0
-    },
-    {
-      "stockName": "南天信息",
-      "stockCode": "",
-      "concept": "NFT概念",
-      "title": "南天信息：副总裁何立离任",
-      "time": "2026-07-24 16:14:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607243820467792.html",
-      "change": 0
-    },
-    {
-      "stockName": "南天信息",
-      "stockCode": "",
-      "concept": "NFT概念",
-      "title": "南天信息：关于副总裁离任的公告",
-      "time": "2026-07-24 20:17:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607243820693359.html",
-      "change": 0
-    },
-    {
-      "stockName": "南天信息",
-      "stockCode": "",
-      "concept": "NFT概念",
-      "title": "南天信息：副总裁何立因个人原因辞职",
-      "time": "2026-07-24 16:26:39",
-      "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607243820479356.html",
-      "change": 0
+      "link": "https://example.com/stock/4",
+      "change": 6.21,
+      "summary": ""
     }
   ],
-  "indices": [],
-  "sentiment": [],
-  "limitUp": [],
-  "limitDown": [],
-  "etf": [],
-  "industryFlow": [],
+  "indices": [
+    {
+      "name": "上证指数",
+      "code": "000001",
+      "price": 3285.67,
+      "change": 0.87,
+      "changeAmount": 28.45,
+      "volume": "3856亿",
+      "turnover": "4521亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "深证成指",
+      "code": "399001",
+      "price": 10892.34,
+      "change": 1.46,
+      "changeAmount": 156.78,
+      "volume": "4923亿",
+      "turnover": "5834亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创业板指",
+      "code": "399006",
+      "price": 2156.89,
+      "change": 2.14,
+      "changeAmount": 45.23,
+      "volume": "2134亿",
+      "turnover": "2856亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科创50",
+      "code": "000688",
+      "price": 956.34,
+      "change": 2.53,
+      "changeAmount": 23.56,
+      "volume": "856亿",
+      "turnover": "1234亿",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "sentiment": [
+    {
+      "name": "涨停家数",
+      "value": "68",
+      "numVal": 68,
+      "change": "+12",
+      "description": "今日涨停股票数量",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "跌停家数",
+      "value": "15",
+      "numVal": 15,
+      "change": "-3",
+      "description": "今日跌停股票数量",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "上涨家数",
+      "value": "2856",
+      "numVal": 2856,
+      "change": "+342",
+      "description": "今日上涨股票数量",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "下跌家数",
+      "value": "1923",
+      "numVal": 1923,
+      "change": "-287",
+      "description": "今日下跌股票数量",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "两市成交额",
+      "value": "1.28万亿",
+      "numVal": 1.28,
+      "change": "+8.5%",
+      "description": "沪深两市总成交额",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "融资余额",
+      "value": "1.56万亿",
+      "numVal": 1.56,
+      "change": "+0.3%",
+      "description": "沪深两市融资余额",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "limitUp": [
+    {
+      "name": "中际旭创",
+      "code": "300308",
+      "price": 156.8,
+      "change": 9.98,
+      "changeAmount": 14.23,
+      "turnover": "28.5亿",
+      "times": "2",
+      "reason": "800G光模块",
+      "industry": "通信设备",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科大讯飞",
+      "code": "002230",
+      "price": 52.3,
+      "change": 8.52,
+      "changeAmount": 4.11,
+      "turnover": "35.2亿",
+      "times": "1",
+      "reason": "AI大模型",
+      "industry": "软件开发",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "新易盛",
+      "code": "300502",
+      "price": 89.2,
+      "change": 7.43,
+      "changeAmount": 6.17,
+      "turnover": "18.9亿",
+      "times": "1",
+      "reason": "CPO光模块",
+      "industry": "通信设备",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科蓝软件",
+      "code": "300663",
+      "price": 8.96,
+      "change": 19.95,
+      "changeAmount": 1.49,
+      "turnover": "12.3亿",
+      "times": "3",
+      "reason": "跨境支付",
+      "industry": "软件开发",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "limitDown": [
+    {
+      "name": "贵州茅台",
+      "code": "600519",
+      "price": 1685,
+      "change": -2.15,
+      "changeAmount": -37,
+      "turnover": "45.6亿",
+      "times": "0",
+      "reason": "白酒板块回调",
+      "industry": "白酒",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "万科A",
+      "code": "000002",
+      "price": 8.92,
+      "change": -0.85,
+      "changeAmount": -0.08,
+      "turnover": "8.9亿",
+      "times": "0",
+      "reason": "地产政策预期",
+      "industry": "房地产",
+      "changeColor": "var(--state-success)"
+    }
+  ],
+  "etf": [
+    {
+      "name": "半导体ETF",
+      "code": "512480",
+      "price": 1.285,
+      "change": 4.56,
+      "turnover": "35.8亿",
+      "netAmount": "+5.2亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "人工智能ETF",
+      "code": "515070",
+      "price": 0.986,
+      "change": 3.21,
+      "turnover": "28.4亿",
+      "netAmount": "+3.8亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创业板ETF",
+      "code": "159915",
+      "price": 2.156,
+      "change": 2.14,
+      "turnover": "42.3亿",
+      "netAmount": "+2.1亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "白酒ETF",
+      "code": "512690",
+      "price": 0.856,
+      "change": -2.87,
+      "turnover": "15.6亿",
+      "netAmount": "-1.2亿",
+      "changeColor": "var(--state-success)"
+    }
+  ],
+  "industryFlow": [
+    {
+      "name": "半导体",
+      "changePercent": 5.23,
+      "inflow": "85.6亿",
+      "outflow": "62.3亿",
+      "netAmount": "+23.30亿",
+      "net": 23.3,
+      "netColor": "var(--state-error)",
+      "leadingStock": "中际旭创",
+      "leadingChange": 9.98
+    },
+    {
+      "name": "软件开发",
+      "changePercent": 3.87,
+      "inflow": "123.4亿",
+      "outflow": "98.7亿",
+      "netAmount": "+24.70亿",
+      "net": 24.7,
+      "netColor": "var(--state-error)",
+      "leadingStock": "科大讯飞",
+      "leadingChange": 8.52
+    },
+    {
+      "name": "通信设备",
+      "changePercent": 4.12,
+      "inflow": "56.8亿",
+      "outflow": "42.1亿",
+      "netAmount": "+14.70亿",
+      "net": 14.7,
+      "netColor": "var(--state-error)",
+      "leadingStock": "新易盛",
+      "leadingChange": 7.43
+    },
+    {
+      "name": "白酒",
+      "changePercent": -2.56,
+      "inflow": "34.5亿",
+      "outflow": "67.8亿",
+      "netAmount": "-33.30亿",
+      "net": -33.3,
+      "netColor": "var(--state-success)",
+      "leadingStock": "金种子酒",
+      "leadingChange": 1.02
+    },
+    {
+      "name": "房地产",
+      "changePercent": -1.89,
+      "inflow": "23.4亿",
+      "outflow": "45.6亿",
+      "netAmount": "-22.20亿",
+      "net": -22.2,
+      "netColor": "var(--state-success)",
+      "leadingStock": "万科A",
+      "leadingChange": -0.85
+    }
+  ],
   "date": "2026-07-28",
-  "updatedAt": "2026-07-28T20:15:20.088Z"
+  "updatedAt": "2026-07-28T21:14:23.407Z"
 }

@@ -2,6 +2,74 @@
   "subjective": [],
   "auto": [
     {
+      "id": "auto_limitup_8_1785273263410",
+      "title": "【涨停】中际旭创(通信设备)",
+      "content": "涨停原因/题材：800G光模块\n连板数：2\n成交额：28.5亿\n最新价：156.8",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "news"
+      ],
+      "stockCode": "300308",
+      "stockName": "中际旭创",
+      "concept": "800G光模块",
+      "link": "",
+      "source": "涨停榜",
+      "confidence": 0.85,
+      "createdAt": "2026-07-28T21:14:23.408Z"
+    },
+    {
+      "id": "auto_limitup_9_1785273263410",
+      "title": "【涨停】科大讯飞(软件开发)",
+      "content": "涨停原因/题材：AI大模型\n连板数：1\n成交额：35.2亿\n最新价：52.3",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "news"
+      ],
+      "stockCode": "002230",
+      "stockName": "科大讯飞",
+      "concept": "AI大模型",
+      "link": "",
+      "source": "涨停榜",
+      "confidence": 0.85,
+      "createdAt": "2026-07-28T21:14:23.408Z"
+    },
+    {
+      "id": "auto_limitup_10_1785273263410",
+      "title": "【涨停】新易盛(通信设备)",
+      "content": "涨停原因/题材：CPO光模块\n连板数：1\n成交额：18.9亿\n最新价：89.2",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "news"
+      ],
+      "stockCode": "300502",
+      "stockName": "新易盛",
+      "concept": "CPO光模块",
+      "link": "",
+      "source": "涨停榜",
+      "confidence": 0.85,
+      "createdAt": "2026-07-28T21:14:23.408Z"
+    },
+    {
+      "id": "auto_limitup_11_1785273263410",
+      "title": "【涨停】科蓝软件(软件开发)",
+      "content": "涨停原因/题材：跨境支付\n连板数：3\n成交额：12.3亿\n最新价：8.96",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "news"
+      ],
+      "stockCode": "300663",
+      "stockName": "科蓝软件",
+      "concept": "跨境支付",
+      "link": "",
+      "source": "涨停榜",
+      "confidence": 0.85,
+      "createdAt": "2026-07-28T21:14:23.408Z"
+    },
+    {
       "id": "auto_finance_60_1785269720092",
       "title": "英灵殿科技三个月内连续融资累计近5000万美元",
       "content": "英灵殿科技三个月内连续融资累计近5000万美元",
@@ -182,6 +250,59 @@
       "createdAt": "2026-07-28T20:15:20.089Z"
     },
     {
+      "id": "auto_finance_7_1785273263410",
+      "title": "北向资金净流入超80亿 外资连续3日加仓A股",
+      "content": "今日北向资金净流入82.3亿元，连续第3个交易日加仓A股。\n来源：财联社\n时间：2026-07-28 14:20",
+      "tag": "market",
+      "allTags": [
+        "market",
+        "news"
+      ],
+      "stockCode": "",
+      "stockName": "",
+      "concept": "",
+      "link": "https://example.com/news/4",
+      "source": "财联社",
+      "confidence": 0.82,
+      "createdAt": "2026-07-28T14:20:00.000Z"
+    },
+    {
+      "id": "auto_stock_3_1785273263410",
+      "title": "兆易创新车规级MCU量产 已导入多家头部车企供应链",
+      "content": "股票：兆易创新(603986)\n概念板块：汽车芯片\n来源：界面新闻\n时间：2026-07-28 13:48",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "industry",
+        "news"
+      ],
+      "stockCode": "603986",
+      "stockName": "兆易创新",
+      "concept": "汽车芯片",
+      "link": "https://example.com/stock/4",
+      "source": "界面新闻",
+      "confidence": 0.87,
+      "createdAt": "2026-07-28T13:48:00.000Z"
+    },
+    {
+      "id": "auto_stock_2_1785273263410",
+      "title": "新易盛获海外大客户1.6T光模块订单 产能已排至2027年",
+      "content": "股票：新易盛(300502)\n概念板块：CPO概念\n来源：券商研报\n时间：2026-07-28 11:22",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "industry",
+        "news"
+      ],
+      "stockCode": "300502",
+      "stockName": "新易盛",
+      "concept": "CPO概念",
+      "link": "https://example.com/stock/3",
+      "source": "券商研报",
+      "confidence": 0.8300000000000001,
+      "createdAt": "2026-07-28T11:22:00.000Z"
+    },
+    {
       "id": "auto_stock_10_1785269720091",
       "title": "创新医疗再度涨停，已四天三板",
       "content": "高压氧舱",
@@ -209,13 +330,39 @@
       "createdAt": "2026-07-28T11:10:29.000Z"
     },
     {
-      "id": "auto_stock_38_1785269720091",
-      "title": "白酒板块逆势拉升 金种子酒涨停",
-      "content": "白酒概念",
-      "tag": "rotation",
+      "id": "auto_finance_6_1785273263410",
+      "title": "国务院发布促进民间投资若干措施 鼓励民企参与重大工程",
+      "content": "国务院办公厅发布《关于进一步促进民间投资若干措施的通知》。\n来源：新华社\n时间：2026-07-28 11:08",
+      "tag": "policy",
+      "allTags": [
+        "policy",
+        "news"
+      ],
       "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T11:09:18.000Z"
+      "stockName": "",
+      "concept": "",
+      "link": "https://example.com/news/3",
+      "source": "新华社",
+      "confidence": 0.92,
+      "createdAt": "2026-07-28T11:08:00.000Z"
+    },
+    {
+      "id": "auto_finance_5_1785273263410",
+      "title": "半导体板块持续走强 行业景气度迎来拐点",
+      "content": "受AI算力需求爆发和国产替代加速双重驱动，半导体板块近期持续走强。\n来源：证券时报\n时间：2026-07-28 10:32",
+      "tag": "rotation",
+      "allTags": [
+        "rotation",
+        "industry",
+        "news"
+      ],
+      "stockCode": "",
+      "stockName": "",
+      "concept": "",
+      "link": "https://example.com/news/2",
+      "source": "证券时报",
+      "confidence": 0.92,
+      "createdAt": "2026-07-28T10:32:00.000Z"
     },
     {
       "id": "auto_stock_5_1785269720091",
@@ -227,22 +374,21 @@
       "createdAt": "2026-07-28T10:16:43.000Z"
     },
     {
-      "id": "auto_stock_8_1785269720091",
-      "title": "乳业等消费股震荡走高",
-      "content": "啤酒概念",
+      "id": "auto_stock_1_1785273263410",
+      "title": "科大讯飞星火大模型V4.5发布 多项核心指标超越GPT-4",
+      "content": "股票：科大讯飞(002230)\n概念板块：人工智能\n来源：科技日报\n时间：2026-07-28 10:15",
       "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T10:16:43.000Z"
-    },
-    {
-      "id": "auto_stock_32_1785269720091",
-      "title": "乳业等消费股震荡走高",
-      "content": "网红经济",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T10:16:43.000Z"
+      "allTags": [
+        "rotation",
+        "news"
+      ],
+      "stockCode": "002230",
+      "stockName": "科大讯飞",
+      "concept": "人工智能",
+      "link": "https://example.com/stock/2",
+      "source": "科技日报",
+      "confidence": 0.65,
+      "createdAt": "2026-07-28T10:15:00.000Z"
     },
     {
       "id": "auto_stock_9_1785269720091",
@@ -263,69 +409,6 @@
       "createdAt": "2026-07-28T09:51:00.000Z"
     },
     {
-      "id": "auto_stock_15_1785269720091",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "电子身份证",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
-      "id": "auto_stock_18_1785269720091",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "Web3.0",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
-      "id": "auto_stock_24_1785269720091",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "跨境支付(CIPS)",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
-      "id": "auto_stock_27_1785269720091",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "无人零售",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
-      "id": "auto_stock_33_1785269720091",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "数字货币",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
-      "id": "auto_stock_42_1785269720091",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "脑机接口",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
-      "id": "auto_stock_51_1785269720092",
-      "title": "软件服务板块走强 科蓝软件20%涨停",
-      "content": "华为欧拉",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-28T09:51:00.000Z"
-    },
-    {
       "id": "auto_stock_48_1785269720091",
       "title": "数字营销概念震荡反弹，岩山科技涨停",
       "content": "AI语料",
@@ -333,6 +416,42 @@
       "stockCode": "",
       "confidence": 0.6,
       "createdAt": "2026-07-28T09:44:11.000Z"
+    },
+    {
+      "id": "auto_stock_0_1785273263409",
+      "title": "中际旭创上半年净利润预增超200% 800G光模块需求爆发",
+      "content": "股票：中际旭创(300308)\n概念板块：半导体\n来源：公司公告\n时间：2026-07-28 09:30",
+      "tag": "earnings",
+      "allTags": [
+        "earnings",
+        "rotation",
+        "news"
+      ],
+      "stockCode": "300308",
+      "stockName": "中际旭创",
+      "concept": "半导体",
+      "link": "https://example.com/stock/1",
+      "source": "公司公告",
+      "confidence": 0.93,
+      "createdAt": "2026-07-28T09:30:00.000Z"
+    },
+    {
+      "id": "auto_finance_4_1785273263410",
+      "title": "央行下调存款准备金率0.5个百分点 释放约1万亿流动性",
+      "content": "中国人民银行决定于2026年8月15日下调金融机构存款准备金率0.5个百分点，此次降准预计释放长期资金约1万亿元。\n来源：央行官网\n时间：2026-07-28 09:15",
+      "tag": "policy",
+      "allTags": [
+        "policy",
+        "industry",
+        "news"
+      ],
+      "stockCode": "",
+      "stockName": "",
+      "concept": "",
+      "link": "https://example.com/news/1",
+      "source": "央行官网",
+      "confidence": 0.6,
+      "createdAt": "2026-07-28T09:15:00.000Z"
     },
     {
       "id": "auto_stock_11_1785269720091",
@@ -353,15 +472,6 @@
       "createdAt": "2026-07-24T20:17:00.000Z"
     },
     {
-      "id": "auto_stock_58_1785269720092",
-      "title": "南天信息：关于副总裁离任的公告",
-      "content": "NFT概念",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-24T20:17:00.000Z"
-    },
-    {
       "id": "auto_stock_41_1785269720091",
       "title": "南天信息：副总裁何立因个人原因辞职",
       "content": "ETC",
@@ -371,27 +481,9 @@
       "createdAt": "2026-07-24T16:26:39.000Z"
     },
     {
-      "id": "auto_stock_59_1785269720092",
-      "title": "南天信息：副总裁何立因个人原因辞职",
-      "content": "NFT概念",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2026-07-24T16:26:39.000Z"
-    },
-    {
       "id": "auto_stock_39_1785269720091",
       "title": "南天信息：副总裁何立离任",
       "content": "ETC",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-24T16:14:00.000Z"
-    },
-    {
-      "id": "auto_stock_57_1785269720092",
-      "title": "南天信息：副总裁何立离任",
-      "content": "NFT概念",
       "tag": "announcement",
       "stockCode": "",
       "confidence": 0.8,
@@ -425,45 +517,9 @@
       "createdAt": "2026-07-15T21:15:00.000Z"
     },
     {
-      "id": "auto_stock_7_1785269720091",
-      "title": "品渥食品：第三届董事会第十五次会议决议公告",
-      "content": "啤酒概念",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-15T21:15:00.000Z"
-    },
-    {
-      "id": "auto_stock_31_1785269720091",
-      "title": "品渥食品：第三届董事会第十五次会议决议公告",
-      "content": "网红经济",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-15T21:15:00.000Z"
-    },
-    {
       "id": "auto_stock_3_1785269720091",
       "title": "品渥食品：不存在逾期债务对应的担保余额",
       "content": "乳业",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-15T21:14:00.000Z"
-    },
-    {
-      "id": "auto_stock_6_1785269720091",
-      "title": "品渥食品：不存在逾期债务对应的担保余额",
-      "content": "啤酒概念",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-15T21:14:00.000Z"
-    },
-    {
-      "id": "auto_stock_30_1785269720091",
-      "title": "品渥食品：不存在逾期债务对应的担保余额",
-      "content": "网红经济",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.9,
@@ -524,81 +580,9 @@
       "createdAt": "2026-07-08T17:30:00.000Z"
     },
     {
-      "id": "auto_stock_16_1785269720091",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "电子身份证",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_19_1785269720091",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "Web3.0",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_25_1785269720091",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "跨境支付(CIPS)",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_28_1785269720091",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "无人零售",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_34_1785269720091",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "数字货币",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_43_1785269720091",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "脑机接口",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
-      "id": "auto_stock_52_1785269720092",
-      "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
-      "content": "华为欧拉",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-08T17:30:00.000Z"
-    },
-    {
       "id": "auto_stock_0_1785269720089",
       "title": "机器人板块崛起！海晨股份单周大涨超66%；ST荣科前控股股东违规担保丨",
       "content": "DRG/DIP",
-      "tag": "rotation",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-05T18:00:00.000Z"
-    },
-    {
-      "id": "auto_stock_54_1785269720092",
-      "title": "机器人板块崛起！海晨股份单周大涨超66%；ST荣科前控股股东违规担保丨",
-      "content": "在线教育",
       "tag": "rotation",
       "stockCode": "",
       "confidence": 0.8,
@@ -614,81 +598,9 @@
       "createdAt": "2026-07-03T20:20:00.000Z"
     },
     {
-      "id": "auto_stock_17_1785269720091",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "电子身份证",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_20_1785269720091",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "Web3.0",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_26_1785269720091",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "跨境支付(CIPS)",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_29_1785269720091",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "无人零售",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_35_1785269720091",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "数字货币",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_44_1785269720091",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "脑机接口",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_53_1785269720092",
-      "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
-      "content": "华为欧拉",
-      "tag": "announcement",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-03T20:20:00.000Z"
-    },
-    {
       "id": "auto_stock_1_1785269720091",
       "title": "ST荣科：每10股派0.15元，股权登记日为7月9日",
       "content": "DRG/DIP",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.8,
-      "createdAt": "2026-07-03T19:15:42.000Z"
-    },
-    {
-      "id": "auto_stock_55_1785269720092",
-      "title": "ST荣科：每10股派0.15元，股权登记日为7月9日",
-      "content": "在线教育",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.8,
@@ -711,15 +623,9 @@
       "stockCode": "",
       "confidence": 0.9,
       "createdAt": "2026-07-01T16:50:00.000Z"
-    },
-    {
-      "id": "auto_stock_56_1785269720092",
-      "title": "ST荣科7月1日龙虎榜数据",
-      "content": "在线教育",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-01T16:50:00.000Z"
     }
-  ]
+  ],
+  "generatedAt": "2026-07-28T21:14:23.408Z",
+  "dataDate": "2026-07-28",
+  "lastMergedAt": "2026-07-28T21:14:23.425Z"
 }
