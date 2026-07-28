@@ -216,6 +216,13 @@ export function createLogicLibraryPage(root) {
     `
   }
 
+  function getStockUrl(code, name) {
+    if (code) {
+      return 'https://stockpage.10jqka.com.cn/' + code + '/'
+    }
+    return 'https://so.eastmoney.com/web/s?keyword=' + encodeURIComponent(name)
+  }
+
   function renderStockCard(stock) {
     const isExpanded = expandedStocks.has(stock.name)
     const tagsHtml = stock.tags.map((tag) => {
@@ -223,20 +230,24 @@ export function createLogicLibraryPage(root) {
       return `<span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; margin-right:4px; margin-bottom:4px; display:inline-block;">${escHtml(tag)}</span>`
     }).join('')
 
+    const stockUrl = getStockUrl(stock.code, stock.name)
+
     const appearancesHtml = isExpanded ? `
       <div style="padding:var(--s-3) var(--s-4); background:var(--surface-2); border-radius:0 0 var(--r-md) var(--r-md); border-top:1px solid var(--line);">
         ${stock.appearances.map((app) => {
-          const c = getTagColor(app.concept)
+          const conceptsHtml = (app.concepts || []).map((cc) => {
+            const c = getTagColor(cc.name)
+            return `<span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; font-weight:var(--weight-medium); margin-right:4px; margin-bottom:4px; display:inline-block;">${escHtml(cc.name)}${cc.conceptChange ? ' +' + cc.conceptChange + '%' : ''}</span>`
+          }).join('')
           return `
             <div style="padding:var(--s-3) 0; border-bottom:1px dashed var(--line); display:flex; align-items:flex-start; gap:var(--s-3);">
-              <div style="flex-shrink:0; width:72px; text-align:center;">
+              <div style="flex-shrink:0; width:56px; text-align:center;">
                 <div style="font-size:var(--text-caption); color:var(--ink-3);">${formatDate(app.date)}</div>
                 ${app.change ? `<div style="font-size:var(--text-caption); margin-top:2px;">${formatChange(app.change)}</div>` : ''}
               </div>
               <div style="flex:1; min-width:0;">
-                <div style="display:flex; align-items:center; gap:var(--s-2); margin-bottom:var(--s-1);">
-                  <span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; font-weight:var(--weight-medium);;">${escHtml(app.concept)}</span>
-                  ${app.conceptChange ? `<span style="font-size:var(--text-caption); color:var(--ink-3);">+${app.conceptChange}%</span>` : ''}
+                <div style="display:flex; flex-wrap:wrap; align-items:center; gap:4px; margin-bottom:var(--s-1);">
+                  ${conceptsHtml}
                 </div>
                 ${app.news ? `
                   <div style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">
@@ -264,7 +275,9 @@ export function createLogicLibraryPage(root) {
             <i data-lucide="chevron-right" class="expand-icon ${isExpanded ? 'expanded' : ''}" style="width:16px; height:16px; color:var(--ink-3); transition:transform var(--duration-hover) var(--ease-hover); flex-shrink:0;"></i>
             <div style="flex:1; min-width:0;">
               <div style="display:flex; align-items:center; gap:var(--s-2); margin-bottom:${stock.tags.length > 0 ? 'var(--s-2)' : '0'};">
-                <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(stock.name)}</span>
+                <a href="${escHtml(stockUrl)}" target="_blank" rel="noopener" class="stock-name-link" data-stock-name="${escHtml(stock.name)}" style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); text-decoration:none; transition:color var(--duration-hover) var(--ease-hover);" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--ink)'" title="在同花顺查看 ${escHtml(stock.name)} 行情">
+                  ${escHtml(stock.name)}
+                </a>
                 ${stock.code ? `<span style="font-size:var(--text-mono); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(stock.code)}</span>` : ''}
                 <span style="font-size:var(--text-caption); color:var(--brand); background:var(--brand-bg); border-radius:var(--r-pill); padding:2px 8px; font-weight:var(--weight-medium);">${stock.appearances.length}次上榜</span>
               </div>
@@ -313,7 +326,8 @@ export function createLogicLibraryPage(root) {
     })
 
     root.querySelectorAll('.stock-card-header').forEach((header) => {
-      header.addEventListener('click', () => {
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.stock-name-link')) return
         const name = header.getAttribute('data-stock-name')
         if (expandedStocks.has(name)) {
           expandedStocks.delete(name)

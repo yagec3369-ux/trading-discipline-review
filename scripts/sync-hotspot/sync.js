@@ -472,14 +472,20 @@ function generateLogicLibrary(currentData) {
       }
 
       const change = concept.leadingChange || 0
-      const existingAppearance = entry.appearances.find(
-        (a) => a.date === date && a.concept === concept.name
+      const newsTitle = bestNews ? bestNews.title : ''
+      // 按 日期+新闻标题 融合：同日同标题的多个概念合并为一条
+      const existing = entry.appearances.find(
+        (a) => a.date === date && a.newsTitle === newsTitle
       )
-      if (!existingAppearance) {
+      if (existing) {
+        if (!existing.concepts.some((c) => c.name === concept.name)) {
+          existing.concepts.push({ name: concept.name, conceptChange: concept.changePercent })
+        }
+      } else {
         entry.appearances.push({
           date,
-          concept: concept.name,
-          conceptChange: concept.changePercent,
+          newsTitle,
+          concepts: [{ name: concept.name, conceptChange: concept.changePercent }],
           change,
           news: bestNews
             ? {
@@ -538,7 +544,7 @@ function generateLogicLibrary(currentData) {
         tags: s.tags.sort(),
         appearances: s.appearances.sort((a, b) => {
           if (a.date !== b.date) return b.date.localeCompare(a.date)
-          return b.conceptChange - a.conceptChange
+          return (b.concepts[0]?.conceptChange || 0) - (a.concepts[0]?.conceptChange || 0)
         })
       }))
       .sort((a, b) => {
