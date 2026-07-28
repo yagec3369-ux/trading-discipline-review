@@ -65,6 +65,13 @@ export function createOverviewPage(root) {
     const available = totalFund - totalBuyAmount + totalSellAmount
     // 当前总资产 = 股票市值 + 可用资金
     const totalAsset = stockValue + available
+    // 累计盈亏 = 当前总资产 - 账户总金额
+    const totalPnl = totalAsset - totalFund
+    // 本日盈亏 = 今日卖出金额 - 今日买入金额
+    const todayStr = new Date().toISOString().slice(0, 10)
+    const todayBuy = trades.filter(t => t.type === 'buy' && t.date === todayStr).reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
+    const todaySell = trades.filter(t => t.type === 'sell' && t.date === todayStr).reduce((s, t) => s + (parseFloat(t.actualAmount) || 0), 0)
+    const todayPnl = todaySell - todayBuy
     // 本月累计盈亏 = 持仓浮动盈亏
     const monthlyPnl = floatPnl
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
@@ -124,7 +131,7 @@ export function createOverviewPage(root) {
       </div>
 
       <!-- KPI Summary -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-8">
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
             <span style="font-size:var(--text-caption); color:var(--ink-3);">当前总资产</span>
@@ -132,6 +139,22 @@ export function createOverviewPage(root) {
           </div>
           <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums;">${totalAsset > 0 ? totalAsset.toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '元' : '--'}</div>
           <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">市值 ${stockValue > 0 ? stockValue.toLocaleString('zh-CN', { maximumFractionDigits: 0 }) : '--'} + 可用 ${available > 0 ? available.toLocaleString('zh-CN', { maximumFractionDigits: 0 }) : '--'}</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
+          <div class="flex items-center justify-between mb-2">
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">累计盈亏</span>
+            <i data-lucide="trending-up" style="width:14px; height:14px; color:${totalPnl > 0 ? 'var(--price-up)' : totalPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'};"></i>
+          </div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:${totalPnl > 0 ? 'var(--price-up)' : totalPnl < 0 ? 'var(--price-down)' : 'var(--ink)'}; white-space:nowrap; font-variant-numeric:tabular-nums;">${(totalPnl >= 0 ? '+' : '') + totalPnl.toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '元'}</div>
+          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">总资产 - 账户总金额</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
+          <div class="flex items-center justify-between mb-2">
+            <span style="font-size:var(--text-caption); color:var(--ink-3);">本日盈亏</span>
+            <i data-lucide="zap" style="width:14px; height:14px; color:${todayPnl > 0 ? 'var(--price-up)' : todayPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'};"></i>
+          </div>
+          <div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:${todayPnl > 0 ? 'var(--price-up)' : todayPnl < 0 ? 'var(--price-down)' : 'var(--ink)'}; white-space:nowrap; font-variant-numeric:tabular-nums;">${trades.length === 0 ? '--' : (todayPnl >= 0 ? '+' : '') + todayPnl.toLocaleString('zh-CN', { maximumFractionDigits: 2 }) + '元'}</div>
+          <div class="mt-1" style="font-size:var(--text-caption); color:var(--ink-3);">今日卖出 - 今日买入</div>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
           <div class="flex items-center justify-between mb-2">
