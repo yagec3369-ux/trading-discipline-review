@@ -1,4 +1,4 @@
-// 大盘热点页面 — 新闻热点排行榜、财经新闻、个股新闻
+// 大盘热点页面 — 新闻热点（概念排行+个股新闻融合）、财经新闻
 
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
@@ -129,165 +129,120 @@ const SAMPLE_CONCEPTS = [
   }
 ]
 
-// 示例数据：财经新闻
 const SAMPLE_FINANCE_NEWS = [
   {
     title: '央行下调存款准备金率0.5个百分点 释放约1万亿流动性',
-    summary: '中国人民银行决定于2026年8月15日下调金融机构存款准备金率0.5个百分点，此次降准预计释放长期资金约1万亿元。专家表示，此举将有助于降低金融机构资金成本，增强金融机构信贷投放能力，支持实体经济恢复发展。',
+    summary: '中国人民银行决定于2026年8月15日下调金融机构存款准备金率0.5个百分点，此次降准预计释放长期资金约1万亿元。',
     time: '2026-07-27 09:15',
     source: '央行官网',
     link: '#'
   },
   {
     title: '半导体板块持续走强 行业景气度迎来拐点',
-    summary: '受AI算力需求爆发和国产替代加速双重驱动，半导体板块近期持续走强。多家券商研报指出，当前半导体行业库存周期基本见底，下游需求回暖，2026年下半年有望迎来业绩拐点，建议关注设备、材料、设计等细分领域龙头企业。',
+    summary: '受AI算力需求爆发和国产替代加速双重驱动，半导体板块近期持续走强。',
     time: '2026-07-27 10:32',
     source: '证券时报',
     link: '#'
   },
   {
     title: '国务院发布促进民间投资若干措施 鼓励民企参与重大工程',
-    summary: '国务院办公厅发布《关于进一步促进民间投资若干措施的通知》，提出鼓励民间资本参与国家重大工程和补短板项目，支持民营企业参与新型基础设施、新型城镇化等领域建设，将进一步激发民间投资活力。',
+    summary: '国务院办公厅发布《关于进一步促进民间投资若干措施的通知》。',
     time: '2026-07-27 11:08',
     source: '新华社',
     link: '#'
   },
   {
     title: '北向资金净流入超80亿 外资连续3日加仓A股',
-    summary: '今日北向资金净流入82.3亿元，连续第3个交易日加仓A股。从行业配置看，外资主要加仓半导体、人工智能、新能源等科技成长板块，减仓消费、地产等传统板块。分析师认为，外资持续流入显示对A股长期价值的认可。',
+    summary: '今日北向资金净流入82.3亿元，连续第3个交易日加仓A股。',
     time: '2026-07-27 14:20',
     source: '财联社',
     link: '#'
   },
   {
     title: '新能源汽车6月销量同比增长35% 渗透率突破40%',
-    summary: '中汽协数据显示，6月新能源汽车销量达108.5万辆，同比增长35%，渗透率首次突破40%。其中比亚迪、理想、蔚来等品牌表现亮眼。随着充电基础设施完善和补贴政策持续，预计下半年新能源车销量将继续保持高速增长。',
+    summary: '中汽协数据显示，6月新能源汽车销量达108.5万辆，同比增长35%。',
     time: '2026-07-27 15:45',
     source: '中汽协',
     link: '#'
   }
 ]
 
-// 示例数据：个股新闻
 const SAMPLE_STOCK_NEWS = [
-  {
-    stockName: '中际旭创',
-    stockCode: '300308',
-    concept: '半导体',
-    title: '中际旭创上半年净利润预增超200% 800G光模块需求爆发',
-    time: '2026-07-27 09:30',
-    source: '公司公告',
-    link: '#'
-  },
-  {
-    stockName: '科大讯飞',
-    stockCode: '002230',
-    concept: '人工智能',
-    title: '科大讯飞星火大模型V4.5发布 多项核心指标超越GPT-4',
-    time: '2026-07-27 10:15',
-    source: '科技日报',
-    link: '#'
-  },
-  {
-    stockName: '新易盛',
-    stockCode: '300502',
-    concept: 'CPO概念',
-    title: '新易盛获海外大客户1.6T光模块订单 产能已排至2027年',
-    time: '2026-07-27 11:22',
-    source: '券商研报',
-    link: '#'
-  },
-  {
-    stockName: '兆易创新',
-    stockCode: '603986',
-    concept: '汽车芯片',
-    title: '兆易创新车规级MCU量产 已导入多家头部车企供应链',
-    time: '2026-07-27 13:48',
-    source: '界面新闻',
-    link: '#'
-  },
-  {
-    stockName: '阳光电源',
-    stockCode: '300274',
-    concept: '光伏设备',
-    title: '阳光电源储能业务出海加速 海外订单占比超60%',
-    time: '2026-07-27 14:35',
-    source: '财联社',
-    link: '#'
-  },
-  {
-    stockName: '贵州茅台',
-    stockCode: '600519',
-    concept: '白酒概念',
-    title: '贵州茅台半年报：营收同比增长12% 批价企稳信号显现',
-    time: '2026-07-27 16:00',
-    source: '公司公告',
-    link: '#'
-  }
+  { stockName: '中际旭创', stockCode: '300308', concept: '半导体', title: '中际旭创上半年净利润预增超200% 800G光模块需求爆发', time: '2026-07-27 09:30', source: '公司公告', link: '#', change: 9.98 },
+  { stockName: '科大讯飞', stockCode: '002230', concept: '人工智能', title: '科大讯飞星火大模型V4.5发布 多项核心指标超越GPT-4', time: '2026-07-27 10:15', source: '科技日报', link: '#', change: 8.52 },
+  { stockName: '新易盛', stockCode: '300502', concept: 'CPO概念', title: '新易盛获海外大客户1.6T光模块订单 产能已排至2027年', time: '2026-07-27 11:22', source: '券商研报', link: '#', change: 7.43 },
+  { stockName: '兆易创新', stockCode: '603986', concept: '汽车芯片', title: '兆易创新车规级MCU量产 已导入多家头部车企供应链', time: '2026-07-27 13:48', source: '界面新闻', link: '#', change: 6.21 },
+  { stockName: '阳光电源', stockCode: '300274', concept: '光伏设备', title: '阳光电源储能业务出海加速 海外订单占比超60%', time: '2026-07-27 14:35', source: '财联社', link: '#', change: 1.02 },
+  { stockName: '贵州茅台', stockCode: '600519', concept: '白酒概念', title: '贵州茅台半年报：营收同比增长12% 批价企稳信号显现', time: '2026-07-27 16:00', source: '公司公告', link: '#', change: -2.15 }
 ]
 
 function fmtChange(val) {
   const color = val > 0 ? 'var(--state-error)' : val < 0 ? 'var(--state-success)' : 'var(--ink-3)'
   const prefix = val > 0 ? '+' : ''
-  return { text: prefix + val.toFixed(2) + '%', color }
+  return { text: prefix + (val || 0).toFixed(2) + '%', color }
 }
 
-function renderConceptRank(concepts) {
+// 按概念匹配个股新闻
+function matchStockNews(concept, stockNews) {
+  if (!stockNews || stockNews.length === 0) return []
+  return stockNews.filter((n) => {
+    if (n.concept && concept.name && n.concept === concept.name) return true
+    if (n.stockName && concept.leadingStock && n.stockName === concept.leadingStock) return true
+    return false
+  })
+}
+
+// 渲染融合页面：概念排行 + 可折叠个股新闻
+function renderConceptWithNews(concepts, stockNews) {
   const data = concepts || SAMPLE_CONCEPTS
+  const newsData = stockNews || SAMPLE_STOCK_NEWS
+
   return `
     <div class="mb-4 flex items-center gap-2">
       <i data-lucide="flame" style="width:18px; height:18px; color:var(--state-error);"></i>
-      <span style="font-size:var(--text-body); color:var(--ink-3);">按涨幅排序 · 共 ${data.length} 条</span>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">点击概念行展开个股新闻 · 共 ${data.length} 个概念</span>
     </div>
-    <div class="overflow-x-auto">
-      <table style="width:100%; border-collapse:separate; border-spacing:0; font-size:var(--text-caption);">
-        <thead>
-          <tr style="background:var(--surface); color:var(--ink-3);">
-            <th style="padding:var(--s-3); text-align:left; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">排名</th>
-            <th style="padding:var(--s-3); text-align:left; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">概念名称</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">概念指数</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">涨跌幅</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">流入资金</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">流出资金</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">净额</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">成份股</th>
-            <th style="padding:var(--s-3); text-align:left; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">领涨股</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">领涨幅</th>
-            <th style="padding:var(--s-3); text-align:right; font-weight:var(--weight-medium); border-bottom:1px solid var(--line); white-space:nowrap;">领涨价</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${data.map((c, i) => {
-            const change = fmtChange(c.changePercent)
-            const leadChange = fmtChange(c.leadingChange)
-            const rankColor = i < 3 ? 'var(--state-error)' : 'var(--ink-3)'
-            return `
-              <tr style="background:var(--bg); transition:background 0.15s;" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--bg)'">
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line);">
-                  <span style="font-weight:var(--weight-bold); color:${rankColor}; font-size:var(--text-body);">${i + 1}</span>
-                </td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); white-space:nowrap;">
-                  <span style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(c.name)}</span>
-                </td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap;">${c.index.toFixed(2)}</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${change.color}; white-space:nowrap;">${change.text}</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; color:var(--state-error); white-space:nowrap;">${escHtml(c.inflow)}</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; color:var(--state-success); white-space:nowrap;">${escHtml(c.outflow)}</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${c.netColor}; white-space:nowrap;">${escHtml(c.netAmount)}</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; color:var(--ink-2); white-space:nowrap;">${c.stockCount}只</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); white-space:nowrap;">
-                  <div style="display:flex; flex-direction:column;">
-                    <span style="font-size:var(--text-body); font-weight:var(--weight-medium); color:var(--ink);">${escHtml(c.leadingStock)}</span>
-                    <span style="font-size:11px; color:var(--ink-3); font-family:var(--font-mono);">${escHtml(c.leadingCode)}</span>
+    <div class="flex flex-col gap-2">
+      ${data.map((c, i) => {
+        const change = fmtChange(c.changePercent)
+        const leadChange = fmtChange(c.leadingChange)
+        const rankColor = i < 3 ? 'var(--state-error)' : 'var(--ink-3)'
+        const relatedNews = matchStockNews(c, newsData)
+        const hasNews = relatedNews.length > 0
+        return `
+          <div class="concept-row" data-idx="${i}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; transition:border-color 0.15s;">
+            <div class="concept-header" data-idx="${i}" style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3) var(--s-4); cursor:${hasNews ? 'pointer' : 'default'}; user-select:none;${hasNews ? '' : 'opacity:0.85;'}">
+              <span style="font-weight:var(--weight-bold); color:${rankColor}; font-size:var(--text-body-l); min-width:28px; text-align:center;">${i + 1}</span>
+              <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); min-width:100px;">${escHtml(c.name)}</span>
+              <span style="font-variant-numeric:tabular-nums; color:var(--ink-2); font-size:var(--text-caption); min-width:80px;">${c.index.toFixed(2)}</span>
+              <span style="font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${change.color}; font-size:var(--text-body); min-width:70px;">${change.text}</span>
+              <span style="font-variant-numeric:tabular-nums; color:${c.netColor}; font-size:var(--text-caption); min-width:80px;">净额 ${escHtml(c.netAmount)}</span>
+              <span style="color:var(--ink-2); font-size:var(--text-caption); min-width:90px;">领涨: ${escHtml(c.leadingStock)} <span style="color:${leadChange.color}; font-weight:var(--weight-medium);">${leadChange.text}</span></span>
+              <span style="color:var(--ink-3); font-size:var(--text-caption); min-width:60px;">${c.stockCount}只</span>
+              ${hasNews ? `<span class="expand-icon" data-idx="${i}" style="margin-left:auto; color:var(--ink-3); display:inline-flex; align-items:center; gap:4px; font-size:var(--text-caption);"><i data-lucide="chevron-down" style="width:16px; height:16px;"></i>${relatedNews.length}条新闻</span>` : `<span style="margin-left:auto; color:var(--ink-3); font-size:var(--text-caption);">无新闻</span>`}
+            </div>
+            <div class="concept-news" data-idx="${i}" style="display:none; border-top:1px solid var(--line); padding:var(--s-2) var(--s-4); background:var(--bg);">
+              ${relatedNews.map((n) => {
+                const nChange = fmtChange(n.change ?? n.leadingChange ?? 0)
+                const link = n.link && n.link !== '#' ? n.link : '#'
+                return `
+                  <div style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) 0; border-bottom:1px solid var(--line);">
+                    <div style="display:flex; flex-direction:column; min-width:100px;">
+                      <span style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand);">${escHtml(n.stockName)}</span>
+                      <span style="font-size:11px; color:${nChange.color}; font-weight:var(--weight-medium);">${nChange.text}</span>
+                    </div>
+                    ${link !== '#' ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="flex:1; font-size:var(--text-body); color:var(--ink); text-decoration:none; line-height:1.4;${'text-decoration:none;'}" onmouseenter="this.style.color='var(--brand)'" onmouseleave="this.style.color='var(--ink)'">${escHtml(n.title)} <i data-lucide="external-link" style="width:11px; height:11px; display:inline; vertical-align:middle;"></i></a>` : `<span style="flex:1; font-size:var(--text-body); color:var(--ink-2); line-height:1.4;">${escHtml(n.title)}</span>`}
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; min-width:120px;">
+                      <span style="font-size:11px; color:var(--ink-3);">${escHtml(n.time)}</span>
+                      <span style="font-size:11px; color:var(--ink-2);">${escHtml(n.source)}</span>
+                    </div>
                   </div>
-                </td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; font-weight:var(--weight-semibold); color:${leadChange.color}; white-space:nowrap;">${leadChange.text}</td>
-                <td style="padding:var(--s-3); border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap;">${c.leadingPrice.toFixed(2)}</td>
-              </tr>
-            `
-          }).join('')}
-        </tbody>
-      </table>
+                `
+              }).join('')}
+            </div>
+          </div>
+        `
+      }).join('')}
     </div>
   `
 }
@@ -302,9 +257,7 @@ function renderFinanceNews(news) {
             <h4 style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); line-height:1.4; flex:1;">${escHtml(n.title)}</h4>
             <i data-lucide="external-link" style="width:14px; height:14px; color:var(--ink-3); flex-shrink:0; margin-top:4px;"></i>
           </div>
-          <div style="background:var(--brand-bg); border-left:3px solid var(--brand); border-radius:0 var(--r-sm) var(--r-sm) 0; padding:var(--s-2) var(--s-3); margin-bottom:var(--s-3);">
-            <p style="font-size:var(--text-body); line-height:1.6; color:var(--brand); font-weight:var(--weight-medium);">${escHtml(n.summary)}</p>
-          </div>
+          ${n.summary ? `<div style="background:var(--brand-bg); border-left:3px solid var(--brand); border-radius:0 var(--r-sm) var(--r-sm) 0; padding:var(--s-2) var(--s-3); margin-bottom:var(--s-3);"><p style="font-size:var(--text-body); line-height:1.6; color:var(--brand); font-weight:var(--weight-medium);">${escHtml(n.summary)}</p></div>` : ''}
           <div class="flex items-center gap-3">
             <span style="font-size:var(--text-caption); color:var(--ink-3); display:inline-flex; align-items:center; gap:4px;">
               <i data-lucide="clock" style="width:12px; height:12px;"></i>
@@ -321,48 +274,14 @@ function renderFinanceNews(news) {
   `
 }
 
-function renderStockNews(news) {
-  const data = news || SAMPLE_STOCK_NEWS
-  return `
-    <div class="flex flex-col gap-3">
-      ${data.map((n) => {
-        const change = fmtChange(0) // placeholder
-        return `
-          <a href="${escHtml(n.link)}" target="_blank" rel="noopener" style="display:block; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) var(--s-5); text-decoration:none; transition:border-color 0.15s;" onmouseenter="this.style.borderColor='var(--brand)'" onmouseleave="this.style.borderColor='var(--line)'">
-            <div class="flex items-center gap-3 mb-3 flex-wrap">
-              <span style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand);">${escHtml(n.stockName)}</span>
-              <span style="font-size:var(--text-caption); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(n.stockCode)}</span>
-              <span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:var(--brand-bg); color:var(--brand); font-weight:var(--weight-medium);">${escHtml(n.concept)}</span>
-            </div>
-            <div class="flex items-start justify-between gap-2 mb-3">
-              <h4 style="font-size:var(--text-body); font-weight:var(--weight-semibold); color:var(--ink); line-height:1.5; flex:1;">${escHtml(n.title)}</h4>
-              <i data-lucide="external-link" style="width:14px; height:14px; color:var(--ink-3); flex-shrink:0; margin-top:3px;"></i>
-            </div>
-            <div class="flex items-center gap-4 flex-wrap">
-              <span style="font-size:var(--text-caption); color:var(--ink-3); display:inline-flex; align-items:center; gap:4px;">
-                <i data-lucide="clock" style="width:12px; height:12px;"></i>
-                ${escHtml(n.time)}
-              </span>
-              <span style="font-size:var(--text-caption); color:var(--ink-2); font-weight:var(--weight-medium); display:inline-flex; align-items:center; gap:4px;">
-                <i data-lucide="radio" style="width:12px; height:12px;"></i>
-                来源：${escHtml(n.source)}
-              </span>
-            </div>
-          </a>
-        `
-      }).join('')}
-    </div>
-  `
-}
-
 export function createMarketHotPage(root) {
   let activeTab = 'rank'
   let importedData = loadHotData()
   let remoteData = null
   let remoteFetching = false
   let autoFetchTimer = null
+  let expandedRows = new Set()
 
-  // 自动从仓库 fetch 远程数据
   async function fetchRemoteData() {
     if (remoteFetching) return
     remoteFetching = true
@@ -377,7 +296,6 @@ export function createMarketHotPage(root) {
         render()
       }
     } catch (e) {
-      // 静默失败，不影响页面
     } finally {
       remoteFetching = false
     }
@@ -461,20 +379,10 @@ export function createMarketHotPage(root) {
           <i data-lucide="newspaper" style="width:14px; height:14px; margin-right:6px;"></i>
           财经新闻
         </button>
-        <button id="tab-stock" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="stock" style="${activeTab === 'stock' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'}">
-          <i data-lucide="file-text" style="width:14px; height:14px; margin-right:6px;"></i>
-          个股新闻
-        </button>
       </div>
 
-      ${activeTab === 'rank' ? renderConceptRank(concepts) : ''}
+      ${activeTab === 'rank' ? renderConceptWithNews(concepts, stockNews) : ''}
       ${activeTab === 'finance' ? renderFinanceNews(financeNews) : ''}
-      ${activeTab === 'stock' ? renderStockNews(stockNews) : ''}
-
-      <div style="background:var(--surface-2); border-left:3px solid var(--brand); border-radius:0 var(--r-md) var(--r-md) 0; padding:var(--s-4) var(--s-5); margin-top:var(--s-6);">
-        <p style="font-size:var(--text-caption); font-weight:var(--weight-semibold); color:var(--brand); margin-bottom:var(--s-2); letter-spacing:0.02em;">数据说明</p>
-        <p style="font-size:var(--text-body); line-height:var(--leading-body); color:var(--ink-2);">点击「导入数据」按钮，粘贴 MCP 服务器生成的热点数据 JSON，即可展示真实行情。数据格式：<code style="background:var(--bg); padding:2px 6px; border-radius:var(--r-sm); font-size:var(--text-caption);">{'{ concepts: [...], financeNews: [...], stockNews: [...] }'}</code></p>
-      </div>
     `
     refreshIcons()
     bindEvents()
@@ -484,7 +392,28 @@ export function createMarketHotPage(root) {
     root.querySelectorAll('.tab-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         activeTab = btn.getAttribute('data-tab')
+        expandedRows.clear()
         render()
+      })
+    })
+
+    // 概念行折叠/展开
+    root.querySelectorAll('.concept-header').forEach((header) => {
+      header.addEventListener('click', () => {
+        const idx = header.getAttribute('data-idx')
+        const newsEl = root.querySelector(`.concept-news[data-idx="${idx}"]`)
+        const iconEl = header.querySelector('.expand-icon [data-lucide]')
+        if (!newsEl) return
+        if (newsEl.style.display === 'none') {
+          newsEl.style.display = 'block'
+          if (iconEl) iconEl.setAttribute('data-lucide', 'chevron-up')
+          expandedRows.add(idx)
+        } else {
+          newsEl.style.display = 'none'
+          if (iconEl) iconEl.setAttribute('data-lucide', 'chevron-down')
+          expandedRows.delete(idx)
+        }
+        refreshIcons()
       })
     })
 
@@ -522,11 +451,7 @@ export function createMarketHotPage(root) {
       </div>
       <div style="margin-bottom:var(--s-4); padding:var(--s-3); background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm);">
         <p style="font-size:var(--text-caption); color:var(--ink-2); line-height:var(--leading-body);">
-          <strong style="color:var(--brand);">使用方法：</strong>
-          运行 MCP 服务器的 <code style="background:var(--bg); padding:1px 4px; border-radius:3px;">run_hotspot_report()</code> 获取报告，将返回的 JSON 数据粘贴到下方文本框。
-        </p>
-        <p style="font-size:var(--text-caption); color:var(--ink-3); margin-top:4px;">
-          也可以直接粘贴数据对象，格式：<br>
+          将数据 JSON 粘贴到下方文本框。格式：
           <code style="background:var(--bg); padding:1px 4px; border-radius:3px; display:block; margin-top:4px;">{ "concepts": [...], "financeNews": [...], "stockNews": [...] }</code>
         </p>
       </div>
@@ -560,13 +485,10 @@ export function createMarketHotPage(root) {
   }
 
   function tryParseImport(text) {
-    // Try direct JSON parse
     try {
       const obj = JSON.parse(text)
       return normalizeData(obj)
     } catch (e) {}
-
-    // Try to extract JSON from MCP response
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (jsonMatch) {
       try {
@@ -574,33 +496,24 @@ export function createMarketHotPage(root) {
         return normalizeData(obj)
       } catch (e) {}
     }
-
     return null
   }
 
   function normalizeData(obj) {
-    // Handle MCP hotspot report format
     if (obj.md_report || obj.stdout_tail) {
-      // This is the MCP run_hotspot_report output - try to parse embedded data
-      // For now, extract what we can from the stdout
       if (obj.stdout_tail) {
         const extracted = extractFromText(obj.stdout_tail)
         if (extracted) return extracted
       }
-      // If no extractable data, return sample-like structure
       return { concepts: [], financeNews: [], stockNews: [], date: todayStr() }
     }
-
-    // Direct data format
     const concepts = obj.concepts || obj.sectors || obj.hotSectors || []
     const financeNews = obj.financeNews || obj.news || obj.articles || []
     const stockNews = obj.stockNews || obj.stockArticles || obj.singleStockNews || []
     const date = obj.date || obj.reportDate || todayStr()
-
     if (concepts.length === 0 && financeNews.length === 0 && stockNews.length === 0) {
       return null
     }
-
     return {
       concepts: concepts.map(normalizeConcept),
       financeNews: financeNews.map(normalizeFinanceNews),
@@ -649,17 +562,13 @@ export function createMarketHotPage(root) {
       title: n.title || n.headline || '无标题',
       time: n.time || n.publishTime || n.date || '',
       source: n.source || n.origin || '未知来源',
-      link: n.link || n.url || '#'
+      link: n.link || n.url || '#',
+      change: n.change ?? n.changePercent ?? n.leadingChange ?? null
     }
   }
 
   function extractFromText(text) {
-    // Try to extract data from markdown or plain text reports
     const concepts = []
-    const financeNews = []
-    const stockNews = []
-
-    // Look for concept/board sections
     const conceptSection = text.match(/概念板块[^\n]*\n([\s\S]*?)(?=\n\n|\n##|\n财经|\n$)/)
     if (conceptSection) {
       const lines = conceptSection[1].split('\n').filter(l => l.trim())
@@ -685,17 +594,9 @@ export function createMarketHotPage(root) {
         }
       })
     }
-
-    // If we found data, return it
-    if (concepts.length || financeNews.length || stockNews.length) {
-      return {
-        concepts,
-        financeNews,
-        stockNews,
-        date: todayStr()
-      }
+    if (concepts.length) {
+      return { concepts, financeNews: [], stockNews: [], date: todayStr() }
     }
-
     return null
   }
 

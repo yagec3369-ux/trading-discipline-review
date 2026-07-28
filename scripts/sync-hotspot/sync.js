@@ -107,7 +107,8 @@ function parseNewsSheet(wb, sheetName, type) {
           title: String(r['新闻标题'] || r['新闻标题 '] || r['标题'] || '').trim(),
           time: String(r['发布时间'] || r['发布时间 '] || r['时间'] || '').trim(),
           source: String(r['文章来源'] || r['文章来源 '] || r['来源'] || '').trim(),
-          link: String(r['新闻链接'] || r['新闻链接 '] || r['链接'] || '#').trim()
+          link: String(r['新闻链接'] || r['新闻链接 '] || r['链接'] || '#').trim(),
+          change: parseFloat(r['涨跌幅'] || r['涨跌幅 '] || 0) || 0
         }
       }
       return {
