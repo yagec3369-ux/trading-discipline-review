@@ -73,10 +73,10 @@ export async function fetchStockQuote(code) {
     const resp = await jsonp(url)
     if (!resp || !resp.data) return null
     const d = resp.data
-    // f43: 现价(分)，f170: 涨跌幅(%)
+    // f43: 现价(分)，f170: 涨跌幅(百分比的100倍)
     const price = d.f43 != null ? d.f43 / 100 : null
     const name = d.f58 || ''
-    const changePct = d.f170 != null ? d.f170 : 0
+    const changePct = d.f170 != null ? d.f170 / 100 : 0
     if (price == null) return null
     return { price, name, changePct }
   } catch (e) {
