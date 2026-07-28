@@ -458,11 +458,12 @@ export function createExecutionPage(root) {
 
     const actionLabels = { executed: '已执行', cancelled: '取消', discarded: '弃用' }
 
+    savePlansAndNotify()
+
     if (action === 'executed') {
       createTradeRecordFromPlan(plan, legType)
     }
 
-    savePlansAndNotify()
     showToast(legType === 'buy' ? '买入记录已标记为「' + actionLabels[action] + '」' : '卖出记录已标记为「' + actionLabels[action] + '」')
     render()
   }
