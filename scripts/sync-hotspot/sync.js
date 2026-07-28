@@ -81,12 +81,15 @@ function parseExcel(filePath) {
   const industryFlow = parseSheet(wb, '行业资金流', parseIndustryFlow)
   const fundScale = parseSheet(wb, '基金规模变化', parseFundScale)
 
+  // 构建 股票名→代码 映射，填充缺失的股票代码
+  const codeMap = buildStockCodeMap(wb)
+
   const dateMatch = path.basename(filePath).match(/(\d{8})/)
   const dateStr = dateMatch
     ? dateMatch[1].replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')
     : new Date().toISOString().slice(0, 10)
 
-  return {
+  const data = {
     concepts,
     financeNews,
     stockNews,
@@ -100,6 +103,107 @@ function parseExcel(filePath) {
     date: dateStr,
     updatedAt: new Date().toISOString()
   }
+
+  fillStockCodes(data, codeMap)
+
+  return data
+}
+
+// 从"概念领涨股Top3"等 sheet 构建 股票名→代码 映射
+function buildStockCodeMap(wb) {
+  const map = new Map()
+  // 尝试匹配 "概念领涨股Top3" 及类似 sheet
+  const aliases = ['概念领涨股Top3', '领涨股Top3', '领涨股', '概念领涨', '领涨股排行', 'Top3', 'top3']
+  let matched = false
+  for (const s of wb.SheetNames) {
+    const sLower = s.toLowerCase()
+    if (aliases.some((a) => sLower.includes(a.toLowerCase()) || a.toLowerCase().includes(sLower))) {
+      const sheet = wb.Sheets[s]
+      const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
+      console.log(`  [匹配] 领涨股 sheet → "${s}", ${rows.length} 行`)
+      console.log(`  [列名] ${Object.keys(rows[0] || {}).join(', ')}`)
+      let rowMatched = false
+      for (const r of rows) {
+        rowMatched = false
+        // 宽格式：每行可能有多只股票（领涨股1/领涨股2/领涨股3）
+        for (let i = 1; i <= 3; i++) {
+          const name = col(r, `领涨股${i}`, `股票${i}`, `个股${i}`, i === 1 ? '领涨股' : '', i === 1 ? '股票名称' : '', i === 1 ? '名称' : '')
+          const code = col(r, `领涨股${i}代码`, `股票${i}代码`, `代码${i}`, i === 1 ? '股票代码' : '', i === 1 ? '代码' : '')
+          if (name && code) {
+            map.set(name, code)
+            rowMatched = true
+          }
+        }
+        // 兜底：本行未匹配到，直接找所有含"名称"和"代码"的列对
+        if (!rowMatched) {
+          const keys = Object.keys(r)
+          const nameKeys = keys.filter((k) => /名称|股票|个股|领涨/.test(k))
+          const codeKeys = keys.filter((k) => /代码|证券代码/.test(k))
+          for (const nk of nameKeys) {
+            for (const ck of codeKeys) {
+              if (r[nk] && r[ck]) {
+                map.set(String(r[nk]).trim(), String(r[ck]).trim())
+              }
+            }
+          }
+        }
+      }
+      matched = true
+      break
+    }
+  }
+  if (!matched) {
+    console.log('  [跳过] 未找到"概念领涨股Top3"类 sheet')
+  }
+  // 也从涨停/跌停明细中补充映射
+  for (const sheetName of ['涨停明细', '跌停明细']) {
+    const aliases2 = SHEET_ALIASES[sheetName] || []
+    const allNames = [sheetName, ...aliases2]
+    let actualName = null
+    for (const s of wb.SheetNames) {
+      const sLower = s.toLowerCase()
+      if (allNames.some((n) => sLower.includes(n.toLowerCase()) || n.toLowerCase().includes(sLower))) {
+        actualName = s
+        break
+      }
+    }
+    const sheet = wb.Sheets[actualName || sheetName]
+    if (sheet) {
+      const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
+      for (const r of rows) {
+        const name = col(r, '股票名称', '名称')
+        const code = col(r, '股票代码', '代码')
+        if (name && code && !map.has(name)) {
+          map.set(name, code)
+        }
+      }
+    }
+  }
+  console.log(`  [映射] 股票名→代码映射共 ${map.size} 条`)
+  return map
+}
+
+// 用映射填充缺失的股票代码
+function fillStockCodes(data, codeMap) {
+  if (!codeMap || codeMap.size === 0) return data
+  let filled1 = 0, filled2 = 0
+  // 填充 stockNews 的 stockCode
+  for (const n of data.stockNews) {
+    if (!n.stockCode && n.stockName && codeMap.has(n.stockName)) {
+      n.stockCode = codeMap.get(n.stockName)
+      filled1++
+    }
+  }
+  // 填充 concepts 的 leadingCode
+  for (const c of data.concepts) {
+    if (!c.leadingCode && c.leadingStock && codeMap.has(c.leadingStock)) {
+      c.leadingCode = codeMap.get(c.leadingStock)
+      filled2++
+    }
+  }
+  if (filled1 > 0) console.log(`  [填充] 个股新闻 stockCode ${filled1} 条`)
+  if (filled2 > 0) console.log(`  [填充] 概念 leadingCode ${filled2} 条`)
+  return data
 }
 
 // 按标题去重（个股新闻同时按股票名+标题去重）
