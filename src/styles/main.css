@@ -350,3 +350,11 @@
   .safe-top { padding-top: max(var(--s-2), env(safe-area-inset-top)); }
   .safe-bottom { padding-bottom: max(var(--s-2), env(safe-area-inset-bottom)); }
 }
+
+/* ── Logic Library: Stock card interactions ── */
+.stock-card-header:hover {
+  background: var(--surface-2) !important;
+}
+.stock-card-header .expand-icon.expanded {
+  transform: rotate(90deg);
+}

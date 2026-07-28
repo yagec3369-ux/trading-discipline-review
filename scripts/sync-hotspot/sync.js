@@ -18,6 +18,7 @@ const PUSH = args.push || false
 const DRY = args.dry || false
 const OUTPUT_PATH = path.resolve(process.cwd(), 'public/market-hot.json')
 const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
+const LOGIC_LIBRARY_PATH = path.resolve(process.cwd(), 'public/logic-library.json')
 
 if (!REPORTS_DIR) {
   console.error('错误: 请通过 --reportsDir 指定 workbuddy reports 文件夹路径')
@@ -424,6 +425,136 @@ function parseIndustryFlow(r) {
   }
 }
 
+function generateLogicLibrary(currentData) {
+  const stockMap = new Map()
+
+  function processData(data) {
+    if (!data || !data.concepts || !data.stockNews) return
+    const date = data.date || ''
+
+    for (const concept of data.concepts) {
+      const stockName = concept.leadingStock
+      if (!stockName) continue
+
+      if (!stockMap.has(stockName)) {
+        stockMap.set(stockName, {
+          name: stockName,
+          code: concept.leadingCode || '',
+          tags: [],
+          appearances: []
+        })
+      }
+      const entry = stockMap.get(stockName)
+
+      if (concept.leadingCode && !entry.code) {
+        entry.code = concept.leadingCode
+      }
+
+      if (!entry.tags.includes(concept.name)) {
+        entry.tags.push(concept.name)
+      }
+
+      const relatedNews = data.stockNews.filter(
+        (n) => n.stockName === stockName
+      )
+      let bestNews = null
+      if (relatedNews.length > 0) {
+        const conceptNews = relatedNews.find(
+          (n) => n.concept && n.concept.includes(concept.name)
+        )
+        if (conceptNews) {
+          bestNews = conceptNews
+        } else {
+          const newsWithConcept = relatedNews.find((n) => n.concept)
+          bestNews = newsWithConcept || relatedNews[0]
+        }
+      }
+
+      const change = concept.leadingChange || 0
+      const existingAppearance = entry.appearances.find(
+        (a) => a.date === date && a.concept === concept.name
+      )
+      if (!existingAppearance) {
+        entry.appearances.push({
+          date,
+          concept: concept.name,
+          conceptChange: concept.changePercent,
+          change,
+          news: bestNews
+            ? {
+                title: bestNews.title,
+                time: bestNews.time,
+                source: bestNews.source,
+                link: bestNews.link,
+                concept: bestNews.concept
+              }
+            : null
+        })
+      }
+    }
+
+    for (const news of data.stockNews) {
+      if (!news.stockName) continue
+      if (!stockMap.has(news.stockName)) {
+        stockMap.set(news.stockName, {
+          name: news.stockName,
+          code: news.stockCode || '',
+          tags: news.concept ? [news.concept] : [],
+          appearances: []
+        })
+      }
+      const entry = stockMap.get(news.stockName)
+      if (news.stockCode && !entry.code) {
+        entry.code = news.stockCode
+      }
+      if (news.concept && !entry.tags.includes(news.concept)) {
+        entry.tags.push(news.concept)
+      }
+    }
+  }
+
+  if (fs.existsSync(HISTORY_DIR)) {
+    const files = fs
+      .readdirSync(HISTORY_DIR)
+      .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+      .sort()
+    for (const file of files) {
+      try {
+        const data = JSON.parse(
+          fs.readFileSync(path.join(HISTORY_DIR, file), 'utf-8')
+        )
+        processData(data)
+      } catch (e) {}
+    }
+  }
+
+  const logicData = {
+    generatedAt: new Date().toISOString(),
+    totalStocks: stockMap.size,
+    stocks: Array.from(stockMap.values())
+      .map((s) => ({
+        ...s,
+        tags: s.tags.sort(),
+        appearances: s.appearances.sort((a, b) => {
+          if (a.date !== b.date) return b.date.localeCompare(a.date)
+          return b.conceptChange - a.conceptChange
+        })
+      }))
+      .sort((a, b) => {
+        if (b.appearances.length !== a.appearances.length) {
+          return b.appearances.length - a.appearances.length
+        }
+        return b.appearances[0]?.date.localeCompare(a.appearances[0]?.date || '')
+      })
+  }
+
+  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(logicData, null, 2), 'utf-8')
+  console.log(`\n逻辑库已生成: ${LOGIC_LIBRARY_PATH}`)
+  console.log(`  关注股票 ${logicData.totalStocks} 只, 累计 ${logicData.stocks.reduce((s, st) => s + st.appearances.length, 0)} 次上榜`)
+
+  return logicData
+}
+
 function main() {
   const latestFile = findLatestHotFile(REPORTS_DIR)
   console.log('读取文件:', latestFile)
@@ -473,10 +604,12 @@ function main() {
     console.log('历史索引已更新')
   }
 
+  generateLogicLibrary(data)
+
   if (PUSH) {
     try {
       execSync('git pull --rebase origin main', { stdio: 'inherit' })
-      execSync('git add public/market-hot.json public/hotspot-history/', { stdio: 'inherit' })
+      execSync('git add public/market-hot.json public/hotspot-history/ public/logic-library.json', { stdio: 'inherit' })
       execSync(`git commit -m "chore: 更新热点数据 ${data.date}"`, { stdio: 'inherit' })
       execSync('git push origin main', { stdio: 'inherit' })
       console.log('\n已推送到 GitHub!')

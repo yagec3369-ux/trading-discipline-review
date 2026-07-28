@@ -1,0 +1,457 @@
+{
+  "generatedAt": "2026-07-28T12:58:55.819Z",
+  "totalStocks": 25,
+  "stocks": [
+    {
+      "name": "科蓝软件",
+      "code": "",
+      "tags": [
+        "Web3.0",
+        "化债概念(AMC概念)",
+        "数字货币",
+        "数据确权",
+        "无人零售",
+        "电子身份证",
+        "财税数字化",
+        "跨境支付(CIPS)"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "跨境支付(CIPS)",
+          "conceptChange": 2.09,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "财税数字化",
+          "conceptChange": 1.98,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "电子身份证",
+          "conceptChange": 1.84,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "Web3.0",
+          "conceptChange": 1.68,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "数字货币",
+          "conceptChange": 1.62,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "无人零售",
+          "conceptChange": 1.43,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "化债概念(AMC概念)",
+          "conceptChange": 1.43,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "数据确权",
+          "conceptChange": 1.34,
+          "change": 19.95,
+          "news": {
+            "title": "软件服务板块走强 科蓝软件20%涨停",
+            "time": "2026-07-28 09:51:00",
+            "source": "南方财经网",
+            "link": "http://finance.eastmoney.com/a/202607283823179054.html",
+            "concept": "财税数字化"
+          }
+        }
+      ]
+    },
+    {
+      "name": "品渥食品",
+      "code": "",
+      "tags": [
+        "乳业",
+        "啤酒概念",
+        "网红经济"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "乳业",
+          "conceptChange": 2.66,
+          "change": 10.81,
+          "news": {
+            "title": "品渥食品：不存在逾期债务对应的担保余额",
+            "time": "2026-07-15 21:14:00",
+            "source": "证券日报",
+            "link": "http://finance.eastmoney.com/a/202607153807726575.html",
+            "concept": "乳业"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "啤酒概念",
+          "conceptChange": 2.46,
+          "change": 10.81,
+          "news": {
+            "title": "品渥食品：不存在逾期债务对应的担保余额",
+            "time": "2026-07-15 21:14:00",
+            "source": "证券日报",
+            "link": "http://finance.eastmoney.com/a/202607153807726575.html",
+            "concept": "乳业"
+          }
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "网红经济",
+          "conceptChange": 1.57,
+          "change": 10.81,
+          "news": {
+            "title": "品渥食品：不存在逾期债务对应的担保余额",
+            "time": "2026-07-15 21:14:00",
+            "source": "证券日报",
+            "link": "http://finance.eastmoney.com/a/202607153807726575.html",
+            "concept": "乳业"
+          }
+        }
+      ]
+    },
+    {
+      "name": "南天信息",
+      "code": "",
+      "tags": [
+        "ETC",
+        "NFT概念"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "ETC",
+          "conceptChange": 1.52,
+          "change": 10.01,
+          "news": null
+        },
+        {
+          "date": "2026-07-28",
+          "concept": "NFT概念",
+          "conceptChange": 1.31,
+          "change": 10.01,
+          "news": null
+        }
+      ]
+    },
+    {
+      "name": "ST荣科",
+      "code": "",
+      "tags": [
+        "DRG/DIP"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "DRG/DIP",
+          "conceptChange": 3.38,
+          "change": 19.9,
+          "news": null
+        }
+      ]
+    },
+    {
+      "name": "创新医疗",
+      "code": "",
+      "tags": [
+        "高压氧舱"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "高压氧舱",
+          "conceptChange": 1.69,
+          "change": 10.01,
+          "news": {
+            "title": "创新医疗录得4天3板",
+            "time": "2026-07-28 10:11:00",
+            "source": "证券时报网",
+            "link": "http://finance.eastmoney.com/a/202607283823208463.html",
+            "concept": "高压氧舱"
+          }
+        }
+      ]
+    },
+    {
+      "name": "东百集团",
+      "code": "",
+      "tags": [
+        "免税店"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "免税店",
+          "conceptChange": 1.63,
+          "change": 9.96,
+          "news": {
+            "title": "商贸零售行业资金流入榜：小商品城、东百集团等净流入资金居前",
+            "time": "2026-07-28 18:47:00",
+            "source": "证券时报网",
+            "link": "http://finance.eastmoney.com/a/202607283823620933.html",
+            "concept": "免税店"
+          }
+        }
+      ]
+    },
+    {
+      "name": "金种子酒",
+      "code": "",
+      "tags": [
+        "啤酒概念",
+        "白酒概念"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "白酒概念",
+          "conceptChange": 1.55,
+          "change": 10.02,
+          "news": {
+            "title": "金种子酒回归腰部，押注年份柔和",
+            "time": "2026-07-28 18:35:54",
+            "source": "蓝鲸财经",
+            "link": "http://finance.eastmoney.com/a/202607283823613149.html",
+            "concept": "啤酒概念"
+          }
+        }
+      ]
+    },
+    {
+      "name": "中体产业",
+      "code": "",
+      "tags": [
+        "赛马概念"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "赛马概念",
+          "conceptChange": 1.51,
+          "change": 2.69,
+          "news": {
+            "title": "中体产业：预计2026年上半年亏损600万元-900万元",
+            "time": "2026-07-14 19:30:53",
+            "source": "中国证券报·中证网",
+            "link": "http://finance.eastmoney.com/a/202607143805880870.html",
+            "concept": "赛马概念"
+          }
+        }
+      ]
+    },
+    {
+      "name": "天地在线",
+      "code": "",
+      "tags": [
+        "预制菜"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "预制菜",
+          "conceptChange": 1.46,
+          "change": 9.98,
+          "news": null
+        }
+      ]
+    },
+    {
+      "name": "安诺其",
+      "code": "",
+      "tags": [
+        "染料"
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-28",
+          "concept": "染料",
+          "conceptChange": 1.3,
+          "change": 20.09,
+          "news": null
+        }
+      ]
+    },
+    {
+      "name": "一鸣食品",
+      "code": "",
+      "tags": [
+        "乳业"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "万辰集团",
+      "code": "",
+      "tags": [
+        "乳业"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "嘉美包装",
+      "code": "",
+      "tags": [
+        "啤酒概念"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "天融信",
+      "code": "",
+      "tags": [
+        "财税数字化"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "久其软件",
+      "code": "",
+      "tags": [
+        "财税数字化"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "格尔软件",
+      "code": "",
+      "tags": [
+        "电子身份证"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "大湖股份",
+      "code": "",
+      "tags": [
+        "高压氧舱"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "倍益康",
+      "code": "",
+      "tags": [
+        "高压氧舱"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "ST华扬",
+      "code": "",
+      "tags": [
+        "免税店"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "岭南控股",
+      "code": "",
+      "tags": [
+        "免税店"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "ST西王",
+      "code": "",
+      "tags": [
+        "网红经济"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "皇台酒业",
+      "code": "",
+      "tags": [
+        "白酒概念"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "迎驾贡酒",
+      "code": "",
+      "tags": [
+        "白酒概念"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "新华都",
+      "code": "",
+      "tags": [
+        "赛马概念"
+      ],
+      "appearances": []
+    },
+    {
+      "name": "中牧股份",
+      "code": "",
+      "tags": [
+        "赛马概念"
+      ],
+      "appearances": []
+    }
+  ]
+}
