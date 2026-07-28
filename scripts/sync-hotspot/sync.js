@@ -81,8 +81,8 @@ function parseExcel(filePath) {
   const industryFlow = parseSheet(wb, '行业资金流', parseIndustryFlow)
   const fundScale = parseSheet(wb, '基金规模变化', parseFundScale)
 
-  // 构建 股票名→代码 映射，填充缺失的股票代码
-  const codeMap = buildStockCodeMap(wb)
+  // 构建 股票名→{code, change} 映射，填充缺失的股票代码和涨跌幅
+  const infoMap = buildStockInfoMap(wb)
 
   const dateMatch = path.basename(filePath).match(/(\d{8})/)
   const dateStr = dateMatch
@@ -104,13 +104,13 @@ function parseExcel(filePath) {
     updatedAt: new Date().toISOString()
   }
 
-  fillStockCodes(data, codeMap)
+  fillStockInfo(data, infoMap)
 
   return data
 }
 
-// 从"概念领涨股Top3"等 sheet 构建 股票名→代码 映射
-function buildStockCodeMap(wb) {
+// 从"概念领涨股Top3"等 sheet 构建 股票名→{code, change} 映射
+function buildStockInfoMap(wb) {
   const map = new Map()
   // 尝试匹配 "概念领涨股Top3" 及类似 sheet
   const aliases = ['概念领涨股Top3', '领涨股Top3', '领涨股', '概念领涨', '领涨股排行', 'Top3', 'top3']
@@ -129,8 +129,9 @@ function buildStockCodeMap(wb) {
         for (let i = 1; i <= 3; i++) {
           const name = col(r, `领涨股${i}`, `股票${i}`, `个股${i}`, i === 1 ? '领涨股' : '', i === 1 ? '股票名称' : '', i === 1 ? '名称' : '')
           const code = col(r, `领涨股${i}代码`, `股票${i}代码`, `代码${i}`, i === 1 ? '股票代码' : '', i === 1 ? '代码' : '')
+          const change = colNum(r, `领涨股${i}涨跌幅`, `股票${i}涨跌幅`, `涨跌幅${i}`, i === 1 ? '涨跌幅' : '', i === 1 ? '涨幅' : '')
           if (name && code) {
-            map.set(name, code)
+            map.set(name, { code, change })
             rowMatched = true
           }
         }
@@ -142,7 +143,16 @@ function buildStockCodeMap(wb) {
           for (const nk of nameKeys) {
             for (const ck of codeKeys) {
               if (r[nk] && r[ck]) {
-                map.set(String(r[nk]).trim(), String(r[ck]).trim())
+                const nm = String(r[nk]).trim()
+                const cd = String(r[ck]).trim()
+                // 尝试找对应的涨跌幅列
+                const suffix = nk.replace(/.*名称|.*股票|.*个股|.*领涨/, '').replace(/[^0-9]/g, '')
+                const ckSuffix = ck.replace(/.*代码|.*证券代码/, '').replace(/[^0-9]/g, '')
+                const changeKey = suffix ? `涨跌幅${suffix}` : '涨跌幅'
+                const chg = colNum(r, changeKey, '涨跌幅', '涨幅')
+                if (!map.has(nm)) {
+                  map.set(nm, { code: cd, change: chg })
+                }
               }
             }
           }
@@ -173,36 +183,48 @@ function buildStockCodeMap(wb) {
       for (const r of rows) {
         const name = col(r, '股票名称', '名称')
         const code = col(r, '股票代码', '代码')
+        const change = colNum(r, '涨跌幅', '涨幅', '跌幅')
         if (name && code && !map.has(name)) {
-          map.set(name, code)
+          map.set(name, { code, change })
         }
       }
     }
   }
-  console.log(`  [映射] 股票名→代码映射共 ${map.size} 条`)
+  console.log(`  [映射] 股票名→信息映射共 ${map.size} 条`)
   return map
 }
 
-// 用映射填充缺失的股票代码
-function fillStockCodes(data, codeMap) {
-  if (!codeMap || codeMap.size === 0) return data
-  let filled1 = 0, filled2 = 0
-  // 填充 stockNews 的 stockCode
+// 用映射填充缺失的股票代码和涨跌幅
+function fillStockInfo(data, infoMap) {
+  if (!infoMap || infoMap.size === 0) return data
+  let filledCode = 0, filledChange = 0, filledLeadCode = 0
+  // 填充 stockNews 的 stockCode 和 change
   for (const n of data.stockNews) {
-    if (!n.stockCode && n.stockName && codeMap.has(n.stockName)) {
-      n.stockCode = codeMap.get(n.stockName)
-      filled1++
+    if (n.stockName && infoMap.has(n.stockName)) {
+      const info = infoMap.get(n.stockName)
+      if (!n.stockCode && info.code) {
+        n.stockCode = info.code
+        filledCode++
+      }
+      if (n.change === undefined && info.change) {
+        n.change = info.change
+        filledChange++
+      }
     }
   }
   // 填充 concepts 的 leadingCode
   for (const c of data.concepts) {
-    if (!c.leadingCode && c.leadingStock && codeMap.has(c.leadingStock)) {
-      c.leadingCode = codeMap.get(c.leadingStock)
-      filled2++
+    if (!c.leadingCode && c.leadingStock && infoMap.has(c.leadingStock)) {
+      const info = infoMap.get(c.leadingStock)
+      if (info.code) {
+        c.leadingCode = info.code
+        filledLeadCode++
+      }
     }
   }
-  if (filled1 > 0) console.log(`  [填充] 个股新闻 stockCode ${filled1} 条`)
-  if (filled2 > 0) console.log(`  [填充] 概念 leadingCode ${filled2} 条`)
+  if (filledCode > 0) console.log(`  [填充] 个股新闻 stockCode ${filledCode} 条`)
+  if (filledChange > 0) console.log(`  [填充] 个股新闻 涨跌幅 ${filledChange} 条`)
+  if (filledLeadCode > 0) console.log(`  [填充] 概念 leadingCode ${filledLeadCode} 条`)
   return data
 }
 
