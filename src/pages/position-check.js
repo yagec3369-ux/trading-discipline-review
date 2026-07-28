@@ -215,7 +215,7 @@ export function createPositionCheckPage(root) {
                 <i data-lucide="file-text" style="width:14px; height:14px; color:var(--brand);"></i>
                 今日复盘总结${submitted ? '' : '（当日可修改）'}
               </label>
-              <textarea class="review-notes-input" data-id="${h.id}" rows="2" placeholder="记录今日操作心得、情绪变化、改进方向..." style="width:100%; font-size:var(--text-body); padding:var(--s-2) var(--s-3); resize:vertical; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--bg); color:var(--ink);">${escHtml(h.reviewNotes || '')}</textarea>
+              <textarea class="review-notes-input" data-id="${h.id}" placeholder="记录今日操作心得、情绪变化、改进方向..." style="width:100%; font-size:var(--text-body); padding:var(--s-2) var(--s-3); resize:none; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--bg); color:var(--ink); min-height:40px; overflow:hidden;">${escHtml(h.reviewNotes || '')}</textarea>
             </div>
 
             <!-- 操作按钮 -->
@@ -364,12 +364,14 @@ export function createPositionCheckPage(root) {
     stopAutoRefresh()
     // 每 30 秒自动刷新
     _refreshTimer = setInterval(() => {
-      // 仅在交易时间自动刷新 (9:25-15:05)
+      // 仅在交易时间自动刷新 (9:16-11:30, 13:00-15:00)
       const now = new Date()
       const h = now.getHours()
       const m = now.getMinutes()
       const minutes = h * 60 + m
-      if (minutes >= 565 && minutes <= 905) {
+      const inMorning = minutes >= 556 && minutes <= 690
+      const inAfternoon = minutes >= 780 && minutes <= 900
+      if (inMorning || inAfternoon) {
         refreshQuotes()
       }
     }, 30000)
@@ -453,6 +455,10 @@ export function createPositionCheckPage(root) {
     })
 
     root.querySelectorAll('.review-notes-input').forEach((ta) => {
+      const autoResize = () => {
+        ta.style.height = 'auto'
+        ta.style.height = Math.max(40, ta.scrollHeight) + 'px'
+      }
       ta.addEventListener('input', () => {
         const id = ta.getAttribute('data-id')
         const h = holdings.find((item) => item.id === id)
@@ -460,7 +466,9 @@ export function createPositionCheckPage(root) {
           h.reviewNotes = ta.value
           autoSave()
         }
+        autoResize()
       })
+      autoResize()
     })
 
     root.querySelectorAll('.qa-reason-input').forEach((ta) => {

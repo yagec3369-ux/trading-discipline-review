@@ -75,26 +75,12 @@ export function createRiskControlPage(root) {
   // Local state mirror of inputs for recalculation
   const state = {
     totalFund: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, '120000'),
-    availableFund: lsGet(STORAGE_KEYS.availableFund, ''),
-    monthlyPnl: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.monthlyPnl, ''),
     compliantCount: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.compliantCount, '0'),
     recoveryStatus: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.recoveryStatus, 'active')
   }
 
-  // 可用资金初始化：若未设置过，默认等于账户总金额
-  function getAvailableFund() {
-    if (state.availableFund === '' || state.availableFund === null || state.availableFund === undefined) {
-      return parseFloat(state.totalFund) || 0
-    }
-    return parseFloat(state.availableFund) || 0
-  }
-  function setAvailableFund(val) {
-    state.availableFund = String(val)
-    lsSet(STORAGE_KEYS.availableFund, String(val))
-  }
-
-  // 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
-  function calcMonthlyPnl() {
+  // 盈亏今日 = Σ(现价 - 成本价) × 持仓数
+  function calcTodayPnl() {
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     return holdings.reduce((sum, h) => {
       const qty = parseFloat(h.quantity) || 0
@@ -103,6 +89,11 @@ export function createRiskControlPage(root) {
       const curPrice = parseFloat(h.currentPrice) || 0
       return sum + (curPrice - buyPrice) * qty
     }, 0)
+  }
+
+  // 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
+  function calcMonthlyPnl() {
+    return calcTodayPnl()
   }
 
   function render() {
@@ -127,8 +118,8 @@ export function createRiskControlPage(root) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           ${overviewCard('账户总金额', 'landmark', '元', 'rc-total-fund', true, state.totalFund)}
           ${overviewCard('股票市值', 'trending-up', '元', 'rc-stock-value', false)}
+          ${overviewCard('盈亏今日', 'trending-up', '元', 'rc-today-pnl', false)}
           ${overviewCard('可用资金', 'wallet', '元', 'rc-available', false)}
-          ${overviewCard('亏损的钱', 'trending-down', '元', 'rc-loss-amount', false)}
           ${overviewCard('当前总资产', 'coins', '元', 'rc-total-asset', false)}
           ${overviewCard('本月累计盈亏', 'arrow-down-up', '元', 'rc-monthly-pnl', false)}
           ${positionCard()}
@@ -324,8 +315,12 @@ export function createRiskControlPage(root) {
   }
 
   function bindEvents() {
-    // 账户总金额编辑（差额同步到可用资金）
-    bindTotalFundField()
+    // 账户总金额编辑
+    bindField('rc-total-fund', FIELD_KEYS.totalFund, () => {
+      recalcDerived()
+      runAllChecks()
+      emit(DATA_EVENTS.RISK_CTRL_CHANGED)
+    })
 
     // Checklist row toggles
     root.querySelectorAll('.checklist-row').forEach((row) => {
@@ -359,7 +354,7 @@ export function createRiskControlPage(root) {
       })
     })
 
-    // Transfer in — 账户总金额和可用资金同时增加
+    // Transfer in — 账户总金额增加
     root.querySelector('#btn-transfer-in')?.addEventListener('click', () => {
       const input = root.querySelector('#rc-transfer-in')
       const amount = parseFloat(input.value) || 0
@@ -370,7 +365,6 @@ export function createRiskControlPage(root) {
       const newTotal = (parseFloat(state.totalFund) || 0) + amount
       state.totalFund = String(newTotal)
       lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(newTotal))
-      setAvailableFund(getAvailableFund() + amount)
       const inputEl = root.querySelector('#rc-total-fund')
       if (inputEl) inputEl.value = String(newTotal)
       input.value = ''
@@ -379,7 +373,7 @@ export function createRiskControlPage(root) {
       showSaveStatus('资金转入成功')
     })
 
-    // Transfer out — 账户总金额和可用资金同时减少
+    // Transfer out — 账户总金额减少
     root.querySelector('#btn-transfer-out')?.addEventListener('click', () => {
       const input = root.querySelector('#rc-transfer-out')
       const amount = parseFloat(input.value) || 0
@@ -387,15 +381,9 @@ export function createRiskControlPage(root) {
         showSaveStatus('请输入有效金额', 'error')
         return
       }
-      const available = getAvailableFund()
-      if (amount > available) {
-        showSaveStatus(`转出金额不能超过可用资金（${available.toFixed(2)}元）`, 'error')
-        return
-      }
       const newTotal = (parseFloat(state.totalFund) || 0) - amount
       state.totalFund = String(newTotal)
       lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(newTotal))
-      setAvailableFund(available - amount)
       const inputEl = root.querySelector('#rc-total-fund')
       if (inputEl) inputEl.value = String(newTotal)
       input.value = ''
@@ -509,16 +497,16 @@ export function createRiskControlPage(root) {
   }
 
   function recalcDerived() {
-    // 1. 账户总金额（锚定值，可编辑，含已实现亏损）
+    // 1. 账户总金额（锚定值，可编辑）
     const totalFund = parseFloat(state.totalFund) || 0
-    // 2. 股票总市值 = Σ(持仓数 × 现价)，自动更新
+    // 2. 股票总市值 = Σ(持仓数 × 现价)
     const stockValue = getHoldingsValue()
-    // 3. 可用资金（独立跟踪，买入减少/卖出增加）
-    const available = getAvailableFund()
-    // 4. 当前总资产 = 股票市值 + 可用资金
+    // 3. 盈亏今日（自动计算）
+    const todayPnl = calcTodayPnl()
+    // 4. 可用资金 = 账户总金额 - 股票市值 + 盈亏今日
+    const available = totalFund - stockValue + todayPnl
+    // 5. 当前总资产 = 股票市值 + 可用资金
     const totalAsset = stockValue + available
-    // 5. 亏损的钱 = 账户总金额 - 当前总资产 = 账户总金额 - 股票市值 - 可用资金
-    const lossAmount = totalFund - totalAsset
     // 6. 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
     const monthlyPnl = calcMonthlyPnl()
     // 7. 总仓位占比 = 股票市值 / 当前总资产
@@ -526,7 +514,7 @@ export function createRiskControlPage(root) {
 
     const stockValueEl = root.querySelector('#rc-stock-value')
     const availableEl = root.querySelector('#rc-available')
-    const lossEl = root.querySelector('#rc-loss-amount')
+    const todayPnlEl = root.querySelector('#rc-today-pnl')
     const totalAssetEl = root.querySelector('#rc-total-asset')
     const monthlyPnlEl = root.querySelector('#rc-monthly-pnl')
     const positionPctEl = root.querySelector('#rc-position-pct')
@@ -539,12 +527,12 @@ export function createRiskControlPage(root) {
     if (stockValueEl) {
       stockValueEl.textContent = stockValue > 0 ? fmt(stockValue) : '--'
     }
+    if (todayPnlEl) {
+      todayPnlEl.textContent = hasData ? fmtSigned(todayPnl) : '--'
+      todayPnlEl.style.color = todayPnl > 0 ? 'var(--price-up)' : todayPnl < 0 ? 'var(--price-down)' : 'var(--ink-3)'
+    }
     if (availableEl) {
       availableEl.textContent = hasData ? fmt(available) : '--'
-    }
-    if (lossEl) {
-      lossEl.textContent = hasData ? fmtSigned(lossAmount) : '--'
-      lossEl.style.color = lossAmount > 0 ? 'var(--price-down)' : lossAmount < 0 ? 'var(--price-up)' : 'var(--ink-3)'
     }
     if (totalAssetEl) {
       totalAssetEl.textContent = hasData ? fmt(totalAsset) : '--'

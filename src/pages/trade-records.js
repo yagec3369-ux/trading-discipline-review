@@ -2,7 +2,7 @@
 
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, escHtml } from '../utils/ui.js'
-import { lsGet, lsSet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 const EMOTION_OPTIONS = ['平静', '焦虑', '兴奋', '沮丧', '自信', '贪婪', '恐慌']
@@ -33,22 +33,6 @@ export function createTradeRecordsPage(root) {
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     const qty = parseInt(shares, 10) || 0
     if (qty <= 0) return
-
-    // 更新可用资金：买入减少，卖出增加
-    const tradeAmount = (parseFloat(price) || 0) * qty
-    if (tradeAmount > 0) {
-      const totalFundStr = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
-      const totalFund = parseFloat(totalFundStr) || 0
-      // 若可用资金未初始化，默认等于账户总金额
-      const availStr = lsGet(STORAGE_KEYS.availableFund, '')
-      let available = availStr === '' ? totalFund : (parseFloat(availStr) || 0)
-      if (type === 'buy') {
-        available -= tradeAmount
-      } else if (type === 'sell') {
-        available += tradeAmount
-      }
-      lsSet(STORAGE_KEYS.availableFund, String(available))
-    }
 
     const existing = holdings.find((h) => h.code === code)
     if (type === 'buy') {

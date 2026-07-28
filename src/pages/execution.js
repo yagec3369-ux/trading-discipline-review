@@ -2,7 +2,7 @@
 
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
-import { lsGet, lsSet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
+import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 const LEG_STATUS = {
@@ -612,28 +612,6 @@ export function createExecutionPage(root) {
       else if (legType === 'sell') updateHoldings('sell')
 
       lsSetJSON(STORAGE_KEYS.holdings, holdings)
-
-      // 更新可用资金：买入减少，卖出增加
-      const updateAvailable = (type) => {
-        let amount = 0
-        if (type === 'buy' && plan.buyPrice && plan.buyShares) {
-          amount = (parseFloat(plan.buyPrice) || 0) * (parseInt(plan.buyShares, 10) || 0)
-        } else if (type === 'sell' && plan.sellPrice && plan.sellShares) {
-          amount = (parseFloat(plan.sellPrice) || 0) * (parseInt(plan.sellShares, 10) || 0)
-        }
-        if (amount > 0) {
-          const totalFundStr = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
-          const totalFund = parseFloat(totalFundStr) || 0
-          const availStr = lsGet(STORAGE_KEYS.availableFund, '')
-          let available = availStr === '' ? totalFund : (parseFloat(availStr) || 0)
-          if (type === 'buy') available -= amount
-          else if (type === 'sell') available += amount
-          lsSet(STORAGE_KEYS.availableFund, String(available))
-        }
-      }
-      if (legType === 'buy') updateAvailable('buy')
-      else if (legType === 'sell') updateAvailable('sell')
-
       notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
     }
     notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)

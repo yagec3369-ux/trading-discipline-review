@@ -50,19 +50,20 @@ export function createOverviewPage(root) {
     const riskData = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '120000')
     const totalFund = parseFloat(riskData) || 0
     const stockValue = holdings.reduce((sum, h) => sum + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
-    // 可用资金（独立跟踪）
-    const availStr = lsGet(STORAGE_KEYS.availableFund, '')
-    const available = availStr === '' ? totalFund : (parseFloat(availStr) || 0)
-    // 当前总资产 = 股票市值 + 可用资金
-    const totalAsset = stockValue + available
-    // 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
-    const monthlyPnl = holdings.reduce((sum, h) => {
+    // 盈亏今日 = Σ(现价 - 成本价) × 持仓数
+    const todayPnl = holdings.reduce((sum, h) => {
       const qty = parseFloat(h.quantity) || 0
       if (qty <= 0) return sum
       const buyPrice = parseFloat(h.buyPrice) || 0
       const curPrice = parseFloat(h.currentPrice) || 0
       return sum + (curPrice - buyPrice) * qty
     }, 0)
+    // 可用资金 = 账户总金额 - 股票市值 + 盈亏今日
+    const available = totalFund - stockValue + todayPnl
+    // 当前总资产 = 股票市值 + 可用资金
+    const totalAsset = stockValue + available
+    // 本月累计盈亏 = Σ(现价 - 成本价) × 持仓数
+    const monthlyPnl = todayPnl
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
 
     // 本月买入股数：累加交易记录里的 actualPnl（已改为买入股数）
