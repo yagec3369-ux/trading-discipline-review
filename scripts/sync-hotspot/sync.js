@@ -475,6 +475,7 @@ function main() {
 
   if (PUSH) {
     try {
+      execSync('git pull --rebase origin main', { stdio: 'inherit' })
       execSync('git add public/market-hot.json public/hotspot-history/', { stdio: 'inherit' })
       execSync(`git commit -m "chore: 更新热点数据 ${data.date}"`, { stdio: 'inherit' })
       execSync('git push origin main', { stdio: 'inherit' })
