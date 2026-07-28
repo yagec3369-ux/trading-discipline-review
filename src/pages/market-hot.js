@@ -446,6 +446,40 @@ function renderIndustryFlow(data) {
   `
 }
 
+function renderFundScale(data) {
+  if (!data || data.length === 0) return '<div style="padding:var(--s-8); text-align:center; color:var(--ink-3);">暂无数据</div>'
+  return `
+    <div class="mb-4 flex items-center gap-2">
+      <i data-lucide="pie-chart" style="width:18px; height:18px; color:var(--brand);"></i>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">基金规模变化 · 共 ${data.length} 条</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table style="width:100%; border-collapse:collapse; font-size:var(--text-caption);">
+        <thead>
+          <tr style="background:var(--surface); color:var(--ink-3);">
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">基金名称</th>
+            <th style="padding:var(--s-3); text-align:left; border-bottom:1px solid var(--line);">类型</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">最新规模</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">规模变化</th>
+            <th style="padding:var(--s-3); text-align:right; border-bottom:1px solid var(--line);">变化率</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map((d) => `
+            <tr style="border-bottom:1px solid var(--line);" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background='var(--bg)'">
+              <td style="padding:var(--s-3); font-weight:var(--weight-semibold); color:var(--ink);">${escHtml(d.name)}${d.code ? `<span style="color:var(--ink-3); font-weight:var(--weight-normal); margin-left:4px;">${escHtml(d.code)}</span>` : ''}</td>
+              <td style="padding:var(--s-3); color:var(--ink-2);">${escHtml(d.type || '--')}</td>
+              <td style="padding:var(--s-3); text-align:right; font-variant-numeric:tabular-nums; color:var(--ink);">${escHtml(d.scaleStr || '--')}</td>
+              <td style="padding:var(--s-3); text-align:right; color:${d.changeColor || 'var(--ink-2)'}; font-weight:var(--weight-medium);">${escHtml(d.change || '--')}</td>
+              <td style="padding:var(--s-3); text-align:right; font-weight:var(--weight-bold); color:${d.changeColor || 'var(--ink-3)'}; font-variant-numeric:tabular-nums;">${d.changePct ? (d.changePct > 0 ? '+' : '') + d.changePct.toFixed(2) + '%' : '--'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
 const HISTORY_KEY = 'td_market_hot_history'
 const REMOTE_HISTORY_CACHE = {}
 
@@ -663,6 +697,10 @@ export function createMarketHotPage(root) {
     const src = currentData
     return src?.industryFlow?.length > 0 ? src.industryFlow : []
   }
+  function getFundScale() {
+    const src = currentData
+    return src?.fundScale?.length > 0 ? src.fundScale : []
+  }
   function getDataDate() {
     return currentViewDate || null
   }
@@ -752,6 +790,10 @@ export function createMarketHotPage(root) {
             <i data-lucide="git-branch" style="width:14px; height:14px; margin-right:6px;"></i>
             行业资金
           </button>
+          <button id="tab-fundScale" class="tab-btn px-4 py-2 rounded-md font-medium transition-all" data-tab="fundScale" style="${activeTab === 'fundScale' ? 'background:var(--bg); color:var(--ink); box-shadow:var(--shadow-sm);' : 'color:var(--ink-3);'} white-space:nowrap; flex-shrink:0;">
+            <i data-lucide="pie-chart" style="width:14px; height:14px; margin-right:6px;"></i>
+            基金规模
+          </button>
         </div>
       </div>
 
@@ -763,6 +805,7 @@ export function createMarketHotPage(root) {
       ${activeTab === 'limitDown' ? renderLimitList(getLimitDown(), 'down') : ''}
       ${activeTab === 'etf' ? renderETF(getETF()) : ''}
       ${activeTab === 'industryFlow' ? renderIndustryFlow(getIndustryFlow()) : ''}
+      ${activeTab === 'fundScale' ? renderFundScale(getFundScale()) : ''}
     `
     refreshIcons()
     bindEvents()

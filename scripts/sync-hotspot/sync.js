@@ -77,8 +77,9 @@ function parseExcel(filePath) {
   const sentiment = parseSheet(wb, '市场情绪', parseSentiment)
   const limitUp = parseSheet(wb, '涨停明细', (r) => parseLimit(r, 'up'))
   const limitDown = parseSheet(wb, '跌停明细', (r) => parseLimit(r, 'down'))
-  const etf = parseSheet(wb, 'ETF', parseETF)
+  const etf = parseSheet(wb, 'ETF成交额', parseETF)
   const industryFlow = parseSheet(wb, '行业资金流', parseIndustryFlow)
+  const fundScale = parseSheet(wb, '基金规模变化', parseFundScale)
 
   const dateMatch = path.basename(filePath).match(/(\d{8})/)
   const dateStr = dateMatch
@@ -95,6 +96,7 @@ function parseExcel(filePath) {
     limitDown,
     etf,
     industryFlow,
+    fundScale,
     date: dateStr,
     updatedAt: new Date().toISOString()
   }
@@ -121,8 +123,10 @@ const SHEET_ALIASES = {
   '市场情绪': ['情绪', '市场情绪指标', '情绪指标'],
   '涨停明细': ['涨停', '涨停板', '涨停股'],
   '跌停明细': ['跌停', '跌停板', '跌停股'],
-  'ETF': ['etf', 'ETF基金', '基金'],
-  '行业资金流': ['行业资金', '资金流向', '行业资金流向', '资金流', '行业流向']
+  'ETF': ['ETF成交额', 'ETF净值排行', 'etf', 'ETF基金', 'etf成交额'],
+  'ETF成交额': ['ETF净值排行', 'etf', 'ETF基金'],
+  '行业资金流': ['行业资金', '资金流向', '行业资金流向', '资金流', '行业流向'],
+  '基金规模变化': ['基金规模', '规模变化', '基金变化']
 }
 
 function parseSheet(wb, sheetName, mapFn) {
@@ -247,17 +251,33 @@ function parseLimit(r, type) {
 }
 
 function parseETF(r) {
-  const name = col(r, '名称', 'ETF名称', '基金名称')
+  const name = col(r, '名称', 'ETF名称', '基金名称', '基金简称')
   if (!name) return null
   const change = colNum(r, '涨跌幅', '涨幅')
   return {
     name,
-    code: col(r, '代码', '基金代码'),
-    price: colNum(r, '最新价', '价格', '净值'),
+    code: col(r, '代码', '基金代码', 'ETF代码'),
+    price: colNum(r, '最新价', '价格', '净值', '单位净值'),
     change,
-    turnover: col(r, '成交额', '金额'),
-    netAmount: col(r, '净流入', '净额', '资金净流入'),
+    turnover: col(r, '成交额', '金额', '成交金额'),
+    netAmount: col(r, '净流入', '净额', '资金净流入', '主力净流入'),
     changeColor: change < 0 ? 'var(--state-success)' : 'var(--state-error)'
+  }
+}
+
+function parseFundScale(r) {
+  const name = col(r, '基金名称', '基金简称', '名称')
+  if (!name) return null
+  const scale = colNum(r, '最新规模', '规模', '基金规模')
+  return {
+    name,
+    code: col(r, '基金代码', '代码'),
+    scale,
+    scaleStr: col(r, '最新规模', '规模', '基金规模'),
+    change: col(r, '规模变化', '变化', '变动'),
+    changePct: colNum(r, '变化率', '涨跌幅', '变化幅度'),
+    type: col(r, '基金类型', '类型'),
+    changeColor: colNum(r, '变化率', '涨跌幅', '变化幅度') < 0 ? 'var(--state-success)' : 'var(--state-error)'
   }
 }
 
@@ -288,6 +308,7 @@ function main() {
   console.log(`  指数行情 ${data.indices.length} 条, 市场情绪 ${data.sentiment.length} 条`)
   console.log(`  涨停 ${data.limitUp.length} 条, 跌停 ${data.limitDown.length} 条`)
   console.log(`  ETF ${data.etf.length} 条, 行业资金流 ${data.industryFlow.length} 条`)
+  console.log(`  基金规模 ${data.fundScale.length} 条`)
   console.log('数据日期:', data.date)
 
   if (DRY) {
