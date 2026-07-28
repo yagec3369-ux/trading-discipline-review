@@ -358,21 +358,66 @@ function renderStockNews(news) {
 export function createMarketHotPage(root) {
   let activeTab = 'rank'
   let importedData = loadHotData()
+  let remoteData = null
+  let remoteFetching = false
+  let autoFetchTimer = null
+
+  // 自动从仓库 fetch 远程数据
+  async function fetchRemoteData() {
+    if (remoteFetching) return
+    remoteFetching = true
+    try {
+      const base = import.meta.env.BASE_URL || '/'
+      const url = base + 'market-hot.json?t=' + Date.now()
+      const resp = await fetch(url)
+      if (!resp.ok) return
+      const data = await resp.json()
+      if (data && (data.concepts?.length || data.financeNews?.length || data.stockNews?.length)) {
+        remoteData = data
+        render()
+      }
+    } catch (e) {
+      // 静默失败，不影响页面
+    } finally {
+      remoteFetching = false
+    }
+  }
+
+  function startAutoFetch() {
+    stopAutoFetch()
+    fetchRemoteData()
+    autoFetchTimer = setInterval(fetchRemoteData, 5 * 60 * 1000)
+  }
+
+  function stopAutoFetch() {
+    if (autoFetchTimer) {
+      clearInterval(autoFetchTimer)
+      autoFetchTimer = null
+    }
+  }
 
   function getConcepts() {
-    return importedData?.concepts?.length > 0 ? importedData.concepts : SAMPLE_CONCEPTS
+    const src = remoteData || importedData
+    return src?.concepts?.length > 0 ? src.concepts : SAMPLE_CONCEPTS
   }
   function getFinanceNews() {
-    return importedData?.financeNews?.length > 0 ? importedData.financeNews : SAMPLE_FINANCE_NEWS
+    const src = remoteData || importedData
+    return src?.financeNews?.length > 0 ? src.financeNews : SAMPLE_FINANCE_NEWS
   }
   function getStockNews() {
-    return importedData?.stockNews?.length > 0 ? importedData.stockNews : SAMPLE_STOCK_NEWS
+    const src = remoteData || importedData
+    return src?.stockNews?.length > 0 ? src.stockNews : SAMPLE_STOCK_NEWS
   }
   function getDataDate() {
-    return importedData?.date || null
+    const src = remoteData || importedData
+    return src?.date || null
   }
   function hasImportedData() {
-    return !!(importedData && (importedData.concepts?.length || importedData.financeNews?.length || importedData.stockNews?.length))
+    const src = remoteData || importedData
+    return !!(src && (src.concepts?.length || src.financeNews?.length || src.stockNews?.length))
+  }
+  function isRemoteData() {
+    return !!remoteData
   }
 
   function render() {
@@ -381,12 +426,13 @@ export function createMarketHotPage(root) {
     const stockNews = getStockNews()
     const dataDate = getDataDate()
     const isImported = hasImportedData()
+    const isRemote = isRemoteData()
 
     root.innerHTML = `
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div class="flex items-center gap-3">
           <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">大盘热点</h2>
-          ${isImported ? '<span style="font-size:var(--text-caption); color:var(--state-success); background:var(--state-success-bg); padding:2px 8px; border-radius:var(--r-pill);">已导入数据</span>' : ''}
+          ${isRemote ? '<span style="font-size:var(--text-caption); color:var(--brand); background:var(--brand-muted); padding:2px 8px; border-radius:var(--r-pill); display:inline-flex; align-items:center; gap:4px;"><i data-lucide="wifi" style="width:10px; height:10px;"></i>自动同步</span>' : isImported ? '<span style="font-size:var(--text-caption); color:var(--state-success); background:var(--state-success-bg); padding:2px 8px; border-radius:var(--r-pill);">已导入数据</span>' : ''}
         </div>
         <div class="flex items-center gap-3">
           <span style="font-size:var(--text-caption); color:var(--ink-3); display:inline-flex; align-items:center; gap:4px;">
@@ -660,7 +706,13 @@ export function createMarketHotPage(root) {
   }
 
   return {
-    mount() { render() },
-    unmount() { closeImportDialog() }
+    mount() {
+      render()
+      startAutoFetch()
+    },
+    unmount() {
+      stopAutoFetch()
+      closeImportDialog()
+    }
   }
 }
