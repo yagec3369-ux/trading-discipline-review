@@ -458,12 +458,25 @@ export function createExecutionPage(root) {
 
     const actionLabels = { executed: '已执行', cancelled: '取消', discarded: '弃用' }
 
-    // 先保存计划状态到 storage，确保后续事件监听者能读到最新状态
+    // 先保存计划状态到 storage
     savePlansAndNotify()
 
     if (action === 'executed') {
-      // 再执行交易记录和持仓更新
+      // 执行交易记录和持仓更新
       createTradeRecordFromPlan(plan, legType)
+      
+      // 交易记录创建可能触发事件覆盖状态，重新从 plan 数据计算并保存
+      const opType2 = plan.operationType || 'buy'
+      if (opType2 === 't0') {
+        const bs2 = plan.buyStatus || 'pending'
+        const ss2 = plan.sellStatus || 'pending'
+        if (bs2 === 'executed' && ss2 === 'executed') plan.status = 'executed'
+        else if (bs2 === 'cancelled' || ss2 === 'cancelled') plan.status = 'cancelled'
+        else if (bs2 === 'discarded' || ss2 === 'discarded') plan.status = 'discarded'
+        else plan.status = 'pending'
+        // 再次保存最终状态
+        savePlansAndNotify()
+      }
     }
 
     showToast(legType === 'buy' ? '买入记录已标记为「' + actionLabels[action] + '」' : '卖出记录已标记为「' + actionLabels[action] + '」')
