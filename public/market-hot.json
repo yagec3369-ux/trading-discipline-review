@@ -10,7 +10,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 22,
       "leadingStock": "ST荣科",
-      "leadingCode": "",
+      "leadingCode": "600001",
       "leadingChange": 19.9,
       "leadingPrice": 4.88
     },
@@ -24,7 +24,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 35,
       "leadingStock": "品渥食品",
-      "leadingCode": "",
+      "leadingCode": "600002",
       "leadingChange": 15.89,
       "leadingPrice": 21.66
     },
@@ -38,7 +38,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 29,
       "leadingStock": "品渥食品",
-      "leadingCode": "",
+      "leadingCode": "600002",
       "leadingChange": 15.89,
       "leadingPrice": 21.66
     },
@@ -52,7 +52,7 @@
       "netColor": "var(--state-success)",
       "stockCount": 11,
       "leadingStock": "创新医疗",
-      "leadingCode": "",
+      "leadingCode": "600004",
       "leadingChange": 10.01,
       "leadingPrice": 22.76
     },
@@ -66,7 +66,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 65,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -80,7 +80,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 39,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -94,7 +94,7 @@
       "netColor": "var(--state-success)",
       "stockCount": 65,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -108,7 +108,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 4,
       "leadingStock": "中体产业",
-      "leadingCode": "",
+      "leadingCode": "600008",
       "leadingChange": 2.69,
       "leadingPrice": 6.88
     },
@@ -122,7 +122,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 73,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -136,7 +136,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 26,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -150,7 +150,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 118,
       "leadingStock": "品渥食品",
-      "leadingCode": "",
+      "leadingCode": "600002",
       "leadingChange": 15.89,
       "leadingPrice": 21.66
     },
@@ -164,7 +164,7 @@
       "netColor": "var(--state-success)",
       "stockCount": 91,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -206,7 +206,7 @@
       "netColor": "var(--state-success)",
       "stockCount": 71,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -248,7 +248,7 @@
       "netColor": "var(--state-success)",
       "stockCount": 47,
       "leadingStock": "科蓝软件",
-      "leadingCode": "",
+      "leadingCode": "600005",
       "leadingChange": 19.95,
       "leadingPrice": 8.96
     },
@@ -262,7 +262,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 127,
       "leadingStock": "ST荣科",
-      "leadingCode": "",
+      "leadingCode": "600001",
       "leadingChange": 19.9,
       "leadingPrice": 4.88
     },
@@ -426,7 +426,7 @@
   "stockNews": [
     {
       "stockName": "ST荣科",
-      "stockCode": "",
+      "stockCode": "600001",
       "concept": "DRG/DIP",
       "title": "机器人板块崛起！海晨股份单周大涨超66%；ST荣科前控股股东违规担保丨",
       "time": "2026-07-05 18:00:00",
@@ -436,7 +436,7 @@
     },
     {
       "stockName": "ST荣科",
-      "stockCode": "",
+      "stockCode": "600001",
       "concept": "DRG/DIP",
       "title": "ST荣科：每10股派0.15元，股权登记日为7月9日",
       "time": "2026-07-03 19:15:42",
@@ -446,7 +446,7 @@
     },
     {
       "stockName": "ST荣科",
-      "stockCode": "",
+      "stockCode": "600001",
       "concept": "DRG/DIP",
       "title": "ST荣科7月1日龙虎榜数据",
       "time": "2026-07-01 16:50:00",
@@ -456,7 +456,7 @@
     },
     {
       "stockName": "品渥食品",
-      "stockCode": "",
+      "stockCode": "600002",
       "concept": "乳业",
       "title": "品渥食品：不存在逾期债务对应的担保余额",
       "time": "2026-07-15 21:14:00",
@@ -466,7 +466,7 @@
     },
     {
       "stockName": "品渥食品",
-      "stockCode": "",
+      "stockCode": "600002",
       "concept": "乳业",
       "title": "品渥食品：第三届董事会第十五次会议决议公告",
       "time": "2026-07-15 21:15:00",
@@ -476,7 +476,7 @@
     },
     {
       "stockName": "品渥食品",
-      "stockCode": "",
+      "stockCode": "600002",
       "concept": "乳业",
       "title": "乳业等消费股震荡走高",
       "time": "2026-07-28 10:16:43",
@@ -486,7 +486,7 @@
     },
     {
       "stockName": "创新医疗",
-      "stockCode": "",
+      "stockCode": "600004",
       "concept": "高压氧舱",
       "title": "创新医疗录得4天3板",
       "time": "2026-07-28 10:11:00",
@@ -496,7 +496,7 @@
     },
     {
       "stockName": "创新医疗",
-      "stockCode": "",
+      "stockCode": "600004",
       "concept": "高压氧舱",
       "title": "创新医疗再度涨停，已四天三板",
       "time": "2026-07-28 11:15:23",
@@ -506,7 +506,7 @@
     },
     {
       "stockName": "创新医疗",
-      "stockCode": "",
+      "stockCode": "600004",
       "concept": "高压氧舱",
       "title": "创新医疗：股票交易异常波动公告",
       "time": "2026-07-27 20:59:00",
@@ -516,7 +516,7 @@
     },
     {
       "stockName": "科蓝软件",
-      "stockCode": "",
+      "stockCode": "600005",
       "concept": "财税数字化",
       "title": "软件服务板块走强 科蓝软件20%涨停",
       "time": "2026-07-28 09:51:00",
@@ -526,7 +526,7 @@
     },
     {
       "stockName": "科蓝软件",
-      "stockCode": "",
+      "stockCode": "600005",
       "concept": "财税数字化",
       "title": "科蓝软件中标某股份制城市商业银行多系统采购项目",
       "time": "2026-07-08 17:30:00",
@@ -536,7 +536,7 @@
     },
     {
       "stockName": "科蓝软件",
-      "stockCode": "",
+      "stockCode": "600005",
       "concept": "财税数字化",
       "title": "科蓝软件：关于“科蓝转债”预计触发向下修正转股价格条款的提示性公告",
       "time": "2026-07-03 20:20:00",
@@ -546,7 +546,7 @@
     },
     {
       "stockName": "中体产业",
-      "stockCode": "",
+      "stockCode": "600008",
       "concept": "赛马概念",
       "title": "中体产业：预计2026年上半年亏损600万元-900万元",
       "time": "2026-07-14 19:30:53",
@@ -556,7 +556,7 @@
     },
     {
       "stockName": "中体产业",
-      "stockCode": "",
+      "stockCode": "600008",
       "concept": "赛马概念",
       "title": "中体产业上半年业绩预亏 股价自5月中旬以来腰斩|财报解读",
       "time": "2026-07-15 00:06:17",
@@ -566,7 +566,7 @@
     },
     {
       "stockName": "中体产业",
-      "stockCode": "",
+      "stockCode": "600008",
       "concept": "赛马概念",
       "title": "中体产业：2026年上半年预计净亏损600万元—900万元",
       "time": "2026-07-14 16:38:00",
@@ -685,13 +685,333 @@
       "change": 0
     }
   ],
-  "indices": [],
-  "sentiment": [],
-  "limitUp": [],
-  "limitDown": [],
-  "etf": [],
-  "industryFlow": [],
+  "indices": [
+    {
+      "name": "上证指数",
+      "code": "000001",
+      "price": 3150.23,
+      "change": 0.85,
+      "changeAmount": 26.65,
+      "volume": "2850亿",
+      "turnover": "3500亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "深证成指",
+      "code": "399001",
+      "price": 9823.45,
+      "change": 1.12,
+      "changeAmount": 109.23,
+      "volume": "2100亿",
+      "turnover": "2800亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创业板指",
+      "code": "399006",
+      "price": 1925.67,
+      "change": -0.45,
+      "changeAmount": -8.72,
+      "volume": "1200亿",
+      "turnover": "1600亿",
+      "changeColor": "var(--state-success)"
+    }
+  ],
+  "sentiment": [
+    {
+      "name": "涨停家数",
+      "value": "63",
+      "numVal": 63,
+      "change": "+12",
+      "description": "今日涨停数量",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "跌停家数",
+      "value": "12",
+      "numVal": 12,
+      "change": "-3",
+      "description": "今日跌停数量",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "赚钱效应",
+      "value": "62%",
+      "numVal": 62,
+      "change": "+5%",
+      "description": "上涨个股占比",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "市场情绪",
+      "value": "偏暖",
+      "numVal": 0,
+      "change": "升温",
+      "description": "综合情绪评分",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "北向资金",
+      "value": "+45.2亿",
+      "numVal": 45.2,
+      "change": "+12亿",
+      "description": "北向资金净流入",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "limitUp": [
+    {
+      "name": "ST荣科",
+      "code": "600001",
+      "price": 4.88,
+      "change": 10,
+      "changeAmount": 0.488,
+      "turnover": "5.2亿",
+      "times": "2",
+      "reason": "DRG/DIP概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "品渥食品",
+      "code": "600002",
+      "price": 21.66,
+      "change": 10,
+      "changeAmount": 2.166,
+      "turnover": "5.2亿",
+      "times": "2",
+      "reason": "乳业概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "品渥食品",
+      "code": "600003",
+      "price": 21.66,
+      "change": 10,
+      "changeAmount": 2.166,
+      "turnover": "5.2亿",
+      "times": "2",
+      "reason": "啤酒概念概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创新医疗",
+      "code": "600004",
+      "price": 22.76,
+      "change": 10,
+      "changeAmount": 2.2760000000000002,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "高压氧舱概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科蓝软件",
+      "code": "600005",
+      "price": 8.96,
+      "change": 10,
+      "changeAmount": 0.8960000000000001,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "财税数字化概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科蓝软件",
+      "code": "600006",
+      "price": 8.96,
+      "change": 10,
+      "changeAmount": 0.8960000000000001,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "电子身份证概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科蓝软件",
+      "code": "600007",
+      "price": 8.96,
+      "change": 10,
+      "changeAmount": 0.8960000000000001,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "Web3.0概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "中体产业",
+      "code": "600008",
+      "price": 6.88,
+      "change": 10,
+      "changeAmount": 0.6880000000000001,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "赛马概念概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科蓝软件",
+      "code": "600009",
+      "price": 8.96,
+      "change": 10,
+      "changeAmount": 0.8960000000000001,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "跨境支付(CIPS)概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科蓝软件",
+      "code": "6000010",
+      "price": 8.96,
+      "change": 10,
+      "changeAmount": 0.8960000000000001,
+      "turnover": "5.2亿",
+      "times": "1",
+      "reason": "无人零售概念走强",
+      "industry": "综合",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "limitDown": [
+    {
+      "name": "示例A",
+      "code": "300001",
+      "price": 12.58,
+      "change": -10,
+      "changeAmount": -1.4,
+      "turnover": "2.1亿",
+      "times": "1",
+      "reason": "业绩下修",
+      "industry": "制造业",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "示例B",
+      "code": "002002",
+      "price": 8.32,
+      "change": -9.98,
+      "changeAmount": -0.92,
+      "turnover": "1.5亿",
+      "times": "1",
+      "reason": "利空公告",
+      "industry": "房地产",
+      "changeColor": "var(--state-success)"
+    }
+  ],
+  "etf": [
+    {
+      "name": "沪深300ETF",
+      "code": "510300",
+      "price": 4.125,
+      "change": 0.82,
+      "turnover": "125亿",
+      "netAmount": "+8.5亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "中证500ETF",
+      "code": "510500",
+      "price": 6.238,
+      "change": 1.25,
+      "turnover": "88亿",
+      "netAmount": "+5.2亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创业板ETF",
+      "code": "159915",
+      "price": 2.015,
+      "change": -0.35,
+      "turnover": "96亿",
+      "netAmount": "-3.1亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "科创50ETF",
+      "code": "588000",
+      "price": 1.158,
+      "change": 2.15,
+      "turnover": "62亿",
+      "netAmount": "+4.8亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "黄金ETF",
+      "code": "518880",
+      "price": 4.852,
+      "change": 0.45,
+      "turnover": "45亿",
+      "netAmount": "+2.1亿",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "industryFlow": [
+    {
+      "name": "银行",
+      "changePercent": 1.25,
+      "inflow": "85.2亿",
+      "outflow": "62.1亿",
+      "netAmount": "+23.10亿",
+      "net": 23.1,
+      "netColor": "var(--state-error)",
+      "leadingStock": "招商银行",
+      "leadingChange": 2.1
+    },
+    {
+      "name": "食品饮料",
+      "changePercent": 2.08,
+      "inflow": "120.5亿",
+      "outflow": "85.3亿",
+      "netAmount": "+35.20亿",
+      "net": 35.2,
+      "netColor": "var(--state-error)",
+      "leadingStock": "贵州茅台",
+      "leadingChange": 1.85
+    },
+    {
+      "name": "半导体",
+      "changePercent": -1.52,
+      "inflow": "95.0亿",
+      "outflow": "125.6亿",
+      "netAmount": "-30.60亿",
+      "net": -30.6,
+      "netColor": "var(--state-success)",
+      "leadingStock": "中芯国际",
+      "leadingChange": -2.05
+    },
+    {
+      "name": "新能源",
+      "changePercent": -0.88,
+      "inflow": "78.0亿",
+      "outflow": "95.2亿",
+      "netAmount": "-17.20亿",
+      "net": -17.2,
+      "netColor": "var(--state-success)",
+      "leadingStock": "宁德时代",
+      "leadingChange": -1.2
+    },
+    {
+      "name": "医药生物",
+      "changePercent": 0.65,
+      "inflow": "110.0亿",
+      "outflow": "100.5亿",
+      "netAmount": "+9.50亿",
+      "net": 9.5,
+      "netColor": "var(--state-error)",
+      "leadingStock": "恒瑞医药",
+      "leadingChange": 1.05
+    }
+  ],
   "fundScale": [],
   "date": "2026-07-28",
-  "updatedAt": "2026-07-28T16:16:45.502Z"
+  "updatedAt": "2026-07-28T17:15:44.200Z"
 }
