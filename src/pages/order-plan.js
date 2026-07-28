@@ -117,7 +117,7 @@ export function createOrderPlanPage(root) {
                 </div>
                 <div>
                   <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">状态</span>
-                  <span style="font-size:var(--text-body); color:var(--ink);">${p.status === 'pending' ? '待执行' : p.status === 'executed' ? '已操作' : p.status === 'cancelled' ? '已取消' : p.status === 'discarded' ? '已弃用' : '--'}</span>
+                  <span style="font-size:var(--text-body); color:var(--ink);">${p.status === 'pending' ? '待执行' : p.status === 'executed' ? '已执行' : p.status === 'cancelled' ? '已取消' : p.status === 'discarded' ? '已弃用' : '--'}</span>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-3">

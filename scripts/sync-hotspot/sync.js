@@ -86,6 +86,9 @@ function parseExcel(filePath) {
   // 构建 股票名→{code, change} 映射，填充缺失的股票代码和涨跌幅
   const infoMap = buildStockInfoMap(wb)
 
+  // 为每个概念附加 Top3 领涨股列表
+  attachTopStocks(wb, concepts)
+
   const dateMatch = path.basename(filePath).match(/(\d{8})/)
   const dateStr = dateMatch
     ? dateMatch[1].replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')
@@ -109,6 +112,57 @@ function parseExcel(filePath) {
   fillStockInfo(data, infoMap)
 
   return data
+}
+
+// 从"概念领涨股Top3" sheet 提取每个概念的前3名领涨股，附加到 concepts 数据
+function attachTopStocks(wb, concepts) {
+  const aliases = ['概念领涨股Top3', '领涨股Top3', '领涨股', '概念领涨', '领涨股排行', 'Top3', 'top3']
+  let topSheetName = null
+  for (const s of wb.SheetNames) {
+    const sLower = s.toLowerCase()
+    if (aliases.some((a) => sLower.includes(a.toLowerCase()) || a.toLowerCase().includes(sLower))) {
+      topSheetName = s
+      break
+    }
+  }
+  if (!topSheetName) {
+    console.log('  [跳过] 未找到"概念领涨股Top3" sheet，仅使用领涨股第1名')
+    return
+  }
+
+  const sheet = wb.Sheets[topSheetName]
+  const rows = xlsx.utils.sheet_to_json(sheet, { defval: '' })
+  console.log(`  [匹配] 领涨股Top3 sheet → "${topSheetName}", ${rows.length} 行`)
+
+  // 构建 概念名 → [{name, code, change}] 映射
+  const conceptTopMap = new Map()
+  for (const r of rows) {
+    const conceptName = col(r, '概念名称', '概念', '板块名称', '板块', '所属概念')
+    if (!conceptName) continue
+    const stocks = []
+    for (let i = 1; i <= 3; i++) {
+      const name = col(r, `领涨股${i}`, `股票${i}`, `个股${i}`, i === 1 ? '领涨股' : '', i === 1 ? '股票名称' : '', i === 1 ? '名称' : '')
+      const code = col(r, `领涨股${i}代码`, `股票${i}代码`, `代码${i}`, i === 1 ? '股票代码' : '', i === 1 ? '代码' : '')
+      const change = colNum(r, `领涨股${i}涨跌幅`, `股票${i}涨跌幅`, `涨跌幅${i}`, i === 1 ? '涨跌幅' : '', i === 1 ? '涨幅' : '')
+      if (name) stocks.push({ name, code, change })
+    }
+    if (stocks.length > 0) {
+      conceptTopMap.set(conceptName, stocks)
+    }
+  }
+
+  // 附加到 concepts
+  let attached = 0
+  for (const c of concepts) {
+    if (conceptTopMap.has(c.name)) {
+      c.topStocks = conceptTopMap.get(c.name)
+      attached++
+    } else if (c.leadingStock) {
+      // 兜底：没有 Top3 数据，至少用 leadingStock
+      c.topStocks = [{ name: c.leadingStock, code: c.leadingCode, change: c.leadingChange }]
+    }
+  }
+  console.log(`  [附加] Top3 领涨股 ${attached}/${concepts.length} 个概念`)
 }
 
 // 从"概念领涨股Top3"等 sheet 构建 股票名→{code, change} 映射
@@ -434,69 +488,79 @@ function generateLogicLibrary(currentData) {
     const date = data.date || ''
 
     for (const concept of data.concepts) {
-      const stockName = concept.leadingStock
-      if (!stockName) continue
+      // 遍历 Top3 领涨股，前3都算上榜
+      const topStocks = concept.topStocks && concept.topStocks.length > 0
+        ? concept.topStocks
+        : (concept.leadingStock ? [{ name: concept.leadingStock, code: concept.leadingCode, change: concept.leadingChange }] : [])
 
-      if (!stockMap.has(stockName)) {
-        stockMap.set(stockName, {
-          name: stockName,
-          code: concept.leadingCode || '',
-          tags: [],
-          appearances: []
-        })
-      }
-      const entry = stockMap.get(stockName)
+      for (const ts of topStocks) {
+        const stockName = ts.name
+        if (!stockName) continue
 
-      if (concept.leadingCode && !entry.code) {
-        entry.code = concept.leadingCode
-      }
+        if (!stockMap.has(stockName)) {
+          stockMap.set(stockName, {
+            name: stockName,
+            code: ts.code || '',
+            tags: [],
+            tagCounts: {},
+            appearances: []
+          })
+        }
+        const entry = stockMap.get(stockName)
 
-      if (!entry.tags.includes(concept.name)) {
-        entry.tags.push(concept.name)
-      }
+        if (ts.code && !entry.code) {
+          entry.code = ts.code
+        }
 
-      const relatedNews = data.stockNews.filter(
-        (n) => n.stockName === stockName
-      )
-      let bestNews = null
-      if (relatedNews.length > 0) {
-        const conceptNews = relatedNews.find(
-          (n) => n.concept && n.concept.includes(concept.name)
+        // 概念标签计数：同一概念上榜多次则 +1
+        if (!entry.tagCounts[concept.name]) {
+          entry.tagCounts[concept.name] = 0
+        }
+        entry.tagCounts[concept.name]++
+
+        const relatedNews = data.stockNews.filter(
+          (n) => n.stockName === stockName
         )
-        if (conceptNews) {
-          bestNews = conceptNews
-        } else {
-          const newsWithConcept = relatedNews.find((n) => n.concept)
-          bestNews = newsWithConcept || relatedNews[0]
+        let bestNews = null
+        if (relatedNews.length > 0) {
+          const conceptNews = relatedNews.find(
+            (n) => n.concept && n.concept.includes(concept.name)
+          )
+          if (conceptNews) {
+            bestNews = conceptNews
+          } else {
+            const newsWithConcept = relatedNews.find((n) => n.concept)
+            bestNews = newsWithConcept || relatedNews[0]
+          }
         }
-      }
 
-      const change = concept.leadingChange || 0
-      const newsTitle = bestNews ? bestNews.title : ''
-      // 按 日期+新闻标题 融合：同日同标题的多个概念合并为一条
-      const existing = entry.appearances.find(
-        (a) => a.date === date && a.newsTitle === newsTitle
-      )
-      if (existing) {
-        if (!existing.concepts.some((c) => c.name === concept.name)) {
-          existing.concepts.push({ name: concept.name, conceptChange: concept.changePercent })
+        const change = ts.change || 0
+        const newsTitle = bestNews ? bestNews.title : ''
+        // 按 日期+新闻标题 融合：同日同标题的多个概念合并为一条
+        const existing = entry.appearances.find(
+          (a) => a.date === date && a.newsTitle === newsTitle
+        )
+        if (existing) {
+          if (!existing.concepts.some((c) => c.name === concept.name)) {
+            existing.concepts.push({ name: concept.name, conceptChange: concept.changePercent })
+          }
+        } else {
+          entry.appearances.push({
+            date,
+            newsTitle,
+            concepts: [{ name: concept.name, conceptChange: concept.changePercent }],
+            change,
+            news: bestNews
+              ? {
+                  title: bestNews.title,
+                  time: bestNews.time,
+                  source: bestNews.source,
+                  link: bestNews.link,
+                  concept: bestNews.concept
+                }
+              : null
+          })
         }
-      } else {
-        entry.appearances.push({
-          date,
-          newsTitle,
-          concepts: [{ name: concept.name, conceptChange: concept.changePercent }],
-          change,
-          news: bestNews
-            ? {
-                title: bestNews.title,
-                time: bestNews.time,
-                source: bestNews.source,
-                link: bestNews.link,
-                concept: bestNews.concept
-              }
-            : null
-        })
       }
     }
 
@@ -506,16 +570,14 @@ function generateLogicLibrary(currentData) {
         stockMap.set(news.stockName, {
           name: news.stockName,
           code: news.stockCode || '',
-          tags: news.concept ? [news.concept] : [],
+          tags: [],
+          tagCounts: {},
           appearances: []
         })
       }
       const entry = stockMap.get(news.stockName)
       if (news.stockCode && !entry.code) {
         entry.code = news.stockCode
-      }
-      if (news.concept && !entry.tags.includes(news.concept)) {
-        entry.tags.push(news.concept)
       }
     }
   }
@@ -539,14 +601,21 @@ function generateLogicLibrary(currentData) {
     generatedAt: new Date().toISOString(),
     totalStocks: stockMap.size,
     stocks: Array.from(stockMap.values())
-      .map((s) => ({
-        ...s,
-        tags: s.tags.sort(),
-        appearances: s.appearances.sort((a, b) => {
-          if (a.date !== b.date) return b.date.localeCompare(a.date)
-          return (b.concepts[0]?.conceptChange || 0) - (a.concepts[0]?.conceptChange || 0)
-        })
-      }))
+      .map((s) => {
+        // 将 tagCounts 转为 tags 数组：[{name, count}]
+        const tags = Object.entries(s.tagCounts || {})
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+        return {
+          name: s.name,
+          code: s.code,
+          tags,
+          appearances: s.appearances.sort((a, b) => {
+            if (a.date !== b.date) return b.date.localeCompare(a.date)
+            return (b.concepts[0]?.conceptChange || 0) - (a.concepts[0]?.conceptChange || 0)
+          })
+        }
+      })
       .sort((a, b) => {
         if (b.appearances.length !== a.appearances.length) {
           return b.appearances.length - a.appearances.length

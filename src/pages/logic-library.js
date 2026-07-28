@@ -53,6 +53,7 @@ export function createLogicLibraryPage(root) {
   let logicLibraryData = null
   let expandedStocks = new Set()
   let filterText = ''
+  let isFiltering = false
 
   function loadData() {
     const saved = lsGetJSON(STORAGE_KEYS.logicLibrary, null) || {}
@@ -122,6 +123,17 @@ export function createLogicLibraryPage(root) {
     `
     refreshIcons()
     bindEvents()
+
+    // 搜索触发的重新渲染：恢复输入框焦点和光标位置，避免输入被打断
+    if (isFiltering) {
+      const input = root.querySelector('#filter-input')
+      if (input) {
+        input.focus()
+        const len = input.value.length
+        input.setSelectionRange(len, len)
+      }
+      isFiltering = false
+    }
   }
 
   function renderLoading() {
@@ -189,7 +201,10 @@ export function createLogicLibraryPage(root) {
 
     const stocks = logicLibraryData.stocks
     const filtered = filterText
-      ? stocks.filter((s) => s.name.includes(filterText) || s.tags.some((t) => t.includes(filterText)))
+      ? stocks.filter((s) => s.name.includes(filterText) || s.tags.some((t) => {
+          const tagName = typeof t === 'string' ? t : t.name
+          return tagName.includes(filterText)
+        }))
       : stocks
 
     return `
@@ -226,8 +241,10 @@ export function createLogicLibraryPage(root) {
   function renderStockCard(stock) {
     const isExpanded = expandedStocks.has(stock.name)
     const tagsHtml = stock.tags.map((tag) => {
-      const c = getTagColor(tag)
-      return `<span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; margin-right:4px; margin-bottom:4px; display:inline-block;">${escHtml(tag)}</span>`
+      const tagName = typeof tag === 'string' ? tag : tag.name
+      const tagCount = typeof tag === 'object' && tag.count ? tag.count : 1
+      const c = getTagColor(tagName)
+      return `<span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; margin-right:4px; margin-bottom:4px; display:inline-block;">${escHtml(tagName)}${tagCount > 1 ? ' <span style="font-weight:var(--weight-semibold); opacity:0.7;">×' + tagCount + '</span>' : ''}</span>`
     }).join('')
 
     const stockUrl = getStockUrl(stock.code, stock.name)
@@ -342,11 +359,13 @@ export function createLogicLibraryPage(root) {
     if (filterInput) {
       let debounceTimer = null
       filterInput.addEventListener('input', (e) => {
+        const val = e.target.value
         clearTimeout(debounceTimer)
         debounceTimer = setTimeout(() => {
-          filterText = e.target.value
+          filterText = val
+          isFiltering = true
           render()
-        }, 200)
+        }, 250)
       })
     }
   }

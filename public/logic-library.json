@@ -1,12 +1,15 @@
 {
-  "generatedAt": "2026-07-28T14:32:36.745Z",
+  "generatedAt": "2026-07-28T14:36:43.176Z",
   "totalStocks": 25,
   "stocks": [
     {
       "name": "ST荣科",
       "code": "",
       "tags": [
-        "DRG/DIP"
+        {
+          "name": "DRG/DIP",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -27,9 +30,18 @@
       "name": "品渥食品",
       "code": "",
       "tags": [
-        "乳业",
-        "啤酒概念",
-        "网红经济"
+        {
+          "name": "乳业",
+          "count": 1
+        },
+        {
+          "name": "啤酒概念",
+          "count": 1
+        },
+        {
+          "name": "网红经济",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -64,14 +76,38 @@
       "name": "科蓝软件",
       "code": "",
       "tags": [
-        "Web3.0",
-        "化债概念(AMC概念)",
-        "数字货币",
-        "数据确权",
-        "无人零售",
-        "电子身份证",
-        "财税数字化",
-        "跨境支付(CIPS)"
+        {
+          "name": "Web3.0",
+          "count": 1
+        },
+        {
+          "name": "化债概念(AMC概念)",
+          "count": 1
+        },
+        {
+          "name": "数字货币",
+          "count": 1
+        },
+        {
+          "name": "数据确权",
+          "count": 1
+        },
+        {
+          "name": "无人零售",
+          "count": 1
+        },
+        {
+          "name": "电子身份证",
+          "count": 1
+        },
+        {
+          "name": "财税数字化",
+          "count": 1
+        },
+        {
+          "name": "跨境支付(CIPS)",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -126,7 +162,10 @@
       "name": "创新医疗",
       "code": "",
       "tags": [
-        "高压氧舱"
+        {
+          "name": "高压氧舱",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -153,7 +192,10 @@
       "name": "东百集团",
       "code": "",
       "tags": [
-        "免税店"
+        {
+          "name": "免税店",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -180,8 +222,10 @@
       "name": "金种子酒",
       "code": "",
       "tags": [
-        "啤酒概念",
-        "白酒概念"
+        {
+          "name": "白酒概念",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -208,8 +252,14 @@
       "name": "南天信息",
       "code": "",
       "tags": [
-        "ETC",
-        "NFT概念"
+        {
+          "name": "ETC",
+          "count": 1
+        },
+        {
+          "name": "NFT概念",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -234,7 +284,10 @@
       "name": "中体产业",
       "code": "",
       "tags": [
-        "赛马概念"
+        {
+          "name": "赛马概念",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -261,7 +314,10 @@
       "name": "天地在线",
       "code": "",
       "tags": [
-        "预制菜"
+        {
+          "name": "预制菜",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -282,7 +338,10 @@
       "name": "安诺其",
       "code": "",
       "tags": [
-        "染料"
+        {
+          "name": "染料",
+          "count": 1
+        }
       ],
       "appearances": [
         {
@@ -302,121 +361,91 @@
     {
       "name": "一鸣食品",
       "code": "",
-      "tags": [
-        "乳业"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "万辰集团",
       "code": "",
-      "tags": [
-        "乳业"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "嘉美包装",
       "code": "",
-      "tags": [
-        "啤酒概念"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "天融信",
       "code": "",
-      "tags": [
-        "财税数字化"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "久其软件",
       "code": "",
-      "tags": [
-        "财税数字化"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "格尔软件",
       "code": "",
-      "tags": [
-        "电子身份证"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "大湖股份",
       "code": "",
-      "tags": [
-        "高压氧舱"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "倍益康",
       "code": "",
-      "tags": [
-        "高压氧舱"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "ST华扬",
       "code": "",
-      "tags": [
-        "免税店"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "岭南控股",
       "code": "",
-      "tags": [
-        "免税店"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "ST西王",
       "code": "",
-      "tags": [
-        "网红经济"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "皇台酒业",
       "code": "",
-      "tags": [
-        "白酒概念"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "迎驾贡酒",
       "code": "",
-      "tags": [
-        "白酒概念"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "新华都",
       "code": "",
-      "tags": [
-        "赛马概念"
-      ],
+      "tags": [],
       "appearances": []
     },
     {
       "name": "中牧股份",
       "code": "",
-      "tags": [
-        "赛马概念"
-      ],
+      "tags": [],
       "appearances": []
     }
   ]

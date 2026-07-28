@@ -7,7 +7,7 @@ import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 const LEG_STATUS = {
   pending: { label: '待执行', color: 'var(--state-warning)', bg: 'var(--state-warning-bg)', icon: 'clock' },
-  executed: { label: '已操作', color: 'var(--state-success)', bg: 'var(--state-success-bg)', icon: 'check-circle-2' },
+  executed: { label: '已执行', color: 'var(--state-success)', bg: 'var(--state-success-bg)', icon: 'check-circle-2' },
   cancelled: { label: '已取消', color: 'var(--state-info)', bg: 'var(--state-info-bg)', icon: 'x-circle' },
   discarded: { label: '已弃用', color: 'var(--ink-3)', bg: 'var(--surface-2)', icon: 'archive' }
 }
@@ -17,7 +17,7 @@ const FILTER_TABS = [
   { id: 'buy', label: '买入执行' },
   { id: 'sell', label: '卖出执行' },
   { id: 'pending', label: '待执行' },
-  { id: 'executed', label: '已操作' }
+  { id: 'executed', label: '已执行' }
 ]
 
 export function createExecutionPage(root) {
@@ -113,7 +113,7 @@ export function createExecutionPage(root) {
       <section class="mb-6">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           ${statCard('待执行', counts.pending, 'clock', 'var(--state-warning)', 'var(--state-warning-bg)')}
-          ${statCard('已操作', counts.executed + counts.cancelled, 'check-circle-2', 'var(--state-success)', 'var(--state-success-bg)')}
+          ${statCard('已执行', counts.executed + counts.cancelled, 'check-circle-2', 'var(--state-success)', 'var(--state-success-bg)')}
           ${statCard('已买入', legs.filter(l => l.status === 'executed' && l.legType === 'buy').length, 'trending-up', 'var(--state-error)', 'var(--state-error-bg)')}
           ${statCard('已卖出', legs.filter(l => l.status === 'executed' && l.legType === 'sell').length, 'trending-down', 'var(--state-success)', 'var(--state-success-bg)')}
         </div>
@@ -252,7 +252,7 @@ export function createExecutionPage(root) {
           </div>
           <span style="font-size:var(--text-caption); font-weight:var(--weight-medium); padding:2px 10px; border-radius:var(--r-pill); background:${statusBg}; color:${statusColor}; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
             <i data-lucide="${sd.icon}" style="width:12px; height:12px;"></i>
-            ${l.status === 'executed' ? (l.legType === 'buy' ? '已买入' : '已卖出') : escHtml(sd.label)}
+            ${escHtml(sd.label)}
           </span>
         </div>
 
@@ -298,7 +298,7 @@ export function createExecutionPage(root) {
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                 ${detailItem('操作类型', opTypeLabel)}
                 ${detailItem('执行类型', l.actionLabel)}
-                ${detailItem('状态', l.status === 'executed' ? (l.legType === 'buy' ? '已买入' : '已卖出') : sd.label)}
+                ${detailItem('状态', sd.label)}
                 ${detailItem('创建时间', formatDate(p.createdAt))}
               </div>
               ${p.reviewNotes ? `<div class="mb-2"><span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">复盘总结</span><p style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">${escHtml(p.reviewNotes)}</p></div>` : ''}
@@ -456,7 +456,7 @@ export function createExecutionPage(root) {
       else plan.status = 'pending'
     }
 
-    const actionLabels = { executed: '已操作', cancelled: '取消', discarded: '弃用' }
+    const actionLabels = { executed: '已执行', cancelled: '取消', discarded: '弃用' }
 
     if (action === 'executed') {
       createTradeRecordFromPlan(plan, legType)
