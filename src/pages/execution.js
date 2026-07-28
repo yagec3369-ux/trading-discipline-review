@@ -527,6 +527,18 @@ export function createExecutionPage(root) {
   function createTradeRecordFromPlan(plan, legType) {
     const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
     const records = []
+    
+    // 调试日志：检查 plan 数据
+    console.log('[createTradeRecordFromPlan]', {
+      legType: legType,
+      planId: plan.id,
+      buyShares: plan.buyShares,
+      sellShares: plan.sellShares,
+      buyPrice: plan.buyPrice,
+      sellPrice: plan.sellPrice,
+      buyStatus: plan.buyStatus,
+      sellStatus: plan.sellStatus
+    })
 
     const pushLeg = (type) => {
       if (type === 'buy' && plan.buyPrice && plan.buyShares) {
@@ -588,14 +600,20 @@ export function createExecutionPage(root) {
 
       const updateHoldings = (type) => {
         const existing = holdings.find((h) => h.code === code)
+        console.log('[updateHoldings]', {
+          type: type,
+          existingFound: !!existing,
+          existingQty: existing ? existing.quantity : null,
+          planSellShares: plan.sellShares,
+          planBuyShares: plan.buyShares,
+          holdingsCount: holdings.length
+        })
         if (type === 'buy' && plan.buyShares) {
           const qty = parseInt(plan.buyShares, 10) || 0
           const buyPrice = parseFloat(plan.buyPrice) || 0
           if (existing) {
             const oldQty = parseInt(existing.quantity, 10) || 0
             const oldCost = parseFloat(existing.buyPrice) || 0
-            // 新成本 = (原成本×原数量 + 买入价×买入数量 - 卖出价×卖出数量) / 总数量
-            // 本次为纯买入，卖出数量为 0
             const totalQty = oldQty + qty
             if (totalQty > 0) {
               existing.buyPrice = ((oldCost * oldQty) + (buyPrice * qty)) / totalQty
@@ -613,24 +631,31 @@ export function createExecutionPage(root) {
               createdAt: new Date().toISOString()
             })
           }
+          console.log('[updateHoldings:buy] 结果', { newQty: existing ? existing.quantity : qty })
         } else if (type === 'sell' && plan.sellShares) {
           const qty = parseInt(plan.sellShares, 10) || 0
           const sellPrice = parseFloat(plan.sellPrice) || 0
           if (existing) {
             const oldQty = parseInt(existing.quantity, 10) || 0
             const oldCost = parseFloat(existing.buyPrice) || 0
-            // 新成本 = (原成本×原数量 - 卖出价×卖出数量) / 总数量
-            // 本次为纯卖出，买入数量为 0
             const totalQty = oldQty - qty
             if (totalQty > 0) {
               existing.buyPrice = ((oldCost * oldQty) - (sellPrice * qty)) / totalQty
             } else if (totalQty === 0) {
-              // 全部卖出，清仓保留成本价记录
               existing.buyPrice = oldCost
             }
             existing.quantity = Math.max(0, totalQty)
             existing.currentPrice = plan.sellPrice || existing.currentPrice
+            console.log('[updateHoldings:sell] 结果', { oldQty: oldQty, soldQty: qty, newQty: existing.quantity, newCost: existing.buyPrice })
+          } else {
+            console.log('[updateHoldings:sell] 警告：未找到持仓，无法扣减！')
           }
+        } else {
+          console.log('[updateHoldings] 跳过，条件不满足', {
+            type: type,
+            sellShares: plan.sellShares,
+            buyShares: plan.buyShares
+          })
         }
       }
 
