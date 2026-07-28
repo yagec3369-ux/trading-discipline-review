@@ -585,16 +585,23 @@ export function createExecutionPage(root) {
         const existing = holdings.find((h) => h.code === code)
         if (type === 'buy' && plan.buyShares) {
           const qty = parseInt(plan.buyShares, 10) || 0
+          const buyPrice = parseFloat(plan.buyPrice) || 0
           if (existing) {
-            existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
-            if (plan.buyPrice) existing.buyPrice = plan.buyPrice
+            const oldQty = parseInt(existing.quantity, 10) || 0
+            const oldCost = parseFloat(existing.buyPrice) || 0
+            // 加权平均成本 = (原成本 × 原数量 + 本次买入价 × 本次数量) / 总数量
+            const totalQty = oldQty + qty
+            if (totalQty > 0) {
+              existing.buyPrice = ((oldCost * oldQty) + (buyPrice * qty)) / totalQty
+            }
+            existing.quantity = totalQty
             existing.currentPrice = plan.dailyClose || plan.buyPrice || existing.currentPrice
           } else {
             holdings.push({
               id: 'h_' + Date.now(),
               name: name,
               code: code,
-              buyPrice: plan.buyPrice || '--',
+              buyPrice: buyPrice || '--',
               currentPrice: plan.dailyClose || plan.buyPrice || '--',
               quantity: qty,
               createdAt: new Date().toISOString()
@@ -605,6 +612,7 @@ export function createExecutionPage(root) {
           if (existing) {
             existing.quantity = Math.max(0, (parseInt(existing.quantity, 10) || 0) - qty)
             existing.currentPrice = plan.sellPrice || existing.currentPrice
+            // 卖出不影响成本价
           }
         }
       }
