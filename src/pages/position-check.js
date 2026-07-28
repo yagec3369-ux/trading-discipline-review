@@ -4,6 +4,7 @@ import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
+import { fetchStockQuotes } from '../utils/stock-quote.js'
 
 const DAILY_QUESTIONS = [
   '今日操作是否在计划内？',
@@ -91,10 +92,16 @@ export function createPositionCheckPage(root) {
           <i data-lucide="clipboard-check" style="width:20px; height:20px; color:var(--brand);"></i>
           <h2 style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); letter-spacing:-0.015em;">持仓检查</h2>
         </div>
-        <button id="add-holding-btn" class="flex items-center gap-2 px-4 h-9 whitespace-nowrap" style="background:var(--brand); color:var(--brand-ink); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); border:none; cursor:pointer;">
-          <i data-lucide="plus" style="width:16px; height:16px;"></i>
-          新增持仓
-        </button>
+        <div class="flex items-center gap-2">
+          <button id="refresh-quote-btn" class="flex items-center gap-2 px-3 h-9 whitespace-nowrap" style="background:var(--surface); color:var(--ink-2); border:1px solid var(--line); border-radius:var(--r-md); font-size:var(--text-caption); font-weight:var(--weight-medium); cursor:pointer;">
+            <i data-lucide="refresh-cw" id="refresh-icon" style="width:14px; height:14px;"></i>
+            <span id="refresh-text">刷新行情</span>
+          </button>
+          <button id="add-holding-btn" class="flex items-center gap-2 px-4 h-9 whitespace-nowrap" style="background:var(--brand); color:var(--brand-ink); border-radius:var(--r-md); font-size:var(--text-body); font-weight:var(--weight-semibold); border:none; cursor:pointer;">
+            <i data-lucide="plus" style="width:16px; height:16px;"></i>
+            新增持仓
+          </button>
+        </div>
       </div>
 
       ${activeHoldings.length === 0 ? `
@@ -172,7 +179,7 @@ export function createPositionCheckPage(root) {
                   <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono);">${h.buyPrice || '--'}</span>
                 </div>
                 <div>
-                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">现价</span>
+                  <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">现价${h.priceChangePct != null ? ` <span style="font-size:10px; color:${h.priceChangePct >= 0 ? 'var(--price-up)' : 'var(--price-down)'};">${h.priceChangePct >= 0 ? '+' : ''}${h.priceChangePct}%</span>` : ''}</span>
                   <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono);">${h.currentPrice || '--'}</span>
                 </div>
                 <div>
@@ -306,9 +313,81 @@ export function createPositionCheckPage(root) {
     `
   }
 
+  let _refreshing = false
+  let _refreshTimer = null
+
+  async function refreshQuotes() {
+    if (_refreshing) return
+    const activeCodes = holdings.filter((h) => !h.archived && h.code).map((h) => h.code)
+    if (activeCodes.length === 0) {
+      showToast('暂无持仓可刷新')
+      return
+    }
+
+    _refreshing = true
+    const refreshBtn = root.querySelector('#refresh-quote-btn')
+    const refreshIcon = root.querySelector('#refresh-icon')
+    const refreshText = root.querySelector('#refresh-text')
+    if (refreshBtn) refreshBtn.style.opacity = '0.6'
+    if (refreshIcon) refreshIcon.style.animation = 'spin 0.8s linear infinite'
+    if (refreshText) refreshText.textContent = '刷新中...'
+
+    try {
+      const quotes = await fetchStockQuotes(activeCodes)
+      let updated = 0
+      holdings.forEach((h) => {
+        if (h.code && quotes[h.code]) {
+          h.currentPrice = quotes[h.code].price
+          h.priceChangePct = quotes[h.code].changePct
+          updated++
+        }
+      })
+      if (updated > 0) {
+        saveHoldings()
+        notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
+        render()
+        showToast('已更新 ' + updated + ' 只股票现价')
+      } else {
+        showToast('未能获取行情数据')
+      }
+    } catch (e) {
+      showToast('行情刷新失败：' + e.message)
+    } finally {
+      _refreshing = false
+      if (refreshBtn) refreshBtn.style.opacity = '1'
+      if (refreshIcon) refreshIcon.style.animation = ''
+      if (refreshText) refreshText.textContent = '刷新行情'
+    }
+  }
+
+  function startAutoRefresh() {
+    stopAutoRefresh()
+    // 每 30 秒自动刷新
+    _refreshTimer = setInterval(() => {
+      // 仅在交易时间自动刷新 (9:25-15:05)
+      const now = new Date()
+      const h = now.getHours()
+      const m = now.getMinutes()
+      const minutes = h * 60 + m
+      if (minutes >= 565 && minutes <= 905) {
+        refreshQuotes()
+      }
+    }, 30000)
+  }
+
+  function stopAutoRefresh() {
+    if (_refreshTimer) {
+      clearInterval(_refreshTimer)
+      _refreshTimer = null
+    }
+  }
+
   function bindEvents() {
     const addBtn = root.querySelector('#add-holding-btn')
     if (addBtn) addBtn.addEventListener('click', () => openHoldingDialog())
+
+    const refreshBtn = root.querySelector('#refresh-quote-btn')
+    if (refreshBtn) refreshBtn.addEventListener('click', refreshQuotes)
 
     root.querySelectorAll('.stock-card-header').forEach((header) => {
       header.addEventListener('click', () => {
@@ -663,8 +742,12 @@ export function createPositionCheckPage(root) {
       on(DATA_EVENTS.HOLDINGS_CHANGED, _holdingsListener)
       on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _holdingsListener)
       render()
+      // 进入页面时自动刷新一次现价
+      refreshQuotes()
+      startAutoRefresh()
     },
     unmount() {
+      stopAutoRefresh()
       closeHoldingDialog()
       closeHistoryDialog()
       if (_holdingsListener) {
