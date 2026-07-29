@@ -1,9 +1,165 @@
 import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
-import { on, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
+import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
 
 const R_UNIT = 1000
+
+// 同步更新与计划关联的交易记录和持仓
+// 支持通过 fromPlanId 关联，也支持通过股票代码+类型匹配旧数据
+function syncTradeRecordsWithPlan(planId, oldPriceData, newPriceData, planType, planCode, planName) {
+  const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
+  const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+  let changed = false
+  let holdingsChanged = false
+
+  console.log('[syncTradeRecordsWithPlan] start', {
+    planId,
+    planCode,
+    planName,
+    planType,
+    oldPriceData,
+    newPriceData,
+    totalTrades: trades.length
+  })
+
+  // 查找所有与该计划关联的交易记录
+  // 优先通过 fromPlanId 匹配，其次通过股票代码+交易类型匹配（兼容旧数据）
+  const relatedTrades = trades.filter(t => {
+    if (t.fromPlanId === planId) return true
+    // 旧数据可能没有 fromPlanId，通过股票代码和类型匹配
+    if (!t.fromPlanId && planCode && t.code === planCode) {
+      // 对于做T计划，买入和卖出都需要匹配
+      if (planType === 't0') return true
+      // 对于单买入/单卖出计划，只匹配对应类型
+      if (planType === 'buy' && t.type === 'buy') return true
+      if (planType === 'sell' && t.type === 'sell') return true
+    }
+    return false
+  })
+
+  console.log('[syncTradeRecordsWithPlan] relatedTrades found:', relatedTrades.map(t => ({
+    id: t.id,
+    type: t.type,
+    code: t.code,
+    fromPlanId: t.fromPlanId,
+    actualShares: t.actualShares,
+    actualPrice: t.actualPrice
+  })))
+
+  for (const trade of relatedTrades) {
+    const type = trade.type // 'buy' or 'sell'
+    const oldPrice = type === 'buy' ? oldPriceData.buyPrice : oldPriceData.sellPrice
+    const newPrice = type === 'buy' ? newPriceData.buyPrice : newPriceData.sellPrice
+    const oldShares = type === 'buy' ? oldPriceData.buyShares : oldPriceData.sellShares
+    const newShares = type === 'buy' ? newPriceData.buyShares : newPriceData.sellShares
+
+    const priceChanged = parseFloat(oldPrice) !== parseFloat(newPrice)
+    const sharesChanged = parseInt(oldShares, 10) !== parseInt(newShares, 10)
+
+    console.log('[syncTradeRecordsWithPlan] checking trade:', {
+      tradeId: trade.id,
+      type,
+      oldPrice,
+      newPrice,
+      oldShares,
+      newShares,
+      priceChanged,
+      sharesChanged
+    })
+
+    if (!priceChanged && !sharesChanged) continue
+
+    // 为旧数据补充 fromPlanId
+    if (!trade.fromPlanId) {
+      trade.fromPlanId = planId
+      console.log('[syncTradeRecordsWithPlan] assigned fromPlanId to old trade:', trade.id)
+    }
+
+    // 计算数量差额，用于调整持仓
+    const shareDiff = (parseInt(newShares, 10) || 0) - (parseInt(oldShares, 10) || 0)
+
+    // 更新交易记录
+    trade.planPrice = newPrice
+    trade.actualPrice = newPrice
+    trade.planShares = newShares
+    trade.actualShares = newShares
+    const newAmount = (parseFloat(newPrice) || 0) * (parseInt(newShares, 10) || 0)
+    trade.planAmount = newAmount
+    trade.actualAmount = newAmount
+    changed = true
+
+    console.log('[syncTradeRecordsWithPlan] updated trade:', {
+      tradeId: trade.id,
+      newPrice,
+      newShares,
+      newAmount
+    })
+
+    // 更新持仓：使用金额差进行增量调整
+    const existingHolding = holdings.find(h => h.code === trade.code)
+    if (existingHolding) {
+      const oldQty = parseInt(existingHolding.quantity, 10) || 0
+      const oldCost = parseFloat(existingHolding.buyPrice) || 0
+      const oldTotalCost = oldCost * oldQty
+
+      const oldAmount = (parseFloat(oldPrice) || 0) * (parseInt(oldShares, 10) || 0)
+      const newAmountCalc = (parseFloat(newPrice) || 0) * (parseInt(newShares, 10) || 0)
+      const amountDiff = newAmountCalc - oldAmount
+
+      console.log('[syncTradeRecordsWithPlan] holding before:', {
+        code: trade.code,
+        oldQty,
+        oldCost,
+        oldTotalCost,
+        shareDiff,
+        amountDiff
+      })
+
+      if (type === 'buy') {
+        const newQty = Math.max(0, oldQty + shareDiff)
+        if (newQty > 0) {
+          existingHolding.buyPrice = (oldTotalCost + amountDiff) / newQty
+        } else if (newQty === 0) {
+          existingHolding.buyPrice = oldCost
+        }
+        existingHolding.quantity = newQty
+        existingHolding.currentPrice = newPrice || existingHolding.currentPrice
+        holdingsChanged = true
+      } else if (type === 'sell') {
+        const newQty = Math.max(0, oldQty - shareDiff)
+        if (newQty > 0) {
+          existingHolding.buyPrice = (oldTotalCost - amountDiff) / newQty
+        } else if (newQty === 0) {
+          existingHolding.buyPrice = oldCost
+        }
+        existingHolding.quantity = newQty
+        existingHolding.currentPrice = newPrice || existingHolding.currentPrice
+        holdingsChanged = true
+      }
+
+      console.log('[syncTradeRecordsWithPlan] holding after:', {
+        code: trade.code,
+        newQty: existingHolding.quantity,
+        newBuyPrice: existingHolding.buyPrice
+      })
+    }
+  }
+
+  if (changed) {
+    lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
+    notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
+    console.log('[syncTradeRecordsWithPlan] saved trade records, changed:', changed)
+  }
+  if (holdingsChanged) {
+    lsSetJSON(STORAGE_KEYS.holdings, holdings)
+    notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
+    console.log('[syncTradeRecordsWithPlan] saved holdings, changed:', holdingsChanged)
+  }
+
+  console.log('[syncTradeRecordsWithPlan] done, result:', changed || holdingsChanged)
+  return changed || holdingsChanged
+}
 
 function getTotalFund() {
   const v = lsGet(STORAGE_KEYS.riskCtrl + 'total_fund', '200000')
@@ -716,12 +872,24 @@ export function createOrderPlanPage(root) {
       if (editItem) {
         const idx = plans.findIndex((pl) => pl.id === editItem.id)
         if (idx !== -1) {
+          // 获取旧的价格数据用于同步交易记录
+          const oldPlan = plans[idx]
+          const oldPriceData = {
+            buyPrice: oldPlan.buyPrice || 0,
+            buyShares: oldPlan.buyShares || 0,
+            sellPrice: oldPlan.sellPrice || 0,
+            sellShares: oldPlan.sellShares || 0
+          }
+          
           plans[idx] = {
             ...plans[idx],
             name, code, operationType,
             ...priceData,
             expectedGainNR, maxLossNR
           }
+          
+          // 同步更新已生成的交易记录和持仓
+          syncTradeRecordsWithPlan(editItem.id, oldPriceData, priceData, operationType, code, name)
         }
       } else {
         const newPlan = {
@@ -752,7 +920,7 @@ export function createOrderPlanPage(root) {
       notifyDataChange(DATA_EVENTS.PLANS_CHANGED)
       closeDialog()
       render()
-      showToast(editItem ? '已更新' : '已添加')
+      showToast(editItem ? '已更新，交易记录已同步' : '已添加')
     })
   }
 

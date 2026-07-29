@@ -11,7 +11,8 @@ export const TAB_GROUPS = [
     icon: 'bar-chart-3',
     tabs: [
       { id: 'overview', label: '统计概览', icon: 'bar-chart-3' },
-      { id: 'risk', label: '账户风控', icon: 'activity' }
+      { id: 'risk', label: '账户风控', icon: 'activity' },
+      { id: 'data', label: '数据管理', icon: 'database' }
     ]
   },
   {
