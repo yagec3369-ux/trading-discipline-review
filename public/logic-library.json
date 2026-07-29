@@ -2,94 +2,58 @@
   "subjective": [],
   "auto": [
     {
-      "id": "auto_finance_9_1785280997280",
-      "title": "证监会就完善上市公司退市制度征求意见",
-      "content": "进一步优化退市指标，简化退市流程，强化退市监管，保护中小投资者合法权益。",
-      "tag": "policy",
+      "id": "auto_finance_5_1785289076284",
+      "title": "芯片出口管制新规对全球半导体市场影响分析",
+      "content": "美国商务部发布最新半导体出口管制规则",
+      "tag": "industry",
       "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T14:00:00.000Z"
+      "confidence": 0.8,
+      "createdAt": "2026-07-29T14:20:00.000Z"
     },
     {
-      "id": "auto_stock_4_1785280997280",
-      "title": "长江存储NAND Flash产品中标三大服务器厂商集采订单",
-      "content": "存储芯片",
-      "tag": "announcement",
-      "stockCode": "603000",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T13:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_3_1785280997280",
-      "title": "隆基绿能控股股东拟减持不超2%公司股份",
-      "content": "光伏储能",
-      "tag": "reduction",
-      "stockCode": "601012",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T11:15:00.000Z"
-    },
-    {
-      "id": "auto_stock_2_1785280997280",
-      "title": "比亚迪上半年净利润同比增长85% 海外销量超30万辆",
+      "id": "auto_stock_2_1785289076284",
+      "title": "宁德时代与特斯拉签订新一轮供应协议",
       "content": "新能源车",
       "tag": "news",
-      "stockCode": "002594",
+      "stockCode": "300750",
       "confidence": 0.6,
-      "createdAt": "2026-07-28T10:30:00.000Z"
+      "createdAt": "2026-07-29T13:00:00.000Z"
     },
     {
-      "id": "auto_finance_8_1785280997280",
-      "title": "行业轮动加速 机构建议关注业绩确定性主线",
-      "content": "二季度财报密集披露期，市场风格切换明显，基金经理建议从题材炒作转向业绩兑现。",
+      "id": "auto_stock_1_1785289076284",
+      "title": "科大讯飞发布星火大模型V3.0",
+      "content": "人工智能",
+      "tag": "news",
+      "stockCode": "002230",
+      "confidence": 0.9,
+      "createdAt": "2026-07-29T11:30:00.000Z"
+    },
+    {
+      "id": "auto_finance_4_1785289076284",
+      "title": "发改委发布新能源汽车产业发展规划",
+      "content": "国家发改委印发新能源汽车产业高质量发展规划",
+      "tag": "policy",
+      "stockCode": "",
+      "confidence": 0.6,
+      "createdAt": "2026-07-29T10:15:00.000Z"
+    },
+    {
+      "id": "auto_finance_3_1785289076284",
+      "title": "央行宣布下调存款准备金率0.25个百分点",
+      "content": "中国人民银行决定于2026年8月15日下调金融机构存款准备金率0.25个百分点",
+      "tag": "policy",
+      "stockCode": "",
+      "confidence": 0.6,
+      "createdAt": "2026-07-29T09:30:00.000Z"
+    },
+    {
+      "id": "auto_stock_0_1785289076284",
+      "title": "中芯国际公布2026年二季度财报",
+      "content": "半导体",
       "tag": "earnings",
-      "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T10:20:00.000Z"
-    },
-    {
-      "id": "auto_stock_1_1785280997280",
-      "title": "埃斯顿与特斯拉签署人形机器人零部件供应框架协议",
-      "content": "机器人",
-      "tag": "news",
-      "stockCode": "002747",
+      "stockCode": "688981",
       "confidence": 0.9,
-      "createdAt": "2026-07-28T09:45:00.000Z"
-    },
-    {
-      "id": "auto_finance_7_1785280997280",
-      "title": "A股三大指数集体高开 算力板块领涨",
-      "content": "沪指涨0.32%，深成指涨0.58%，创业板指涨0.81%，AI算力、半导体板块涨幅居前。",
-      "tag": "market",
-      "stockCode": "",
-      "confidence": 0.9,
-      "createdAt": "2026-07-28T09:35:00.000Z"
-    },
-    {
-      "id": "auto_finance_6_1785280997280",
-      "title": "央行今日开展3000亿元7天期逆回购操作 净投放2500亿",
-      "content": "央行公开市场操作力度加大，维护银行体系流动性合理充裕，市场利率稳中趋降。",
-      "tag": "policy",
-      "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T09:15:00.000Z"
-    },
-    {
-      "id": "auto_stock_0_1785280997280",
-      "title": "寒武纪发布新一代思元AI推理芯片 性能提升3倍",
-      "content": "AI算力",
-      "tag": "news",
-      "stockCode": "688256",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T09:00:00.000Z"
-    },
-    {
-      "id": "auto_finance_5_1785280997280",
-      "title": "国务院印发数字经济高质量发展规划 2026-2030",
-      "content": "规划提出到2030年数字经济核心产业增加值占GDP比重达到15%，重点支持AI、集成电路、量子信息等领域。",
-      "tag": "policy",
-      "stockCode": "",
-      "confidence": 0.6,
-      "createdAt": "2026-07-28T08:30:00.000Z"
+      "createdAt": "2026-07-29T08:45:00.000Z"
     }
   ]
 }
