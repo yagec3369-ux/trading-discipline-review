@@ -35,24 +35,44 @@ export function createTradeRecordsPage(root) {
     if (qty <= 0) return
 
     const existing = holdings.find((h) => h.code === code)
+    const priceNum = parseFloat(price) || 0
+
     if (type === 'buy') {
       if (existing) {
-        existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty
-        if (price) existing.buyPrice = price
+        const oldQty = parseInt(existing.quantity, 10) || 0
+        const oldCost = parseFloat(existing.buyPrice) || 0
+        const newQty = oldQty + qty
+        // 加权平均成本
+        if (newQty > 0 && priceNum > 0) {
+          existing.buyPrice = ((oldCost * oldQty) + (priceNum * qty)) / newQty
+        }
+        existing.quantity = newQty
+        // 更新现价为最新买入价（确保市值计算有效）
+        if (priceNum > 0) existing.currentPrice = priceNum
       } else {
         holdings.push({
           id: 'h_' + Date.now(),
           name, code,
-          buyPrice: price || '--',
-          currentPrice: price || '--',
+          buyPrice: priceNum > 0 ? priceNum : '--',
+          currentPrice: priceNum > 0 ? priceNum : '--',
           quantity: qty,
           createdAt: new Date().toISOString()
         })
       }
     } else if (type === 'sell') {
       if (existing) {
-        existing.quantity = Math.max(0, (parseInt(existing.quantity, 10) || 0) - qty)
-        if (price) existing.currentPrice = price
+        const oldQty = parseInt(existing.quantity, 10) || 0
+        const oldCost = parseFloat(existing.buyPrice) || 0
+        const newQty = Math.max(0, oldQty - qty)
+        // 做T后重新计算成本
+        if (newQty > 0 && priceNum > 0) {
+          existing.buyPrice = ((oldCost * oldQty) - (priceNum * qty)) / newQty
+        } else if (newQty === 0) {
+          existing.buyPrice = oldCost
+        }
+        existing.quantity = newQty
+        // 更新现价为最新卖出价（确保市值计算有效）
+        if (priceNum > 0) existing.currentPrice = priceNum
       }
     }
     lsSetJSON(STORAGE_KEYS.holdings, holdings)
