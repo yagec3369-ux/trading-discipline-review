@@ -12,7 +12,9 @@ import { on, emit, DATA_EVENTS } from '../utils/events.js'
 
 // Field keys persisted under STORAGE_KEYS.riskCtrl prefix
 const FIELD_KEYS = {
-  totalFund: 'total_fund',
+  totalDeposit: 'total_deposit',
+  totalWithdraw: 'total_withdraw',
+  frozenAmount: 'frozen_amount',
   compliantCount: 'compliant_count',
   recoveryStatus: 'recovery_status'
 }
@@ -62,9 +64,16 @@ const QA_MAPPING = {
 
 export function createRiskControlPage(root) {
   const state = {
-    totalFund: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, '200000')) || 200000,
+    totalDeposit: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalDeposit, '200000')) || 200000,
+    totalWithdraw: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalWithdraw, '0')) || 0,
+    frozenAmount: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.frozenAmount, '0')) || 0,
     compliantCount: parseInt(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.compliantCount, '0')) || 0,
     recoveryStatus: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.recoveryStatus, 'active')
+  }
+
+  // 本金 = 累计转入 - 累计转出
+  function getPrincipal() {
+    return state.totalDeposit - state.totalWithdraw
   }
 
   // 持仓浮动盈亏
@@ -82,7 +91,10 @@ export function createRiskControlPage(root) {
   function calcAvailableFund() {
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     const totalHoldingCost = holdings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
-    return state.totalFund - totalHoldingCost
+    // 账户总现金 = 本金 - 持仓成本
+    const totalCash = getPrincipal() - totalHoldingCost
+    // 剩余可用金额 = 账户总现金 - 冻结金额
+    return totalCash - state.frozenAmount
   }
 
   function getHoldingsValue() {
@@ -324,10 +336,9 @@ export function createRiskControlPage(root) {
       runAllChecks()
     })
     on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
-      const newFund = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalFund, String(state.totalFund)))
-      if (!isNaN(newFund) && newFund !== state.totalFund) {
-        state.totalFund = newFund
-      }
+      state.totalDeposit = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalDeposit, String(state.totalDeposit))) || state.totalDeposit
+      state.totalWithdraw = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalWithdraw, String(state.totalWithdraw))) || state.totalWithdraw
+      state.frozenAmount = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.frozenAmount, String(state.frozenAmount))) || state.frozenAmount
       const container = root.querySelector('#position-usage-container')
       if (container) {
         container.innerHTML = renderPositionUsage()
@@ -399,7 +410,7 @@ export function createRiskControlPage(root) {
 
   function runAllChecks() {
     const dailyData = getDailyReviewData()
-    const totalFund = state.totalFund
+    const principal = getPrincipal()
     const monthlyPnl = calcFloatPnl()
     const totalAsset = calcTotalAsset()
     const trades = getTradeRecords()
@@ -419,14 +430,14 @@ export function createRiskControlPage(root) {
     setChecklistStatus(0, states[0], describeConsecutiveLosses(completedTrades))
 
     // Item 2: 单月累计亏损达到3%
-    if (totalFund > 0 && monthlyPnl < 0) {
-      const lossPct = Math.abs(monthlyPnl) / totalFund * 100
+    if (principal > 0 && monthlyPnl < 0) {
+      const lossPct = Math.abs(monthlyPnl) / principal * 100
       const detail = '本月亏损 ' + Math.abs(monthlyPnl).toLocaleString('zh-CN', { maximumFractionDigits: 0 }) + ' 元，占比 ' + lossPct.toFixed(2) + '%'
       states[1] = lossPct >= 3 ? 'triggered' : 'safe'
       setChecklistStatus(1, states[1], detail)
     } else {
       states[1] = 'safe'
-      if (totalFund <= 0) {
+      if (principal <= 0) {
         setChecklistStatus(1, 'safe', '请先填写本金')
       } else {
         setChecklistStatus(1, 'safe', '本月无亏损或未录入盈亏')

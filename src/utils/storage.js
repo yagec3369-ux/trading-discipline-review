@@ -43,5 +43,9 @@ export const STORAGE_KEYS = {
   holdings: 'td_holdings_v1',
   riskCtrl: 'td_risk_ctrl_',
   availableFund: 'td_available_fund',
+  // 每日总资产快照 { '2026-07-29': 150000, ... }
+  assetSnapshots: 'td_asset_snapshots',
+  // 资金转入转出流水 [{ date, type:'in'|'out', amount, ts }, ...]
+  fundFlows: 'td_fund_flows',
   theme: 'td_theme'
 }

@@ -5,30 +5,105 @@ import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsSet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, emit, DATA_EVENTS } from '../utils/events.js'
 
-// 本金 key（从 risk-control 复用）
-const RC_FUND_KEY = STORAGE_KEYS.riskCtrl + 'total_fund'
-const RC_COMPLIANT_KEY = STORAGE_KEYS.riskCtrl + 'compliant_count'
+const PREFIX = STORAGE_KEYS.riskCtrl
+const K_DEPOSIT = PREFIX + 'total_deposit'    // 累计转入
+const K_WITHDRAW = PREFIX + 'total_withdraw'  // 累计转出
+const K_FROZEN = PREFIX + 'frozen_amount'     // 冻结金额
+const K_COMPLIANT = PREFIX + 'compliant_count'
+
+function loadNum(key, fallback = 0) {
+  const v = parseFloat(lsGet(key, String(fallback)))
+  return isNaN(v) ? fallback : v
+}
+
+// ── 日期工具 ──────────────────────────────────────
+function todayStr() { return new Date().toISOString().slice(0, 10) }
+
+function dateOffset(days) {
+  const d = new Date()
+  d.setDate(d.getDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+// 上月最后一天
+function lastMonthEndStr() {
+  const d = new Date()
+  return new Date(d.getFullYear(), d.getMonth(), 0).toISOString().slice(0, 10)
+}
+
+// ── 资产快照 ──────────────────────────────────────
+// { '2026-07-28': 200000, '2026-07-29': 201500 }
+function loadSnapshots() {
+  return lsGetJSON(STORAGE_KEYS.assetSnapshots, {}) || {}
+}
+function saveSnapshot(date, totalAsset) {
+  const snaps = loadSnapshots()
+  snaps[date] = totalAsset
+  lsSetJSON(STORAGE_KEYS.assetSnapshots, snaps)
+}
+function getSnapshot(date) {
+  const snaps = loadSnapshots()
+  return snaps[date] !== undefined ? snaps[date] : null
+}
+
+// ── 资金流水 ──────────────────────────────────────
+// [{ date:'2026-07-29', type:'in'|'out', amount:5000, ts:1234567890 }, ...]
+function loadFlows() {
+  return lsGetJSON(STORAGE_KEYS.fundFlows, []) || []
+}
+function addFlow(type, amount) {
+  const flows = loadFlows()
+  flows.push({ date: todayStr(), type, amount, ts: Date.now() })
+  lsSetJSON(STORAGE_KEYS.fundFlows, flows)
+}
+// 今日净入金 = 今日转入 - 今日转出
+function todayNetFlow() {
+  const t = todayStr()
+  return loadFlows()
+    .filter((f) => f.date === t)
+    .reduce((s, f) => s + (f.type === 'in' ? f.amount : -f.amount), 0)
+}
+// 本月累计净入金
+function monthNetFlow() {
+  const ym = todayStr().slice(0, 7)  // '2026-07'
+  return loadFlows()
+    .filter((f) => f.date.slice(0, 7) === ym)
+    .reduce((s, f) => s + (f.type === 'in' ? f.amount : -f.amount), 0)
+}
 
 export function createOverviewPage(root) {
   let state = {
-    totalFund: parseFloat(lsGet(RC_FUND_KEY, '200000')) || 200000,
-    goals: ensureGoals(loadGoals())
+    totalDeposit: loadNum(K_DEPOSIT, 200000),
+    totalWithdraw: loadNum(K_WITHDRAW, 0),
+    frozenAmount: loadNum(K_FROZEN, 0),
+    goals: loadGoals()
   }
 
   function loadGoals() {
-    return lsGetJSON(STORAGE_KEYS.stageGoals, null)
+    return lsGetJSON(STORAGE_KEYS.stageGoals, []) || []
   }
   function saveGoals() {
     lsSetJSON(STORAGE_KEYS.stageGoals, state.goals)
   }
-  function ensureGoals(goals) {
-    if (!goals || goals.length === 0) return []
-    return goals
+
+  // 本金 = 累计转入 - 累计转出
+  function getPrincipal() {
+    return state.totalDeposit - state.totalWithdraw
   }
 
-  function saveTotalFund(val) {
-    state.totalFund = val
-    lsSet(RC_FUND_KEY, String(val))
+  function saveDeposit(v) {
+    state.totalDeposit = v
+    lsSet(K_DEPOSIT, String(v))
+    emit(DATA_EVENTS.RISK_CTRL_CHANGED)
+  }
+  function saveWithdraw(v) {
+    state.totalWithdraw = v
+    lsSet(K_WITHDRAW, String(v))
+    emit(DATA_EVENTS.RISK_CTRL_CHANGED)
+  }
+  function saveFrozen(v) {
+    state.frozenAmount = v
+    lsSet(K_FROZEN, String(v))
     emit(DATA_EVENTS.RISK_CTRL_CHANGED)
   }
 
@@ -56,18 +131,19 @@ export function createOverviewPage(root) {
 
   function computeMetrics() {
     let holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
-    const totalFund = state.totalFund
+    const principal = getPrincipal()  // 本金 = 累计转入 - 累计转出
+    const frozen = state.frozenAmount
 
     // 自动维护昨日收盘价
-    const todayStr = new Date().toISOString().slice(0, 10)
+    const today = todayStr()
     let changed = false
     holdings = holdings.map((h) => {
-      if (!h.yesterdayClosePrice || h.yesterdayCloseDate !== todayStr) {
+      if (!h.yesterdayClosePrice || h.yesterdayCloseDate !== today) {
         changed = true
         return {
           ...h,
           yesterdayClosePrice: h.yesterdayClosePrice || h.currentPrice,
-          yesterdayCloseDate: todayStr
+          yesterdayCloseDate: today
         }
       }
       return h
@@ -79,44 +155,47 @@ export function createOverviewPage(root) {
 
     const activeHoldings = holdings.filter((h) => parseFloat(h.quantity) > 0)
 
-    // 股票市值
+    // 股票市值 = Σ(持仓数 × 现价)
     const stockValue = activeHoldings.reduce((s, h) => s + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
-    // 总持仓成本
+    // 总持仓成本 = Σ(持仓数 × 成本价)
     const totalHoldingCost = activeHoldings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
-    // 剩余可用金额 = 本金 - 总持仓成本
-    const available = totalFund - totalHoldingCost
-    // 当前总资产 = 股票市值 + 剩余可用金额
+    // 账户总现金 = 本金 - 总持仓成本
+    const totalCash = principal - totalHoldingCost
+    // 剩余可用金额 = 账户总现金 - 冻结金额
+    const available = totalCash - frozen
+    // 总资产 = 股票市值 + 剩余可用金额
     const totalAsset = stockValue + available
-    // 累计盈亏 = 当前总资产 - 本金
-    const totalPnl = totalAsset - totalFund
-    // 盈亏占比 = 累计盈亏 / 本金
-    const pnlPct = totalFund > 0 ? (totalPnl / totalFund * 100) : 0
+    // 累计营收 = 总资产 - 本金
+    const totalPnl = totalAsset - principal
+    // 盈亏占比 = 累计营收 / 本金
+    const pnlPct = principal > 0 ? (totalPnl / principal * 100) : 0
 
-    // 持仓浮动盈亏
-    const floatPnl = activeHoldings.reduce((s, h) => {
-      const qty = parseFloat(h.quantity) || 0
-      const buy = parseFloat(h.buyPrice) || 0
-      const cur = parseFloat(h.currentPrice) || 0
-      return s + (cur - buy) * qty
-    }, 0)
+    // ── 当日营收 = 今日总资产 - 昨日总资产 - 今日净入金 ──
+    const yesterdayAsset = getSnapshot(dateOffset(-1))
+    const tNetFlow = todayNetFlow()
+    // 今日净入金在转入/转出时已记录，但 totalAsset 是操作后的值
+    // 昨日快照不存在时，用 principal 近似（首次使用）
+    const yesterdayTotal = yesterdayAsset !== null ? yesterdayAsset : principal
+    const todayPnl = totalAsset - yesterdayTotal - tNetFlow
 
-    // 本月累计盈亏 = 持仓浮动盈亏
-    const monthlyPnl = floatPnl
+    // ── 本月营收 = 今日总资产 - 上月末总资产 - 本月累计净入金 ──
+    const lastMonthEndAsset = getSnapshot(lastMonthEndStr())
+    const mNetFlow = monthNetFlow()
+    // 上月末快照不存在时，用 principal 近似
+    const lastMonthEndTotal = lastMonthEndAsset !== null ? lastMonthEndAsset : principal
+    const monthlyPnl = totalAsset - lastMonthEndTotal - mNetFlow
 
-    // 今日盈亏：Σ(现价 - 昨收) × 持仓数
-    const todayPnl = activeHoldings.reduce((s, h) => {
-      const qty = parseFloat(h.quantity) || 0
-      if (qty <= 0) return s
-      const y = parseFloat(h.yesterdayClosePrice) || parseFloat(h.currentPrice) || 0
-      const c = parseFloat(h.currentPrice) || 0
-      return s + (c - y) * qty
-    }, 0)
+    // 保存今日快照（每次渲染都更新，确保最新）
+    saveSnapshot(today, totalAsset)
 
-    // 总仓位占比 = 股票市值 / 当前总资产
+    // 总仓位占比 = 股票市值 / 总资产
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
 
     return {
-      totalFund, stockValue, available, totalAsset, totalPnl, pnlPct, monthlyPnl, todayPnl, positionPct, activeHoldings
+      principal, totalDeposit: state.totalDeposit, totalWithdraw: state.totalWithdraw, frozen,
+      totalCash, stockValue, available,
+      totalAsset, totalPnl, pnlPct,
+      monthlyPnl, todayPnl, positionPct, activeHoldings
     }
   }
 
@@ -129,7 +208,7 @@ export function createOverviewPage(root) {
       return (n >= 0 ? '+' : '') + n.toLocaleString('zh-CN', { maximumFractionDigits: 2 })
     }
     const pnlColor = (v) => (v > 0 ? 'var(--price-up)' : v < 0 ? 'var(--price-down)' : 'var(--ink)')
-    const hasData = m.totalFund > 0 || m.stockValue > 0
+    const hasData = m.principal > 0 || m.stockValue > 0
 
     root.innerHTML = `
       <!-- 1. 关键指标 -->
@@ -139,14 +218,14 @@ export function createOverviewPage(root) {
           <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); margin:0;">关键指标</h3>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          ${kpiCard('本金', 'landmark', fmt(m.totalFund) + '元', 'var(--ink)', true, '可编辑')}
+          ${kpiCard('本金', 'landmark', fmt(m.principal) + '元', 'var(--ink)', false, '初始20万 + Σ转入 - Σ转出')}
           ${kpiCard('当前总资产', 'coins', hasData ? fmt(m.totalAsset) + '元' : '--', 'var(--ink)', false, '市值 + 剩余可用')}
           ${kpiCard('股票市值', 'trending-up', hasData ? fmt(m.stockValue) + '元' : '--', 'var(--ink)', false, 'Σ持仓数×现价')}
-          ${kpiCard('剩余可用金额', 'wallet', hasData ? fmt(m.available) + '元' : '--', 'var(--ink)', false, '本金 - 持仓成本')}
-          ${kpiCard('累积盈亏', 'trending-up', hasData ? fmtSigned(m.totalPnl) + '元' : '--', pnlColor(m.totalPnl), false, '总资产 - 本金')}
-          ${kpiCard('本月累计盈亏', 'arrow-down-up', hasData ? fmtSigned(m.monthlyPnl) + '元' : '--', pnlColor(m.monthlyPnl), false, '持仓浮动盈亏合计')}
-          ${kpiCard('今日盈亏', 'zap', hasData ? fmtSigned(m.todayPnl) + '元' : '--', pnlColor(m.todayPnl), false, 'Σ(现价-昨收)×持仓')}
-          ${kpiCard('盈亏占比', 'percent', hasData ? fmtSigned(m.pnlPct) + '%' : '--', pnlColor(m.pnlPct), false, '累计盈亏/本金')}
+          ${kpiCard('剩余可用金额', 'wallet', hasData ? fmt(m.available) + '元' : '--', 'var(--ink)', false, '账户总现金 - 冻结金额')}
+          ${kpiCard('累计营收', 'trending-up', hasData ? fmtSigned(m.totalPnl) + '元' : '--', pnlColor(m.totalPnl), false, '总资产 - 本金')}
+          ${kpiCard('本月营收', 'arrow-down-up', hasData ? fmtSigned(m.monthlyPnl) + '元' : '--', pnlColor(m.monthlyPnl), false, '今日总资产 - 上月末 - 本月净入金')}
+          ${kpiCard('当日营收', 'zap', hasData ? fmtSigned(m.todayPnl) + '元' : '--', pnlColor(m.todayPnl), false, '今日总资产 - 昨日 - 今日净入金')}
+          ${kpiCard('盈亏占比', 'percent', hasData ? fmtSigned(m.pnlPct) + '%' : '--', pnlColor(m.pnlPct), false, '累计营收/本金')}
           ${positionPctCard(m.positionPct)}
         </div>
       </section>
@@ -168,7 +247,24 @@ export function createOverviewPage(root) {
           <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); margin:0;">资金转入转出</h3>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-5);">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- 统计汇总 -->
+          <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-4 pb-4" style="border-bottom:1px dashed var(--line);">
+            <div>
+              <div style="font-size:var(--text-caption); color:var(--ink-3);">累计转入</div>
+              <div style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--price-up); font-variant-numeric:tabular-nums;">${fmt(m.totalDeposit)}元</div>
+            </div>
+            <div>
+              <div style="font-size:var(--text-caption); color:var(--ink-3);">累计转出</div>
+              <div style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--price-down); font-variant-numeric:tabular-nums;">${fmt(m.totalWithdraw)}元</div>
+            </div>
+            <div>
+              <div style="font-size:var(--text-caption); color:var(--ink-3);">本金</div>
+              <div style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); font-variant-numeric:tabular-nums;">${fmt(m.principal)}元</div>
+            </div>
+          </div>
+
+          <!-- 操作区 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
               <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">转入金额（元）</label>
               <div class="flex items-center gap-2">
@@ -182,6 +278,17 @@ export function createOverviewPage(root) {
                 <input type="number" id="ov-transfer-out" class="field-input" placeholder="0" min="0" step="0.01" style="flex:1;">
                 <button id="btn-transfer-out" class="btn-secondary">转出</button>
               </div>
+            </div>
+          </div>
+
+          <!-- 冻结金额 -->
+          <div style="border-top:1px dashed var(--line); padding-top:var(--s-4);">
+            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">
+              冻结金额（元）<span style="color:var(--ink-3); font-weight:var(--weight-normal);">· 未成交委托等占用资金</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <input type="number" id="ov-frozen" class="field-input" placeholder="0" min="0" step="0.01" value="${m.frozen}" style="flex:1;">
+              <button id="btn-frozen-save" class="btn-secondary">保存</button>
             </div>
           </div>
         </div>
@@ -264,21 +371,16 @@ export function createOverviewPage(root) {
       </section>
     `
 
-    // 填入本金编辑值
-    const editEl = root.querySelector('#kpi-edit-totalFund')
-    if (editEl) editEl.value = state.totalFund
-
     refreshIcons()
     bindTransferEvents()
     bindGoalEvents()
-    bindKpiEditEvents()
     renderGoals()
   }
 
   // ── KPI 卡片 ──────────────────────────────────────
   function kpiCard(label, icon, valueText, valueColor, editable, subtitle) {
     const editInput = editable
-      ? `<input type="number" id="kpi-edit-totalFund" class="kpi-edit-input" value="" style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums; background:transparent; border:none; outline:none; padding:0; margin:0; width:100%; font-family:inherit;">`
+      ? `<input type="number" id="kpi-edit-principal" class="kpi-edit-input" value="" style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums; background:transparent; border:none; outline:none; padding:0; margin:0; width:100%; font-family:inherit;">`
       : `<div style="font-size:var(--text-h2); font-weight:var(--weight-semibold); color:${valueColor}; white-space:nowrap; font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis;">${valueText}</div>`
     return `
       <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) sm:var(--s-5); min-width:0;">
@@ -371,49 +473,36 @@ export function createOverviewPage(root) {
     `
   }
 
-  // ── 资金转入转出 ──────────────────────────────────
+  // ── 资金转入转出 + 冻结金额 ───────────────────────
   function bindTransferEvents() {
     root.querySelector('#btn-transfer-in')?.addEventListener('click', () => {
       const input = root.querySelector('#ov-transfer-in')
       const amount = parseFloat(input.value) || 0
       if (amount <= 0) { showToast('请输入有效金额'); return }
-      const newTotal = state.totalFund + amount
-      saveTotalFund(newTotal)
+      saveDeposit(state.totalDeposit + amount)
+      addFlow('in', amount)   // 记录资金流水
       input.value = ''
-      showSaveStatus('资金转入成功')
+      showSaveStatus('转入成功，本金已更新')
       render()
     })
     root.querySelector('#btn-transfer-out')?.addEventListener('click', () => {
       const input = root.querySelector('#ov-transfer-out')
       const amount = parseFloat(input.value) || 0
       if (amount <= 0) { showToast('请输入有效金额'); return }
-      const newTotal = state.totalFund - amount
-      saveTotalFund(newTotal)
+      if (amount > getPrincipal()) { showToast('转出金额不能超过本金'); return }
+      saveWithdraw(state.totalWithdraw + amount)
+      addFlow('out', amount)  // 记录资金流水
       input.value = ''
-      showSaveStatus('资金转出成功')
+      showSaveStatus('转出成功，本金已更新')
       render()
     })
-  }
-
-  // ── KPI 编辑 ─────────────────────────────────────
-  function bindKpiEditEvents() {
-    const edit = root.querySelector('#kpi-edit-totalFund')
-    if (!edit) return
-    edit.addEventListener('change', () => {
-      const v = parseFloat(edit.value)
-      if (isNaN(v) || v < 0) return
-      saveTotalFund(v)
-      showSaveStatus()
+    root.querySelector('#btn-frozen-save')?.addEventListener('click', () => {
+      const input = root.querySelector('#ov-frozen')
+      const v = parseFloat(input.value) || 0
+      if (v < 0) { showToast('冻结金额不能为负'); return }
+      saveFrozen(v)
+      showSaveStatus('冻结金额已保存')
       render()
-    })
-    edit.addEventListener('blur', () => {
-      const v = parseFloat(edit.value)
-      if (isNaN(v) || v < 0) { edit.value = state.totalFund; return }
-      if (v !== state.totalFund) {
-        saveTotalFund(v)
-        showSaveStatus()
-        render()
-      }
     })
   }
 
@@ -597,28 +686,18 @@ export function createOverviewPage(root) {
       })
     }
 
-    on(DATA_EVENTS.HOLDINGS_CHANGED, () => {
-      render()
-    })
-    on(DATA_EVENTS.TRADE_RECORDS_CHANGED, () => {
-      render()
-    })
+    on(DATA_EVENTS.HOLDINGS_CHANGED, () => render())
+    on(DATA_EVENTS.TRADE_RECORDS_CHANGED, () => render())
     on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
-      // 同步账户总金额可能在别处修改了
-      const newFund = parseFloat(lsGet(RC_FUND_KEY, String(state.totalFund)))
-      if (!isNaN(newFund) && newFund !== state.totalFund) {
-        state.totalFund = newFund
-        render()
-      }
+      state.totalDeposit = loadNum(K_DEPOSIT, state.totalDeposit)
+      state.totalWithdraw = loadNum(K_WITHDRAW, state.totalWithdraw)
+      state.frozenAmount = loadNum(K_FROZEN, state.frozenAmount)
+      render()
     })
   }
 
   return {
-    mount() {
-      render()
-    },
-    unmount() {
-      // cleanup if needed
-    }
+    mount() { render() },
+    unmount() {}
   }
 }
