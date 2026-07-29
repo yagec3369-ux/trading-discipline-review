@@ -419,6 +419,8 @@ export function createExecutionPage(root) {
   }
 
   function handleLegAction(planId, legType, action) {
+    // 先确保加载最新的 plans 数据（可能在其他页面修改了）
+    plans = loadPlans()
     const plan = plans.find((p) => p.id === planId)
     if (!plan) return
 
