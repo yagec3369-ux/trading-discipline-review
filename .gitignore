@@ -4,4 +4,4 @@ dist
 .DS_Store
 *.log
 .vite
-stock_hotspot/
+stock_hotspot

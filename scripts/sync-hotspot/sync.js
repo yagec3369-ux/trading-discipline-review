@@ -13,7 +13,7 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
   return acc
 }, {})
 
-const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || path.resolve(process.cwd(), 'stock_hotspot/reports')
+const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || '/workspace/stock_hotspot/reports'
 const PUSH = args.push || false
 const DRY = args.dry || false
 const OUTPUT_PATH = path.resolve(process.cwd(), 'public/market-hot.json')
@@ -237,124 +237,93 @@ function parseIndustryFlow(r) {
   }
 }
 
-// 自动打标：根据新闻关键词推断逻辑标签（综合两版本规则）
-function tagLogicItem(title, content, stockCode) {
-  const text = (title + ' ' + content + ' ' + (stockCode || '')).toLowerCase()
-  // reduction
-  if (/减持|套现|股东.*减|减持计划|质押|回购|增减持|持股|违规担保/.test(text)) return { tag: 'reduction', confidence: 0.9 }
-  // policy
-  if (/政策|利好|国务院|证监会|央行|部委|发布.*政策|扶持|监管|通告|六部门|发改委/.test(text)) return { tag: 'policy', confidence: 0.88 }
-  // earnings
-  if (/财报|业绩|净利润|营收|亏损|盈利|季报|年报|半年报|预增|预亏|上半年|年度报告|半年度/.test(text)) return { tag: 'earnings', confidence: 0.88 }
-  // announcement
-  if (/公告|重大事项|停牌|复牌|收购|重组|并购|签署.*协议|中标|合同|采购项目|决议|董事会|副总裁|离任|辞职|登记|注册资本/.test(text)) return { tag: 'announcement', confidence: 0.82 }
-  // rotation
-  if (/板块|轮动|领涨|领跌|主线|热点|题材|概念|风格切换|震荡|走高|重挫|下跌|上涨|反弹|逆势|异动|拉升|走强/.test(text)) return { tag: 'rotation', confidence: 0.78 }
-  // industry
-  if (/行业|产业|赛道|光伏|半导体|新能源|医药|消费|地产|军工|AI|人工智能|芯片|白酒|科技|ETF/.test(text)) return { tag: 'industry', confidence: 0.72 }
-  // market
-  if (/大盘|指数|沪指|深成指|创业板|A股|港股|美股|市场整体|估值|涨停|跌停|成交额|北向资金|股市|总票房|地震/.test(text)) return { tag: 'market', confidence: 0.7 }
-  return { tag: 'news', confidence: 0.6 }
-}
+// 生成逻辑库数据：从热点新闻和概念中提取自动逻辑
+function generateLogicLibrary(data) {
+  const autoLogic = []
+  let idCounter = 0
+  const genId = () => 'logic_' + Date.now() + '_' + (++idCounter)
 
-// 生成逻辑库数据：读取现有 → 追加新条目 → 去重合并
-function buildLogicLibrary(data) {
-  let existing = { subjective: [], auto: [] }
-  if (fs.existsSync(LOGIC_LIBRARY_PATH)) {
-    try {
-      existing = JSON.parse(fs.readFileSync(LOGIC_LIBRARY_PATH, 'utf-8'))
-    } catch (e) {
-      existing = { subjective: [], auto: [] }
-    }
-  }
-  if (!Array.isArray(existing.subjective)) existing.subjective = []
-  if (!Array.isArray(existing.auto)) existing.auto = []
-
-  const existingKeys = new Set(existing.auto.map((i) => i.title + '|' + (i.createdAt || '').slice(0, 10)))
-  const today = data.date
-  const newItems = []
-
-  // 从财经新闻生成
-  data.financeNews.forEach((n, idx) => {
-    const key = n.title + '|' + today
-    if (existingKeys.has(key)) return
-    const { tag, confidence } = tagLogicItem(n.title, n.summary || '', '')
-    newItems.push({
-      id: 'auto_' + Date.now() + '_' + idx + '_f',
-      title: n.title,
-      content: n.summary || n.title,
+  // 从财经新闻生成 auto 逻辑（标签：news/policy/earnings/industry/market）
+  data.financeNews?.forEach((n) => {
+    let tag = 'news'
+    const title = (n.title || '').toLowerCase()
+    const summary = (n.summary || '').toLowerCase()
+    const text = title + ' ' + summary
+    if (/政策|国务院|央行|证监会|监管|通知|措施/.test(text)) tag = 'policy'
+    else if (/财报|业绩|净利润|营收|半年报|年报|季报/.test(text)) tag = 'earnings'
+    else if (/行业|板块|产业|赛道/.test(text)) tag = 'industry'
+    else if (/大盘|市场|a股|指数|北向|外资|流动性/.test(text)) tag = 'market'
+    const confidence = tag !== 'news' ? 0.85 : 0.7
+    autoLogic.push({
+      id: genId(),
+      title: n.title || '',
+      content: (n.summary || n.title || '').replace(/\s+/g, ' ').trim(),
       tag,
-      confidence: Math.min(1, confidence + 0.05),
-      source: n.source || '',
-      link: n.link || '#',
+      stockCode: '',
+      confidence,
       createdAt: new Date().toISOString()
     })
   })
 
-  // 从个股新闻生成（带股票代码）
-  data.stockNews.forEach((n, idx) => {
-    const key = n.title + '|' + today
-    if (existingKeys.has(key)) return
-    const { tag, confidence } = tagLogicItem(n.title, n.concept || '', n.stockCode || '')
-    const stockContext = [n.stockName, n.stockCode, n.concept].filter(Boolean).join(' / ')
-    newItems.push({
-      id: 'auto_' + Date.now() + '_' + idx + '_s',
-      title: n.title,
-      content: stockContext ? `${stockContext} — ${n.title}` : n.title,
+  // 从个股新闻生成 auto 逻辑（标签：news/announcement/reduction/rotation/earnings）
+  data.stockNews?.forEach((n) => {
+    let tag = 'news'
+    const title = (n.title || '').toLowerCase()
+    if (/公告|重大|中标|合同|协议|重组|收购|合并/.test(title)) tag = 'announcement'
+    else if (/减持|增持|回购|股东|高管/.test(title)) tag = 'reduction'
+    else if (/轮动|切换|领涨|领跌|板块/.test(title)) tag = 'rotation'
+    else if (/财报|业绩|净利润|营收|半年报|年报|季报/.test(title)) tag = 'earnings'
+    else if (/行业|产业|赛道/.test(title)) tag = 'industry'
+    const confidence = tag !== 'news' ? 0.8 : 0.65
+    autoLogic.push({
+      id: genId(),
+      title: n.title || '',
+      content: (n.stockName ? n.stockName + (n.concept ? '(' + n.concept + ')' : '') + '：' : '') + (n.title || ''),
       tag,
       stockCode: n.stockCode || '',
       confidence,
-      change: n.change || 0,
-      source: n.source || '',
-      link: n.link || '#',
       createdAt: new Date().toISOString()
     })
   })
 
-  // 合并：新的在前，旧的在后，按 title+日期 去重
-  const merged = [...newItems, ...existing.auto]
-  const seen = new Set()
-  const auto = merged.filter((i) => {
-    const k = i.title + '|' + (i.createdAt || '').slice(0, 10)
-    if (seen.has(k)) return false
-    seen.add(k)
-    return true
+  // 从涨停明细提取公告/行业类逻辑
+  data.limitUp?.slice(0, 10).forEach((r) => {
+    if (!r.reason) return
+    let tag = 'industry'
+    const reason = String(r.reason)
+    if (/公告|重大|中标|合同/.test(reason)) tag = 'announcement'
+    else if (/业绩|财报|净利润/.test(reason)) tag = 'earnings'
+    else if (/政策|利好|扶持/.test(reason)) tag = 'policy'
+    autoLogic.push({
+      id: genId(),
+      title: `${r.name}涨停：${reason}`,
+      content: `${r.name}(${r.code}) 涨停${r.industry ? '，所属行业：' + r.industry : ''}。涨停原因：${reason}${r.times ? '，连板数：' + r.times : ''}`,
+      tag,
+      stockCode: r.code || '',
+      confidence: 0.75,
+      createdAt: new Date().toISOString()
+    })
+  })
+
+  // 从概念榜提取行业/轮动类主观逻辑（放入 auto 里也可以）
+  data.concepts?.slice(0, 5).forEach((c) => {
+    if (!c.name || c.changePercent <= 0) return
+    autoLogic.push({
+      id: genId(),
+      title: `${c.name}板块走强，${c.leadingStock || ''}领涨`,
+      content: `${c.name}板块涨幅 ${c.changePercent.toFixed(2)}%，净流入 ${c.netAmount}。领涨股：${c.leadingStock || '-'}(${c.leadingCode || '-'}) 涨幅 ${(c.leadingChange || 0).toFixed(2)}%，成分股 ${c.stockCount || 0} 只。`,
+      tag: 'rotation',
+      stockCode: c.leadingCode || '',
+      confidence: 0.7,
+      createdAt: new Date().toISOString()
+    })
   })
 
   return {
-    subjective: existing.subjective,
-    auto,
-    updatedAt: new Date().toISOString(),
-    date: data.date
-  }
-}
-
-function writeAllOutputs(data, latestFile) {
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true })
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(data, null, 2), 'utf-8')
-  console.log('已写入:', OUTPUT_PATH)
-
-  const logicLib = buildLogicLibrary(data)
-  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(logicLib, null, 2), 'utf-8')
-  console.log(`已写入 logic-library.json (主观 ${logicLib.subjective.length} 条 / 消息 ${logicLib.auto.length} 条):`, LOGIC_LIBRARY_PATH)
-
-  const historyFile = path.join(HISTORY_DIR, data.date + '.json')
-  fs.mkdirSync(HISTORY_DIR, { recursive: true })
-  fs.writeFileSync(historyFile, JSON.stringify(data, null, 2), 'utf-8')
-  console.log('历史数据:', historyFile)
-
-  const historyIndexFile = path.join(HISTORY_DIR, 'index.json')
-  let historyIndex = []
-  if (fs.existsSync(historyIndexFile)) {
-    try {
-      historyIndex = JSON.parse(fs.readFileSync(historyIndexFile, 'utf-8'))
-    } catch (e) {}
-  }
-  if (!historyIndex.includes(data.date)) {
-    historyIndex.push(data.date)
-    historyIndex.sort().reverse()
-    fs.writeFileSync(historyIndexFile, JSON.stringify(historyIndex, null, 2), 'utf-8')
-    console.log('历史索引已更新')
+    subjective: [],
+    auto: autoLogic,
+    date: data.date,
+    updatedAt: new Date().toISOString()
   }
 }
 
@@ -378,58 +347,82 @@ function main() {
         console.log(JSON.stringify(v.slice(0, 2), null, 2))
       }
     }
-    const logic = buildLogicLibrary(data)
-    console.log(`\nlogic-library: subjective ${logic.subjective.length} 条, auto ${logic.auto.length} 条`)
     return
   }
 
-  // 先写入所有产出（如果 git stash pop 出现冲突会再重新生成一次覆盖）
-  writeAllOutputs(data, latestFile)
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true })
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(data, null, 2), 'utf-8')
+  console.log('\n已写入:', OUTPUT_PATH)
+
+  // 生成逻辑库 logic-library.json
+  const logicLibrary = generateLogicLibrary(data)
+  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(logicLibrary, null, 2), 'utf-8')
+  console.log('逻辑库已写入:', LOGIC_LIBRARY_PATH, `(auto ${logicLibrary.auto.length} 条)`)
+
+  // 保存每日历史数据
+  const historyFile = path.join(HISTORY_DIR, data.date + '.json')
+  fs.mkdirSync(HISTORY_DIR, { recursive: true })
+  fs.writeFileSync(historyFile, JSON.stringify(data, null, 2), 'utf-8')
+  console.log('历史数据:', historyFile)
+
+  // 生成历史日期索引
+  const historyIndexFile = path.join(HISTORY_DIR, 'index.json')
+  let historyIndex = []
+  if (fs.existsSync(historyIndexFile)) {
+    try {
+      historyIndex = JSON.parse(fs.readFileSync(historyIndexFile, 'utf-8'))
+    } catch (e) {}
+  }
+  if (!historyIndex.includes(data.date)) {
+    historyIndex.push(data.date)
+    historyIndex.sort().reverse()
+    fs.writeFileSync(historyIndexFile, JSON.stringify(historyIndex, null, 2), 'utf-8')
+    console.log('历史索引已更新')
+  }
 
   if (PUSH) {
     try {
-      console.log('\n--- git add (先暂存所有生成文件) ---')
-      execSync('git add public/market-hot.json public/hotspot-history/ public/logic-library.json package.json package-lock.json scripts/sync-hotspot/sync.js 2>/dev/null || true', { stdio: 'inherit' })
-
-      console.log('\n--- git stash -u (暂存所有改动+未跟踪) ---')
-      const stashBefore = execSync('git stash list | wc -l', { encoding: 'utf-8' }).trim()
-      try {
-        execSync('git stash -u', { stdio: 'inherit' })
-      } catch (e) {
-        console.log('  (无可 stash 的改动，继续)')
+      // pull --rebase 前先暂存本地改动（如刚写入的 JSON），避免冲突
+      const stashMsg = 'sync-hotspot-stash-' + Date.now()
+      const stashOut = execSync('git stash push -m "' + stashMsg + '" -- public/ 2>&1', { encoding: 'utf-8' }).trim()
+      const didStash = !stashOut.includes('No local changes') && !stashOut.includes('没有本地改动')
+      if (didStash) {
+        console.log('[git] 已暂存本地改动 (stash)')
       }
-      const stashAfter = execSync('git stash list | wc -l', { encoding: 'utf-8' }).trim()
-      const stashed = stashBefore !== stashAfter
 
-      console.log('\n--- git pull --rebase ---')
-      execSync('git pull --rebase origin main', { stdio: 'inherit' })
+      console.log('[git] pull --rebase 拉取远程最新代码...')
+      try {
+        execSync('git pull --rebase origin main', { stdio: 'inherit' })
+      } catch (pullErr) {
+        // pull 失败时恢复 stash 后退出
+        if (didStash) {
+          try { execSync('git stash pop', { stdio: 'inherit' }) } catch (_) {}
+        }
+        throw pullErr
+      }
 
-      if (stashed) {
-        console.log('\n--- git stash pop (恢复本地改动) ---')
+      // pull 成功后恢复 stash
+      if (didStash) {
         try {
           execSync('git stash pop', { stdio: 'inherit' })
-        } catch (e) {
-          console.warn('  ⚠️  stash pop 出现冲突，将以本地重新生成的文件为准')
-          // 强制使用重新生成的文件：直接重新运行解析部分
-          const data2 = parseExcel(latestFile)
-          writeAllOutputs(data2, latestFile)
-          // 丢弃 stash 避免后续冲突
-          try { execSync('git stash drop 2>/dev/null || true', { stdio: 'ignore' }) } catch (_) {}
+          console.log('[git] 已恢复本地改动 (stash pop)')
+        } catch (popErr) {
+          console.warn('[git] stash pop 出现冲突，请手动处理:', popErr.message)
         }
-      } else {
-        console.log('\n--- (无需恢复 stash) ---')
       }
 
-      console.log('\n--- git add & commit ---')
-      execSync('git add public/market-hot.json public/hotspot-history/ public/logic-library.json package.json package-lock.json scripts/sync-hotspot/sync.js', { stdio: 'inherit' })
-      const status = execSync('git status --porcelain', { encoding: 'utf-8' }).trim()
-      if (status) {
-        execSync(`git commit -m "chore: 更新热点数据 ${data.date}"`, { stdio: 'inherit' })
+      console.log('[git] 添加变更文件...')
+      execSync('git add public/market-hot.json public/logic-library.json public/hotspot-history/', { stdio: 'inherit' })
+
+      const hasChanges = execSync('git diff --cached --name-only').toString().trim() !== ''
+      if (hasChanges) {
+        console.log('[git] 提交...')
+        execSync(`git commit -m "chore: 更新热点数据 & 逻辑库 ${data.date}"`, { stdio: 'inherit' })
       } else {
-        console.log('  (没有需要提交的新变更)')
+        console.log('[git] 无变更可提交')
       }
 
-      console.log('\n--- git push ---')
+      console.log('[git] 推送到远程...')
       execSync('git push origin main', { stdio: 'inherit' })
       console.log('\n已推送到 GitHub!')
     } catch (e) {
