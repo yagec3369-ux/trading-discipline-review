@@ -13,12 +13,12 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
   return acc
 }, {})
 
-const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || '/workspace/stock_hotspot/reports'
+const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || path.resolve(process.cwd(), 'stock_hotspot/reports')
 const PUSH = args.push || false
 const DRY = args.dry || false
 const OUTPUT_PATH = path.resolve(process.cwd(), 'public/market-hot.json')
-const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
 const LOGIC_LIBRARY_PATH = path.resolve(process.cwd(), 'public/logic-library.json')
+const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
 
 if (!REPORTS_DIR) {
   console.error('错误: 请通过 --reportsDir 指定 workbuddy reports 文件夹路径')
@@ -237,85 +237,125 @@ function parseIndustryFlow(r) {
   }
 }
 
-// 生成逻辑库：从新闻自动抽取并打标
-function generateLogicLibrary(data) {
-  // 标签映射规则（简单关键词匹配）
-  const tagRules = [
-    { id: 'policy', keywords: ['政策', '利好', '扶持', '监管', '通告', '六部门', '国务院', '发改委', '央行'] },
-    { id: 'earnings', keywords: ['财报', '业绩', '营收', '净利润', '亏损', '预增', '预亏', '上半年', '年度报告', '半年度'] },
-    { id: 'industry', keywords: ['板块', '行业', '走强', '拉升', '异动', 'ETF', '概念', '白酒', '科技', '半导体', '消费', '医药', '地产'] },
-    { id: 'reduction', keywords: ['减持', '质押', '回购', '增减持', '持股', '股东', '违规担保'] },
-    { id: 'announcement', keywords: ['公告', '中标', '合同', '采购项目', '决议', '董事会', '副总裁', '离任', '辞职', '登记', '注册资本'] },
-    { id: 'market', keywords: ['沪指', '创业板指', '涨停', '跌停', '成交额', '北向资金', '大盘', '股市', '总票房', '地震'] },
-    { id: 'rotation', keywords: ['轮动', '震荡', '走高', '重挫', '下跌', '上涨', '反弹', '逆势', '板块轮动'] }
-  ]
+// 自动打标：根据新闻关键词推断逻辑标签（综合两版本规则）
+function tagLogicItem(title, content, stockCode) {
+  const text = (title + ' ' + content + ' ' + (stockCode || '')).toLowerCase()
+  // reduction
+  if (/减持|套现|股东.*减|减持计划|质押|回购|增减持|持股|违规担保/.test(text)) return { tag: 'reduction', confidence: 0.9 }
+  // policy
+  if (/政策|利好|国务院|证监会|央行|部委|发布.*政策|扶持|监管|通告|六部门|发改委/.test(text)) return { tag: 'policy', confidence: 0.88 }
+  // earnings
+  if (/财报|业绩|净利润|营收|亏损|盈利|季报|年报|半年报|预增|预亏|上半年|年度报告|半年度/.test(text)) return { tag: 'earnings', confidence: 0.88 }
+  // announcement
+  if (/公告|重大事项|停牌|复牌|收购|重组|并购|签署.*协议|中标|合同|采购项目|决议|董事会|副总裁|离任|辞职|登记|注册资本/.test(text)) return { tag: 'announcement', confidence: 0.82 }
+  // rotation
+  if (/板块|轮动|领涨|领跌|主线|热点|题材|概念|风格切换|震荡|走高|重挫|下跌|上涨|反弹|逆势|异动|拉升|走强/.test(text)) return { tag: 'rotation', confidence: 0.78 }
+  // industry
+  if (/行业|产业|赛道|光伏|半导体|新能源|医药|消费|地产|军工|AI|人工智能|芯片|白酒|科技|ETF/.test(text)) return { tag: 'industry', confidence: 0.72 }
+  // market
+  if (/大盘|指数|沪指|深成指|创业板|A股|港股|美股|市场整体|估值|涨停|跌停|成交额|北向资金|股市|总票房|地震/.test(text)) return { tag: 'market', confidence: 0.7 }
+  return { tag: 'news', confidence: 0.6 }
+}
 
-  function classify(text) {
-    for (const rule of tagRules) {
-      if (rule.keywords.some(k => text.includes(k))) return rule.id
-    }
-    return 'market'
-  }
-
-  function calcConfidence(text) {
-    let hits = 0
-    for (const rule of tagRules) {
-      hits += rule.keywords.filter(k => text.includes(k)).length
-    }
-    return Math.min(0.95, 0.5 + hits * 0.08)
-  }
-
-  const seen = new Set()
-  const autoLogic = []
-  let idx = 0
-
-  for (const n of data.financeNews || []) {
-    if (seen.has(n.title)) continue
-    seen.add(n.title)
-    const text = (n.title || '') + ' ' + (n.summary || '')
-    autoLogic.push({
-      id: `auto_${Date.now()}_${idx++}`,
-      title: n.title,
-      content: n.summary || n.title,
-      tag: classify(text),
-      stockCode: '',
-      confidence: calcConfidence(text),
-      createdAt: new Date().toISOString()
-    })
-  }
-
-  for (const n of data.stockNews || []) {
-    if (seen.has(n.title)) continue
-    seen.add(n.title)
-    const text = (n.title || '') + ' ' + (n.concept || '') + ' ' + (n.stockName || '')
-    autoLogic.push({
-      id: `auto_${Date.now()}_${idx++}`,
-      title: n.title,
-      content: `【${n.concept || ''}】${n.stockName || ''} - ${n.title}`,
-      tag: classify(text),
-      stockCode: n.stockCode || '',
-      confidence: calcConfidence(text),
-      createdAt: new Date().toISOString()
-    })
-  }
-
-  // 读取现有逻辑库，合并保留用户主观逻辑
+// 生成逻辑库数据：读取现有 → 追加新条目 → 去重合并
+function buildLogicLibrary(data) {
   let existing = { subjective: [], auto: [] }
   if (fs.existsSync(LOGIC_LIBRARY_PATH)) {
     try {
       existing = JSON.parse(fs.readFileSync(LOGIC_LIBRARY_PATH, 'utf-8'))
-    } catch (e) {}
+    } catch (e) {
+      existing = { subjective: [], auto: [] }
+    }
   }
+  if (!Array.isArray(existing.subjective)) existing.subjective = []
+  if (!Array.isArray(existing.auto)) existing.auto = []
 
-  const result = {
-    subjective: existing.subjective || [],
-    auto: autoLogic.slice(0, 50),
+  const existingKeys = new Set(existing.auto.map((i) => i.title + '|' + (i.createdAt || '').slice(0, 10)))
+  const today = data.date
+  const newItems = []
+
+  // 从财经新闻生成
+  data.financeNews.forEach((n, idx) => {
+    const key = n.title + '|' + today
+    if (existingKeys.has(key)) return
+    const { tag, confidence } = tagLogicItem(n.title, n.summary || '', '')
+    newItems.push({
+      id: 'auto_' + Date.now() + '_' + idx + '_f',
+      title: n.title,
+      content: n.summary || n.title,
+      tag,
+      confidence: Math.min(1, confidence + 0.05),
+      source: n.source || '',
+      link: n.link || '#',
+      createdAt: new Date().toISOString()
+    })
+  })
+
+  // 从个股新闻生成（带股票代码）
+  data.stockNews.forEach((n, idx) => {
+    const key = n.title + '|' + today
+    if (existingKeys.has(key)) return
+    const { tag, confidence } = tagLogicItem(n.title, n.concept || '', n.stockCode || '')
+    const stockContext = [n.stockName, n.stockCode, n.concept].filter(Boolean).join(' / ')
+    newItems.push({
+      id: 'auto_' + Date.now() + '_' + idx + '_s',
+      title: n.title,
+      content: stockContext ? `${stockContext} — ${n.title}` : n.title,
+      tag,
+      stockCode: n.stockCode || '',
+      confidence,
+      change: n.change || 0,
+      source: n.source || '',
+      link: n.link || '#',
+      createdAt: new Date().toISOString()
+    })
+  })
+
+  // 合并：新的在前，旧的在后，按 title+日期 去重
+  const merged = [...newItems, ...existing.auto]
+  const seen = new Set()
+  const auto = merged.filter((i) => {
+    const k = i.title + '|' + (i.createdAt || '').slice(0, 10)
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+
+  return {
+    subjective: existing.subjective,
+    auto,
     updatedAt: new Date().toISOString(),
     date: data.date
   }
+}
 
-  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(result, null, 2), 'utf-8')
-  console.log('逻辑库:', LOGIC_LIBRARY_PATH, `(主观 ${result.subjective.length} 条, 自动 ${result.auto.length} 条)`)
+function writeAllOutputs(data, latestFile) {
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true })
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(data, null, 2), 'utf-8')
+  console.log('已写入:', OUTPUT_PATH)
+
+  const logicLib = buildLogicLibrary(data)
+  fs.writeFileSync(LOGIC_LIBRARY_PATH, JSON.stringify(logicLib, null, 2), 'utf-8')
+  console.log(`已写入 logic-library.json (主观 ${logicLib.subjective.length} 条 / 消息 ${logicLib.auto.length} 条):`, LOGIC_LIBRARY_PATH)
+
+  const historyFile = path.join(HISTORY_DIR, data.date + '.json')
+  fs.mkdirSync(HISTORY_DIR, { recursive: true })
+  fs.writeFileSync(historyFile, JSON.stringify(data, null, 2), 'utf-8')
+  console.log('历史数据:', historyFile)
+
+  const historyIndexFile = path.join(HISTORY_DIR, 'index.json')
+  let historyIndex = []
+  if (fs.existsSync(historyIndexFile)) {
+    try {
+      historyIndex = JSON.parse(fs.readFileSync(historyIndexFile, 'utf-8'))
+    } catch (e) {}
+  }
+  if (!historyIndex.includes(data.date)) {
+    historyIndex.push(data.date)
+    historyIndex.sort().reverse()
+    fs.writeFileSync(historyIndexFile, JSON.stringify(historyIndex, null, 2), 'utf-8')
+    console.log('历史索引已更新')
+  }
 }
 
 function main() {
@@ -338,36 +378,13 @@ function main() {
         console.log(JSON.stringify(v.slice(0, 2), null, 2))
       }
     }
+    const logic = buildLogicLibrary(data)
+    console.log(`\nlogic-library: subjective ${logic.subjective.length} 条, auto ${logic.auto.length} 条`)
     return
   }
 
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true })
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(data, null, 2), 'utf-8')
-  console.log('\n已写入:', OUTPUT_PATH)
-
-  // 保存每日历史数据
-  const historyFile = path.join(HISTORY_DIR, data.date + '.json')
-  fs.mkdirSync(HISTORY_DIR, { recursive: true })
-  fs.writeFileSync(historyFile, JSON.stringify(data, null, 2), 'utf-8')
-  console.log('历史数据:', historyFile)
-
-  // 生成历史日期索引
-  const historyIndexFile = path.join(HISTORY_DIR, 'index.json')
-  let historyIndex = []
-  if (fs.existsSync(historyIndexFile)) {
-    try {
-      historyIndex = JSON.parse(fs.readFileSync(historyIndexFile, 'utf-8'))
-    } catch (e) {}
-  }
-  if (!historyIndex.includes(data.date)) {
-    historyIndex.push(data.date)
-    historyIndex.sort().reverse()
-    fs.writeFileSync(historyIndexFile, JSON.stringify(historyIndex, null, 2), 'utf-8')
-    console.log('历史索引已更新')
-  }
-
-  // 生成逻辑库 JSON
-  generateLogicLibrary(data)
+  // 先写入所有产出（如果 git stash pop 出现冲突会再重新生成一次覆盖）
+  writeAllOutputs(data, latestFile)
 
   if (PUSH) {
     try {
@@ -395,11 +412,9 @@ function main() {
           console.warn('  ⚠️  stash pop 出现冲突，将以本地重新生成的文件为准')
           // 强制使用重新生成的文件：直接重新运行解析部分
           const data2 = parseExcel(latestFile)
-          fs.writeFileSync(OUTPUT_PATH, JSON.stringify(data2, null, 2), 'utf-8')
-          fs.writeFileSync(historyFile, JSON.stringify(data2, null, 2), 'utf-8')
-          generateLogicLibrary(data2)
-          // 丢弃 stash 避免冲突
-          try { execSync('git stash drop', { stdio: 'ignore' }) } catch (_) {}
+          writeAllOutputs(data2, latestFile)
+          // 丢弃 stash 避免后续冲突
+          try { execSync('git stash drop 2>/dev/null || true', { stdio: 'ignore' }) } catch (_) {}
         }
       } else {
         console.log('\n--- (无需恢复 stash) ---')
