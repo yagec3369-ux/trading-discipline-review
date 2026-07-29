@@ -30,19 +30,14 @@ const CHECKLIST_DEFS = [
     source: '本月累计盈亏 & 本金'
   },
   {
-    title: '发生浮亏补仓',
-    trigger: '每日复盘中"是否严格执行止损"回答为"否"',
-    source: '每日复盘页面 (Q&A 第2题)'
-  },
-  {
     title: '单只持仓超过20%',
     trigger: '任意单只股票持仓市值 / 本金 > 20%',
     source: '交易记录页面 (个股持仓明细)'
   },
   {
     title: '无计划买入',
-    trigger: '每日复盘中"是否有未经计划的临时操作"回答为"是"',
-    source: '每日复盘页面 (Q&A 第6题)'
+    trigger: '直接从交易记录新增的买入（非计划执行）',
+    source: '交易记录页面 (fromPlanId为空的买入记录)'
   },
   {
     title: '情绪化下单',
@@ -53,12 +48,8 @@ const CHECKLIST_DEFS = [
 
 // Map checklist item index -> daily review Q&A index.
 const QA_MAPPING = {
-  // Item 3 (发生浮亏补仓): triggered when "是否严格执行了止损纪律" = 否 (false)
-  2: { qaIndex: 1, triggerValue: false, triggeredText: '已触发：未严格执行止损', safeText: '正常：已严格执行止损' },
-  // Item 5 (无计划买入): triggered when "是否有未经计划的临时操作" = 是 (true)
-  4: { qaIndex: 5, triggerValue: true, triggeredText: '已触发：存在未经计划的临时操作', safeText: '正常：无未经计划的操作' },
-  // Item 6 (情绪化下单): triggered when "情绪状态是否稳定" = 否 (false)
-  5: { qaIndex: 4, triggerValue: false, triggeredText: '已触发：情绪状态不稳定', safeText: '正常：情绪状态稳定' }
+  // Item 5 (情绪化下单): triggered when "情绪状态是否稳定" = 否 (false)
+  4: { qaIndex: 4, triggerValue: false, triggeredText: '已触发：情绪状态不稳定', safeText: '正常：情绪状态稳定' }
 }
 
 export function createRiskControlPage(root) {
@@ -220,15 +211,13 @@ export function createRiskControlPage(root) {
                 <i data-lucide="timer" style="width:16px; height:16px; flex-shrink:0;"></i>
                 <span style="font-size:var(--text-body); font-weight:var(--weight-medium);">恢复进度</span>
               </div>
-              <div class="flex items-center gap-2">
-                <span id="recovery-label" style="font-size:var(--text-caption); color:var(--state-info); font-weight:var(--weight-medium);">已完成 0/20 笔合规交易</span>
-                <input type="number" id="rc-compliant-count" min="0" max="20" value="${state.compliantCount}" style="width:52px; background:transparent; border:1px solid var(--state-info); border-radius:var(--r-xs); font-size:var(--text-caption); color:var(--state-info); font-weight:var(--weight-medium); text-align:center; outline:none; font-variant-numeric:tabular-nums;">
-              </div>
+              <span id="recovery-label" style="font-size:var(--text-caption); color:var(--state-info); font-weight:var(--weight-medium); font-variant-numeric:tabular-nums;">已完成 0/20 笔合规交易</span>
             </div>
             <div style="height:8px; background:var(--surface-2); border-radius:var(--r-pill); overflow:hidden;">
               <div id="recovery-progress-bar" style="height:100%; width:0%; border-radius:var(--r-pill); background:var(--state-info); transition:width 0.3s ease;"></div>
             </div>
-            <div class="flex justify-end mt-1">
+            <div class="flex items-center justify-between mt-1">
+              <span style="font-size:var(--text-caption); color:var(--ink-3);">按计划执行的交易自动累计</span>
               <span id="recovery-pct" style="font-size:var(--text-caption); color:var(--ink-3);">0%</span>
             </div>
           </div>
@@ -301,18 +290,6 @@ export function createRiskControlPage(root) {
       })
     })
 
-    // Compliant count input
-    const compliantInput = root.querySelector('#rc-compliant-count')
-    if (compliantInput) {
-      compliantInput.addEventListener('input', () => {
-        const v = parseInt(compliantInput.value, 10)
-        state.compliantCount = isNaN(v) ? 0 : v
-        lsSet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.compliantCount, String(state.compliantCount))
-        updateRecovery()
-        showSaveStatus()
-      })
-    }
-
     // Recovery status radios
     const radios = root.querySelectorAll('input[name="recovery-status"]')
     radios.forEach((r) => {
@@ -334,6 +311,7 @@ export function createRiskControlPage(root) {
       runAllChecks()
     })
     on(DATA_EVENTS.TRADE_RECORDS_CHANGED, () => {
+      updateRecovery()
       runAllChecks()
     })
     on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
@@ -349,15 +327,13 @@ export function createRiskControlPage(root) {
   }
 
   function updateRecovery() {
-    const compliantInput = root.querySelector('#rc-compliant-count')
     const label = root.querySelector('#recovery-label')
     const bar = root.querySelector('#recovery-progress-bar')
     const pctEl = root.querySelector('#recovery-pct')
-    let count = state.compliantCount
-    if (count < 0) count = 0
-    if (count > 20) count = 20
+    // 合规交易数 = 从计划执行的交易数（fromPlanId非空）
+    const trades = getTradeRecords()
+    const count = Math.min(20, Math.max(0, trades.filter((t) => t.fromPlanId).length))
     state.compliantCount = count
-    if (compliantInput) compliantInput.value = count
     const pct = Math.round(count / 20 * 100)
     if (label) label.textContent = '已完成 ' + count + '/20 笔合规交易'
     if (bar) bar.style.width = pct + '%'
@@ -414,7 +390,7 @@ export function createRiskControlPage(root) {
     const monthlyPnl = calcFloatPnl()
     const totalAsset = calcTotalAsset()
     const trades = getTradeRecords()
-    const states = ['pending', 'pending', 'pending', 'pending', 'pending', 'pending']
+    const states = ['pending', 'pending', 'pending', 'pending', 'pending']
 
     // Item 1: 连续3笔止损
     const completedTrades = trades.filter((t) => t.actualPnl && !t.actualPnl.includes('待结算') && t.actualPnl !== '--')
@@ -444,7 +420,50 @@ export function createRiskControlPage(root) {
       }
     }
 
-    // Items 3, 5, 6 — daily review Q&A driven
+    // Item 3: 单只持仓超过20%
+    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+    const activeHoldings = holdings.filter((h) => !h.archived && parseFloat(h.quantity) > 0)
+    if (activeHoldings.length > 0 && totalAsset > 0) {
+      const overPosition = activeHoldings.filter((h) => {
+        const marketVal = (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0)
+        return (marketVal / totalAsset) > 0.20
+      })
+      if (overPosition.length > 0) {
+        states[2] = 'triggered'
+        const detailText = overPosition.map((h) => {
+          const marketVal = (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0)
+          const pct = (marketVal / totalAsset * 100).toFixed(1)
+          return `${h.name} ${pct}%`
+        }).join('、')
+        setChecklistStatus(2, 'triggered', `以下个股仓位超过20%：${detailText}`)
+      } else {
+        states[2] = 'safe'
+        setChecklistStatus(2, 'safe', '所有个股仓位均在20%以下')
+      }
+    } else if (activeHoldings.length === 0) {
+      states[2] = 'pending'
+      setChecklistStatus(2, 'pending', '暂无持仓数据')
+    } else {
+      states[2] = 'pending'
+      setChecklistStatus(2, 'pending', '请先填写本金')
+    }
+
+    // Item 4: 无计划买入 — 从交易记录检测，fromPlanId为空的买入记录
+    const unplannedBuys = trades.filter((t) => t.type === 'buy' && !t.fromPlanId)
+    if (unplannedBuys.length > 0) {
+      states[3] = 'triggered'
+      const detailText = unplannedBuys.slice(0, 5).map((t) => `${t.name}(${t.date})`).join('、')
+      const more = unplannedBuys.length > 5 ? `等${unplannedBuys.length}笔` : ''
+      setChecklistStatus(3, 'triggered', `存在${unplannedBuys.length}笔无计划买入：${detailText}${more}`)
+    } else if (trades.length > 0) {
+      states[3] = 'safe'
+      setChecklistStatus(3, 'safe', '所有买入均来自下单计划')
+    } else {
+      states[3] = 'pending'
+      setChecklistStatus(3, 'pending', '暂无交易记录')
+    }
+
+    // Item 5: 情绪化下单 — daily review Q&A driven
     Object.keys(QA_MAPPING).forEach((itemIdxStr) => {
       const itemIdx = parseInt(itemIdxStr, 10)
       const cfg = QA_MAPPING[itemIdxStr]
@@ -466,34 +485,6 @@ export function createRiskControlPage(root) {
       states[itemIdx] = status
       setChecklistStatus(itemIdx, status, detail)
     })
-
-    // Item 4: 单只持仓超过20%
-    const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
-    const activeHoldings = holdings.filter((h) => !h.archived && parseFloat(h.quantity) > 0)
-    if (activeHoldings.length > 0 && totalAsset > 0) {
-      const overPosition = activeHoldings.filter((h) => {
-        const marketVal = (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0)
-        return (marketVal / totalAsset) > 0.20
-      })
-      if (overPosition.length > 0) {
-        states[3] = 'triggered'
-        const detailText = overPosition.map((h) => {
-          const marketVal = (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0)
-          const pct = (marketVal / totalAsset * 100).toFixed(1)
-          return `${h.name} ${pct}%`
-        }).join('、')
-        setChecklistStatus(3, 'triggered', `以下个股仓位超过20%：${detailText}`)
-      } else {
-        states[3] = 'safe'
-        setChecklistStatus(3, 'safe', '所有个股仓位均在20%以下')
-      }
-    } else if (activeHoldings.length === 0) {
-      states[3] = 'pending'
-      setChecklistStatus(3, 'pending', '暂无持仓数据')
-    } else {
-      states[3] = 'pending'
-      setChecklistStatus(3, 'pending', '请先填写本金')
-    }
 
     updateCircuitBanner(states)
     updateChecklistSummary(states)
