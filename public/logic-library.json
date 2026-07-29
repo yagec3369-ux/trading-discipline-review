@@ -2,6 +2,74 @@
   "subjective": [],
   "auto": [
     {
+      "id": "auto_1785309300415_1_f",
+      "title": "证监会：进一步推动中长期资金入市",
+      "content": "证监会召开专题会议，研究部署进一步推动中长期资金入市工作，持续优化市场生态，促进资本市场平稳健康发展。",
+      "tag": "policy",
+      "confidence": 0.93,
+      "source": "证券时报",
+      "link": "https://example.com/news/2",
+      "createdAt": "2026-07-29T07:15:00.415Z"
+    },
+    {
+      "id": "auto_1785309300415_2_f",
+      "title": "上半年GDP同比增长5.8% 经济运行总体平稳",
+      "content": "国家统计局发布数据，上半年国内生产总值同比增长5.8%，主要指标保持在合理区间，市场预期逐步改善。",
+      "tag": "earnings",
+      "confidence": 0.93,
+      "source": "经济日报",
+      "link": "https://example.com/news/3",
+      "createdAt": "2026-07-29T07:15:00.415Z"
+    },
+    {
+      "id": "auto_1785309300415_0_s",
+      "title": "鸿博股份签署重大算力服务合同",
+      "content": "鸿博股份 / 002229 / 算力租赁 — 鸿博股份签署重大算力服务合同",
+      "tag": "announcement",
+      "stockCode": "002229",
+      "confidence": 0.82,
+      "change": 10.01,
+      "source": "公司公告",
+      "link": "https://example.com/stock/1",
+      "createdAt": "2026-07-29T07:15:00.415Z"
+    },
+    {
+      "id": "auto_1785309300415_1_s",
+      "title": "中际旭创800G光模块出货量超预期",
+      "content": "中际旭创 / 300308 / CPO — 中际旭创800G光模块出货量超预期",
+      "tag": "news",
+      "stockCode": "300308",
+      "confidence": 0.6,
+      "change": 8.56,
+      "source": "券商研报",
+      "link": "https://example.com/stock/2",
+      "createdAt": "2026-07-29T07:15:00.415Z"
+    },
+    {
+      "id": "auto_1785309300415_2_s",
+      "title": "寒武纪发布新一代AI加速卡 性能提升2倍",
+      "content": "寒武纪 / 688256 / AI芯片 — 寒武纪发布新一代AI加速卡 性能提升2倍",
+      "tag": "industry",
+      "stockCode": "688256",
+      "confidence": 0.72,
+      "change": 7.82,
+      "source": "行业媒体",
+      "link": "https://example.com/stock/3",
+      "createdAt": "2026-07-29T07:15:00.415Z"
+    },
+    {
+      "id": "auto_1785309300416_3_s",
+      "title": "人民网数据确权平台正式上线",
+      "content": "人民网 / 603000 / 数据要素 — 人民网数据确权平台正式上线",
+      "tag": "news",
+      "stockCode": "603000",
+      "confidence": 0.6,
+      "change": 10.02,
+      "source": "公司公告",
+      "link": "https://example.com/stock/4",
+      "createdAt": "2026-07-29T07:15:00.416Z"
+    },
+    {
       "id": "auto_1785305741883_0_f",
       "title": "英灵殿科技三个月内连续融资累计近5000万美元",
       "content": "英灵殿科技三个月内连续融资累计近5000万美元",
@@ -559,6 +627,6 @@
       "createdAt": "2026-07-29T05:11:39.977Z"
     }
   ],
-  "updatedAt": "2026-07-29T06:15:41.885Z",
+  "updatedAt": "2026-07-29T07:15:00.416Z",
   "date": "2026-07-29"
 }
