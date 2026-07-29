@@ -8,7 +8,6 @@ import { on, emit, DATA_EVENTS } from '../utils/events.js'
 const PREFIX = STORAGE_KEYS.riskCtrl
 const K_DEPOSIT = PREFIX + 'total_deposit'    // 累计转入
 const K_WITHDRAW = PREFIX + 'total_withdraw'  // 累计转出
-const K_FROZEN = PREFIX + 'frozen_amount'     // 冻结金额
 const K_COMPLIANT = PREFIX + 'compliant_count'
 
 function loadNum(key, fallback = 0) {
@@ -75,7 +74,6 @@ export function createOverviewPage(root) {
   let state = {
     totalDeposit: loadNum(K_DEPOSIT, 200000),
     totalWithdraw: loadNum(K_WITHDRAW, 0),
-    frozenAmount: loadNum(K_FROZEN, 0),
     goals: loadGoals()
   }
 
@@ -99,11 +97,6 @@ export function createOverviewPage(root) {
   function saveWithdraw(v) {
     state.totalWithdraw = v
     lsSet(K_WITHDRAW, String(v))
-    emit(DATA_EVENTS.RISK_CTRL_CHANGED)
-  }
-  function saveFrozen(v) {
-    state.frozenAmount = v
-    lsSet(K_FROZEN, String(v))
     emit(DATA_EVENTS.RISK_CTRL_CHANGED)
   }
 
@@ -132,7 +125,6 @@ export function createOverviewPage(root) {
   function computeMetrics() {
     let holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     const principal = getPrincipal()  // 本金 = 累计转入 - 累计转出
-    const frozen = state.frozenAmount
 
     // 自动维护昨日收盘价
     const today = todayStr()
@@ -161,8 +153,8 @@ export function createOverviewPage(root) {
     const totalHoldingCost = activeHoldings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
     // 账户总现金 = 本金 - 总持仓成本
     const totalCash = principal - totalHoldingCost
-    // 剩余可用金额 = 账户总现金 - 冻结金额
-    const available = totalCash - frozen
+    // 剩余可用金额 = 账户总现金
+    const available = totalCash
     // 总资产 = 股票市值 + 剩余可用金额
     const totalAsset = stockValue + available
     // 累计营收 = 总资产 - 本金
@@ -192,7 +184,7 @@ export function createOverviewPage(root) {
     const positionPct = totalAsset > 0 ? (stockValue / totalAsset * 100) : 0
 
     return {
-      principal, totalDeposit: state.totalDeposit, totalWithdraw: state.totalWithdraw, frozen,
+      principal, totalDeposit: state.totalDeposit, totalWithdraw: state.totalWithdraw,
       totalCash, stockValue, available,
       totalAsset, totalPnl, pnlPct,
       monthlyPnl, todayPnl, positionPct, activeHoldings
@@ -221,7 +213,7 @@ export function createOverviewPage(root) {
           ${kpiCard('本金', 'landmark', fmt(m.principal) + '元', 'var(--ink)', false, '初始20万 + Σ转入 - Σ转出')}
           ${kpiCard('当前总资产', 'coins', hasData ? fmt(m.totalAsset) + '元' : '--', 'var(--ink)', false, '市值 + 剩余可用')}
           ${kpiCard('股票市值', 'trending-up', hasData ? fmt(m.stockValue) + '元' : '--', 'var(--ink)', false, 'Σ持仓数×现价')}
-          ${kpiCard('剩余可用金额', 'wallet', hasData ? fmt(m.available) + '元' : '--', 'var(--ink)', false, '账户总现金 - 冻结金额')}
+          ${kpiCard('剩余可用金额', 'wallet', hasData ? fmt(m.available) + '元' : '--', 'var(--ink)', false, '本金 - 持仓成本')}
           ${kpiCard('累计营收', 'trending-up', hasData ? fmtSigned(m.totalPnl) + '元' : '--', pnlColor(m.totalPnl), false, '总资产 - 本金')}
           ${kpiCard('本月营收', 'arrow-down-up', hasData ? fmtSigned(m.monthlyPnl) + '元' : '--', pnlColor(m.monthlyPnl), false, '今日总资产 - 上月末 - 本月净入金')}
           ${kpiCard('当日营收', 'zap', hasData ? fmtSigned(m.todayPnl) + '元' : '--', pnlColor(m.todayPnl), false, '今日总资产 - 昨日 - 今日净入金')}
@@ -278,17 +270,6 @@ export function createOverviewPage(root) {
                 <input type="number" id="ov-transfer-out" class="field-input" placeholder="0" min="0" step="0.01" style="flex:1;">
                 <button id="btn-transfer-out" class="btn-secondary">转出</button>
               </div>
-            </div>
-          </div>
-
-          <!-- 冻结金额 -->
-          <div style="border-top:1px dashed var(--line); padding-top:var(--s-4);">
-            <label style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:var(--s-2);">
-              冻结金额（元）<span style="color:var(--ink-3); font-weight:var(--weight-normal);">· 未成交委托等占用资金</span>
-            </label>
-            <div class="flex items-center gap-2">
-              <input type="number" id="ov-frozen" class="field-input" placeholder="0" min="0" step="0.01" value="${m.frozen}" style="flex:1;">
-              <button id="btn-frozen-save" class="btn-secondary">保存</button>
             </div>
           </div>
         </div>
@@ -473,7 +454,7 @@ export function createOverviewPage(root) {
     `
   }
 
-  // ── 资金转入转出 + 冻结金额 ───────────────────────
+  // ── 资金转入转出 ──────────────────────────────────
   function bindTransferEvents() {
     root.querySelector('#btn-transfer-in')?.addEventListener('click', () => {
       const input = root.querySelector('#ov-transfer-in')
@@ -494,14 +475,6 @@ export function createOverviewPage(root) {
       addFlow('out', amount)  // 记录资金流水
       input.value = ''
       showSaveStatus('转出成功，本金已更新')
-      render()
-    })
-    root.querySelector('#btn-frozen-save')?.addEventListener('click', () => {
-      const input = root.querySelector('#ov-frozen')
-      const v = parseFloat(input.value) || 0
-      if (v < 0) { showToast('冻结金额不能为负'); return }
-      saveFrozen(v)
-      showSaveStatus('冻结金额已保存')
       render()
     })
   }
@@ -691,7 +664,6 @@ export function createOverviewPage(root) {
     on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
       state.totalDeposit = loadNum(K_DEPOSIT, state.totalDeposit)
       state.totalWithdraw = loadNum(K_WITHDRAW, state.totalWithdraw)
-      state.frozenAmount = loadNum(K_FROZEN, state.frozenAmount)
       render()
     })
   }

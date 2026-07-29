@@ -14,7 +14,6 @@ import { on, emit, DATA_EVENTS } from '../utils/events.js'
 const FIELD_KEYS = {
   totalDeposit: 'total_deposit',
   totalWithdraw: 'total_withdraw',
-  frozenAmount: 'frozen_amount',
   compliantCount: 'compliant_count',
   recoveryStatus: 'recovery_status'
 }
@@ -66,7 +65,6 @@ export function createRiskControlPage(root) {
   const state = {
     totalDeposit: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalDeposit, '200000')) || 200000,
     totalWithdraw: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalWithdraw, '0')) || 0,
-    frozenAmount: parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.frozenAmount, '0')) || 0,
     compliantCount: parseInt(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.compliantCount, '0')) || 0,
     recoveryStatus: lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.recoveryStatus, 'active')
   }
@@ -91,10 +89,8 @@ export function createRiskControlPage(root) {
   function calcAvailableFund() {
     const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
     const totalHoldingCost = holdings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
-    // 账户总现金 = 本金 - 持仓成本
-    const totalCash = getPrincipal() - totalHoldingCost
-    // 剩余可用金额 = 账户总现金 - 冻结金额
-    return totalCash - state.frozenAmount
+    // 剩余可用金额 = 本金 - 持仓成本
+    return getPrincipal() - totalHoldingCost
   }
 
   function getHoldingsValue() {
@@ -257,6 +253,11 @@ export function createRiskControlPage(root) {
           <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); margin:0;">熔断检查清单</h3>
         </div>
         <div style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:var(--s-4) var(--s-5);">
+          <!-- 熔断总结 -->
+          <div id="checklist-summary" class="flex items-center justify-between gap-3 py-2 px-2 mb-2" style="border-bottom:1px solid var(--line);">
+            <span id="checklist-summary-text" style="font-size:var(--text-body); color:var(--ink-3);">检测中...</span>
+            <span id="checklist-summary-count" style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); font-variant-numeric:tabular-nums;">0/0</span>
+          </div>
           <div class="flex flex-col gap-1" id="checklist-container">
             ${CHECKLIST_DEFS.map((c, i) => checklistItemHTML(c, i)).join('')}
           </div>
@@ -338,7 +339,6 @@ export function createRiskControlPage(root) {
     on(DATA_EVENTS.RISK_CTRL_CHANGED, () => {
       state.totalDeposit = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalDeposit, String(state.totalDeposit))) || state.totalDeposit
       state.totalWithdraw = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.totalWithdraw, String(state.totalWithdraw))) || state.totalWithdraw
-      state.frozenAmount = parseFloat(lsGet(STORAGE_KEYS.riskCtrl + FIELD_KEYS.frozenAmount, String(state.frozenAmount))) || state.frozenAmount
       const container = root.querySelector('#position-usage-container')
       if (container) {
         container.innerHTML = renderPositionUsage()
@@ -496,6 +496,30 @@ export function createRiskControlPage(root) {
     }
 
     updateCircuitBanner(states)
+    updateChecklistSummary(states)
+  }
+
+  function updateChecklistSummary(states) {
+    const total = states.length
+    const triggered = states.filter((s) => s === 'triggered').length
+    const safe = states.filter((s) => s === 'safe').length
+    const pending = states.filter((s) => s === 'pending').length
+
+    const countEl = root.querySelector('#checklist-summary-count')
+    const textEl = root.querySelector('#checklist-summary-text')
+
+    if (countEl) {
+      countEl.textContent = triggered + '/' + total
+      countEl.style.color = triggered > 0 ? 'var(--state-error)' : 'var(--state-success)'
+    }
+
+    if (textEl) {
+      let parts = []
+      if (triggered > 0) parts.push('<span style="color:var(--state-error); font-weight:var(--weight-medium);">' + triggered + ' 项触发</span>')
+      if (safe > 0) parts.push('<span style="color:var(--state-success);">' + safe + ' 项安全</span>')
+      if (pending > 0) parts.push('<span style="color:var(--state-warning);">' + pending + ' 项待检测</span>')
+      textEl.innerHTML = parts.length > 0 ? parts.join('、') : '无数据'
+    }
   }
 
   function describeConsecutiveLosses(completedTrades) {
