@@ -185,7 +185,13 @@ function fmtChange(val) {
 function matchStockNews(concept, stockNews) {
   if (!stockNews || stockNews.length === 0) return []
   return stockNews.filter((n) => {
-    if (n.concept && concept.name && n.concept === concept.name) return true
+    if (n.concept && concept.name) {
+      // 精确匹配
+      if (n.concept === concept.name) return true
+      // 模糊匹配：概念名包含关系（处理"白酒概念" vs "白酒"等情况）
+      if (n.concept.includes(concept.name) || concept.name.includes(n.concept)) return true
+    }
+    // 兜底：领涨股名匹配
     if (n.stockName && concept.leadingStock && n.stockName === concept.leadingStock) return true
     return false
   })
@@ -590,6 +596,7 @@ export function createMarketHotPage(root) {
         render()
       }
     } catch (e) {
+      console.warn('[market-hot] 数据加载失败，使用本地缓存:', e.message)
     } finally {
       remoteFetching = false
     }
@@ -671,10 +678,10 @@ export function createMarketHotPage(root) {
   function getStockNews() {
     const src = currentData
     const news = src?.stockNews?.length > 0 ? src.stockNews : SAMPLE_STOCK_NEWS
-    // 前端去重保险：按 股票名+标题 去重
+    // 前端去重保险：按 概念+股票名+标题 去重
     const seen = new Set()
     return news.filter((n) => {
-      const key = (n.stockName || '') + '|' + (n.title || '')
+      const key = (n.concept || '') + '|' + (n.stockName || '') + '|' + (n.title || '')
       if (seen.has(key)) return false
       seen.add(key)
       return true

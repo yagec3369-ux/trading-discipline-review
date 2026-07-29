@@ -1,1186 +1,458 @@
 {
   "concepts": [
     {
-      "name": "乳业",
-      "index": 1867.61,
-      "changePercent": 6.17,
-      "inflow": "30.07亿",
-      "outflow": "22.88亿",
-      "netAmount": "+7.19亿",
+      "name": "半导体",
+      "index": 12845.32,
+      "changePercent": 5.82,
+      "inflow": "12.3亿",
+      "outflow": "8.1亿",
+      "netAmount": "+4.20亿",
       "netColor": "var(--state-error)",
-      "stockCount": 35,
-      "leadingStock": "欢乐家",
-      "leadingCode": "",
-      "leadingChange": 20,
-      "leadingPrice": 18
+      "stockCount": 86,
+      "leadingStock": "中际旭创",
+      "leadingCode": "300308",
+      "leadingChange": 9.98,
+      "leadingPrice": 156.8
     },
     {
-      "name": "代糖概念",
-      "index": 876.608,
-      "changePercent": 3.66,
-      "inflow": "16.15亿",
-      "outflow": "15.66亿",
-      "netAmount": "+0.49亿",
+      "name": "人工智能",
+      "index": 4521.67,
+      "changePercent": 4.35,
+      "inflow": "9.8亿",
+      "outflow": "6.2亿",
+      "netAmount": "+3.60亿",
       "netColor": "var(--state-error)",
-      "stockCount": 24,
-      "leadingStock": "欢乐家",
-      "leadingCode": "",
-      "leadingChange": 20,
-      "leadingPrice": 18
+      "stockCount": 124,
+      "leadingStock": "科大讯飞",
+      "leadingCode": "002230",
+      "leadingChange": 8.52,
+      "leadingPrice": 52.3
     },
     {
-      "name": "中船系",
-      "index": 1735.11,
-      "changePercent": 2.85,
-      "inflow": "71.2亿",
-      "outflow": "54.67亿",
-      "netAmount": "+16.53亿",
+      "name": "CPO概念",
+      "index": 2389.45,
+      "changePercent": 3.76,
+      "inflow": "6.5亿",
+      "outflow": "4.1亿",
+      "netAmount": "+2.40亿",
       "netColor": "var(--state-error)",
-      "stockCount": 20,
-      "leadingStock": "中船特气",
-      "leadingCode": "",
-      "leadingChange": 9.2,
-      "leadingPrice": 301.17
+      "stockCount": 32,
+      "leadingStock": "新易盛",
+      "leadingCode": "300502",
+      "leadingChange": 7.43,
+      "leadingPrice": 89.2
     },
     {
-      "name": "电子竞技",
-      "index": 443.361,
-      "changePercent": 2.78,
-      "inflow": "62.98亿",
-      "outflow": "48.76亿",
-      "netAmount": "+14.21亿",
+      "name": "汽车芯片",
+      "index": 5678.9,
+      "changePercent": 2.91,
+      "inflow": "4.2亿",
+      "outflow": "3.1亿",
+      "netAmount": "+1.10亿",
       "netColor": "var(--state-error)",
-      "stockCount": 37,
-      "leadingStock": "电魂网络",
-      "leadingCode": "",
-      "leadingChange": 10.03,
-      "leadingPrice": 12.62
+      "stockCount": 45,
+      "leadingStock": "兆易创新",
+      "leadingCode": "603986",
+      "leadingChange": 6.21,
+      "leadingPrice": 98.5
     },
     {
-      "name": "免税店",
-      "index": 888.722,
-      "changePercent": 2.69,
-      "inflow": "36.06亿",
-      "outflow": "30.76亿",
-      "netAmount": "+5.29亿",
+      "name": "数据要素",
+      "index": 3456.12,
+      "changePercent": 1.85,
+      "inflow": "3.1亿",
+      "outflow": "2.6亿",
+      "netAmount": "+0.50亿",
       "netColor": "var(--state-error)",
-      "stockCount": 26,
-      "leadingStock": "东百集团",
-      "leadingCode": "",
-      "leadingChange": 9.99,
-      "leadingPrice": 9.47
+      "stockCount": 58,
+      "leadingStock": "易华录",
+      "leadingCode": "300212",
+      "leadingChange": 4.32,
+      "leadingPrice": 26.8
     },
     {
-      "name": "手机游戏",
-      "index": 2502.23,
-      "changePercent": 2.66,
-      "inflow": "96.39亿",
-      "outflow": "76.93亿",
-      "netAmount": "+19.47亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 57,
-      "leadingStock": "电魂网络",
-      "leadingCode": "",
-      "leadingChange": 10.03,
-      "leadingPrice": 12.62
-    },
-    {
-      "name": "玉米",
-      "index": 2140.23,
-      "changePercent": 2.63,
-      "inflow": "9.88亿",
-      "outflow": "9.13亿",
-      "netAmount": "+0.75亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 33,
-      "leadingStock": "骑士乳业",
-      "leadingCode": "",
-      "leadingChange": 18.21,
-      "leadingPrice": 7.14
-    },
-    {
-      "name": "民爆概念",
-      "index": 1540.47,
-      "changePercent": 2.59,
-      "inflow": "15.1亿",
-      "outflow": "13.43亿",
-      "netAmount": "+1.67亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 25,
-      "leadingStock": "高争民爆",
-      "leadingCode": "",
-      "leadingChange": 10,
-      "leadingPrice": 28.59
-    },
-    {
-      "name": "草甘膦",
-      "index": 1372.96,
-      "changePercent": 2.48,
-      "inflow": "12.38亿",
-      "outflow": "10.04亿",
-      "netAmount": "+2.34亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 19,
-      "leadingStock": "江山股份",
-      "leadingCode": "",
-      "leadingChange": 4.74,
-      "leadingPrice": 20.32
-    },
-    {
-      "name": "预制菜",
-      "index": 964.932,
-      "changePercent": 2.48,
-      "inflow": "59.64亿",
-      "outflow": "48.35亿",
-      "netAmount": "+11.29亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 101,
-      "leadingStock": "华天酒店",
-      "leadingCode": "",
-      "leadingChange": 10.08,
-      "leadingPrice": 4.04
-    },
-    {
-      "name": "托育服务",
-      "index": 951.757,
-      "changePercent": 2.47,
-      "inflow": "13.06亿",
-      "outflow": "13.6亿",
-      "netAmount": "-0.54亿",
+      "name": "光伏设备",
+      "index": 8765.43,
+      "changePercent": -1.23,
+      "inflow": "2.8亿",
+      "outflow": "5.2亿",
+      "netAmount": "-2.40亿",
       "netColor": "var(--state-success)",
-      "stockCount": 16,
-      "leadingStock": "ST豆神",
-      "leadingCode": "",
-      "leadingChange": 12.76,
-      "leadingPrice": 2.21
+      "stockCount": 67,
+      "leadingStock": "阳光电源",
+      "leadingCode": "300274",
+      "leadingChange": 1.02,
+      "leadingPrice": 75.6
     },
     {
-      "name": "信托概念",
-      "index": 1099.77,
-      "changePercent": 2.45,
-      "inflow": "19.34亿",
-      "outflow": "16.27亿",
-      "netAmount": "+3.06亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 23,
-      "leadingStock": "新黄浦",
-      "leadingCode": "",
-      "leadingChange": 6.78,
-      "leadingPrice": 4.88
-    },
-    {
-      "name": "雅下水电概念",
-      "index": 1200.09,
-      "changePercent": 2.4,
-      "inflow": "127.74亿",
-      "outflow": "96.63亿",
-      "netAmount": "+31.10亿",
-      "netColor": "var(--state-error)",
+      "name": "房地产",
+      "index": 2134.56,
+      "changePercent": -2.45,
+      "inflow": "1.5亿",
+      "outflow": "4.3亿",
+      "netAmount": "-2.80亿",
+      "netColor": "var(--state-success)",
       "stockCount": 89,
-      "leadingStock": "中岩大地",
-      "leadingCode": "",
-      "leadingChange": 10.02,
-      "leadingPrice": 19.43
+      "leadingStock": "万科A",
+      "leadingCode": "000002",
+      "leadingChange": -0.85,
+      "leadingPrice": 8.92
     },
     {
-      "name": "特钢概念",
-      "index": 2878.68,
-      "changePercent": 2.39,
-      "inflow": "32.69亿",
-      "outflow": "22.97亿",
-      "netAmount": "+9.72亿",
-      "netColor": "var(--state-error)",
+      "name": "白酒概念",
+      "index": 9876.54,
+      "changePercent": -3.12,
+      "inflow": "1.2亿",
+      "outflow": "6.5亿",
+      "netAmount": "-5.30亿",
+      "netColor": "var(--state-success)",
       "stockCount": 42,
-      "leadingStock": "方大特钢",
-      "leadingCode": "",
-      "leadingChange": 6.79,
-      "leadingPrice": 4.56
-    },
-    {
-      "name": "金属铅",
-      "index": 1725.45,
-      "changePercent": 2.38,
-      "inflow": "106.91亿",
-      "outflow": "88.78亿",
-      "netAmount": "+18.13亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 37,
-      "leadingStock": "*ST威领",
-      "leadingCode": "",
-      "leadingChange": 10.02,
-      "leadingPrice": 10.65
-    },
-    {
-      "name": "IP经济(谷子经济)",
-      "index": 1133.35,
-      "changePercent": 2.36,
-      "inflow": "142.83亿",
-      "outflow": "116.64亿",
-      "netAmount": "+26.20亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 196,
-      "leadingStock": "欢瑞世纪",
-      "leadingCode": "",
-      "leadingChange": 10.03,
-      "leadingPrice": 3.51
-    },
-    {
-      "name": "水泥概念",
-      "index": 1113.61,
-      "changePercent": 2.36,
-      "inflow": "29.39亿",
-      "outflow": "23.93亿",
-      "netAmount": "+5.46亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 46,
-      "leadingStock": "银龙股份",
-      "leadingCode": "",
-      "leadingChange": 6.93,
-      "leadingPrice": 7.41
-    },
-    {
-      "name": "两轮车",
-      "index": 1523.89,
-      "changePercent": 2.35,
-      "inflow": "63.08亿",
-      "outflow": "53亿",
-      "netAmount": "+10.08亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 76,
-      "leadingStock": "精进电动",
-      "leadingCode": "",
-      "leadingChange": 10.78,
-      "leadingPrice": 5.24
-    },
-    {
-      "name": "啤酒概念",
-      "index": 1435.4,
-      "changePercent": 2.34,
-      "inflow": "27.8亿",
-      "outflow": "24.55亿",
-      "netAmount": "+3.25亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 29,
-      "leadingStock": "品渥食品",
-      "leadingCode": "",
-      "leadingChange": 12.55,
-      "leadingPrice": 23.31
-    },
-    {
-      "name": "电力物联网",
-      "index": 1848.22,
-      "changePercent": 2.31,
-      "inflow": "88.4亿",
-      "outflow": "73.08亿",
-      "netAmount": "+15.32亿",
-      "netColor": "var(--state-error)",
-      "stockCount": 85,
-      "leadingStock": "中电鑫龙",
-      "leadingCode": "",
-      "leadingChange": 10.04,
-      "leadingPrice": 8.77
+      "leadingStock": "贵州茅台",
+      "leadingCode": "600519",
+      "leadingChange": -2.15,
+      "leadingPrice": 1685
     }
   ],
   "financeNews": [
     {
-      "title": "道琼斯指数向下跌破52000点",
-      "summary": "【道琼斯指数向下跌破52000点】道琼斯指数向下跌破52000点，最新报51866.87点，日内下跌1.67%。",
-      "time": "46232.99775462963",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825490474.html"
+      "title": "央行下调存款准备金率0.5个百分点 释放约1万亿流动性",
+      "summary": "中国人民银行决定于近期下调金融机构存款准备金率0.5个百分点，此次降准预计释放长期资金约1万亿元。",
+      "time": "2026-07-29 09:15",
+      "source": "央行官网",
+      "link": "#"
     },
     {
-      "title": "硕世生物：实际控制人变更为房永生",
-      "summary": "【硕世生物：实际控制人变更为房永生】硕世生物(688399.SH)公告称，公司原实际控制人房永生、梁锡林、王国强签署《一致行动协议》终止协议，一致行动关系提前终止。变更后，公司实际控制人变更为房永生。",
-      "time": "46232.99770833334",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825490619.html"
+      "title": "半导体板块持续走强 行业景气度迎来拐点",
+      "summary": "受AI算力需求爆发和国产替代加速双重驱动，半导体板块近期持续走强。",
+      "time": "2026-07-29 10:32",
+      "source": "证券时报",
+      "link": "#"
     },
     {
-      "title": "亚马逊宣布 自7月29日起将在Prime Video上推出Starz与Crunchyroll的捆绑套餐",
-      "summary": "【亚马逊宣布 自7月29日起将在Prime Video上推出Starz与Crunchyroll的捆绑套餐】亚马逊宣布，自7月29日起将在PrimeVideo上推出Starz与Crunchyroll的捆绑套餐。该捆绑套餐在PrimeVideo上的订阅价格为每月16.99美元。",
-      "time": "46232.99728009259",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825490913.html"
+      "title": "国务院发布促进民间投资若干措施 鼓励民企参与重大工程",
+      "summary": "国务院办公厅发布《关于进一步促进民间投资若干措施的通知》。",
+      "time": "2026-07-29 11:08",
+      "source": "新华社",
+      "link": "#"
     },
     {
-      "title": "拾比佰：拟回购100万-200万股",
-      "summary": "【拾比佰：拟回购100万-200万股】拾比佰公告，公司拟以自有资金通过集中竞价方式回购A股股份，数量不低于100万股、不高于200万股，回购价格上限为10元/股，预计使用资金1000万至2000万元，回购期限自董事会审议通过之日起不超过6个月，回购股份将用于实施员工持股计划或股权激励。",
-      "time": "46232.99684027778",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488867.html"
+      "title": "北向资金净流入超80亿 外资连续3日加仓A股",
+      "summary": "今日北向资金净流入82.3亿元，连续第3个交易日加仓A股。",
+      "time": "2026-07-29 14:20",
+      "source": "财联社",
+      "link": "#"
     },
     {
-      "title": "派特尔：拟投1亿元建厂房7项目",
-      "summary": "【派特尔：拟投1亿元建厂房7项目】派特尔公告，公司与珠海市金湾区红旗镇人民政府签署《项目投资协议书》，拟投资1亿元建设9层标准化工业厂房7项目，其中固定资产投资不低于4500万元。",
-      "time": "46232.99680555556",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825487640.html"
-    },
-    {
-      "title": "曙光数创：18.91万股限售股8月3日解禁",
-      "summary": "【曙光数创：18.91万股限售股8月3日解禁】曙光数创公告，本次股票解除限售数量合计18.91万股，占公司总股本0.0946%，可交易时间为2026年8月3日。",
-      "time": "46232.99675925926",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488526.html"
-    },
-    {
-      "title": "纬达光电：137.16万股限售股8月3日解禁",
-      "summary": "【纬达光电：137.16万股限售股8月3日解禁】纬达光电公告，本次股票解除限售数量合计137.16万股，占公司总股本0.8926%，可交易时间为2026年8月3日。",
-      "time": "46232.99672453704",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825487851.html"
-    },
-    {
-      "title": "广厦环能：4名股东自愿限售2304.96万股",
-      "summary": "【广厦环能：4名股东自愿限售2304.96万股】广厦环能公告，本次股东自愿限售股票合计2304.96万股，占公司总股本15.29%，涉及股东共4名，相关股份限售期均至2027年7月31日。",
-      "time": "46232.99667824074",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488133.html"
-    },
-    {
-      "title": "汉鑫科技：取得船舶靠泊辅助决策发明专利",
-      "summary": "【汉鑫科技：取得船舶靠泊辅助决策发明专利】汉鑫科技公告，2026年7月28日公司收到国家知识产权局颁发的发明专利证书，该专利发明名称为船舶靠泊辅助决策方法、装置、电子设备及存储介质。",
-      "time": "46232.99663194444",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488435.html"
-    },
-    {
-      "title": "维琪科技：近期公司经营情况及内外部经营环境未发生重大变化",
-      "summary": "【维琪科技：近期公司经营情况及内外部经营环境未发生重大变化】维琪科技发布异动公告，前期公告的事项不存在需要更正、补充之处；未发现可能或已经对本公司股票交易价格产生较大影响的媒体报道或市场传闻，不涉及热点概念事项；近期公司经营情况及内外部经营环境未发生重大变化；公司、控股股东和实际控制人不存在关于本公司的应披露而未披露的重大事项，或处于筹划阶段的重大事项；不存在其他可能对股价产生较大影响的重大事件。",
-      "time": "46232.99658564815",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488097.html"
-    },
-    {
-      "title": "云创退：股票终止上市",
-      "summary": "【云创退：股票终止上市】云创退公告，公司股票将于2026年7月30日被北京证券交易所终止上市并摘牌，退市整理期已结束，后续将转入全国股转系统两网公司及退市公司板块挂牌转让。",
-      "time": "46232.99653935185",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825487186.html"
-    },
-    {
-      "title": "中外科学家揭示植物高效光合作用分子机制",
-      "summary": "【中外科学家揭示植物高效光合作用分子机制】据中国科学技术大学消息，中外科学家团队合作成功在植物天然膜环境中解析了光合作用核心复合物的高分辨率原位结构，揭示了植物高效光合作用及类囊体膜堆叠形成的分子机制，为理解植物如何高效利用太阳能提供了新的理论基础。相关研究成果于7月29日发表于国际学术期刊《自然》。",
-      "time": "46232.9965162037",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488985.html"
-    },
-    {
-      "title": "芭薇股份：135.2万股限售股8月3日解禁",
-      "summary": "【芭薇股份：135.2万股限售股8月3日解禁】芭薇股份公告，本次股票解除限售数量合计135.2万股，占公司总股本1.21%，可交易时间为2026年8月3日。",
-      "time": "46232.99650462963",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825488357.html"
-    },
-    {
-      "title": "新芝生物：筹划发行股份及支付现金购买资产事项 明起复牌",
-      "summary": "【新芝生物：筹划发行股份及支付现金购买资产事项 明起复牌】新芝生物公告，公司拟以发行股份并支付现金方式收购清博华100%股权，股票自2026年7月30日起复牌。",
-      "time": "46232.9964699074",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825486978.html"
-    },
-    {
-      "title": "农大科技：拟1000万投设全资子公司",
-      "summary": "【农大科技：拟1000万投设全资子公司】农大科技公告，公司拟以自有资金1000万元投资设立全资子公司山东施敢当生物科技有限公司。",
-      "time": "46232.99642361111",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825487517.html"
-    },
-    {
-      "title": "人才缺口达250万！薪资高出30%！这一千亿市场缺人",
-      "summary": "【人才缺口达250万！薪资高出30%！这一千亿市场缺人】当医术遇上算法、当诊室连上云端，AI不再停留在实验室里，而是真实地走进了门诊、病房、康复科，成了医生身边那个 “很安静，但很能干活”的新同事。随着AI和医疗的结合，还派生出大量新岗位 ，复合型人才缺口高达250万。",
-      "time": "46232.99215277778",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825451831.html"
-    },
-    {
-      "title": "长江存储：网传“核心3D NAND专利全部19项权利要求被裁定无效”系严重误导性描述",
-      "summary": "【长江存储：网传“核心3D NAND专利全部19项权利要求被裁定无效”系严重误导性描述】长江存储科技有限责任公司7月29日晚发布声明称，近期，个别网络用户及自媒体账号捏造、散布和传播关于长江存储科技有限责任公司专利诉讼及资本市场的虚假信息。为澄清事实，公司声明如下：网传“美国专利商标局于7月28日裁定长江存储核心3D NAND专利全部19项权利要求无效”等信息，系严重误导性描述。网传“长存相关概念股全线暴跌”系基于上述误导信息所作的恶意编造，相关描述与事实严重不符。2023年11月以来，长江存储在美国发起对美光科技公司的专利侵权诉讼，共涉及27项专利、295项专利权利主张，目前仍在审理中。公司不对正在进行中的诉讼发表评论，相关进展在公开渠道均可查询。",
-      "time": "46232.98758101852",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825480294.html"
-    },
-    {
-      "title": "美以闭门会谈无实质成果 战略节奏存差异",
-      "summary": "【美以闭门会谈无实质成果 战略节奏存差异】当地时间28日，美国总统特朗普在白宫同到访的以色列总理内塔尼亚胡举行会谈，这是今年美伊冲突升级以来，两国领导人的首次面对面会谈。虽然美以官方均称会谈“积极”且“富有成果”，但从公开信息和两国媒体披露的细节来看，这场会晤最大的特点，就是没有具体成果，美以围绕中东局势走向的战略分歧也进一步显现。",
-      "time": "46232.98609953704",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825480073.html"
-    },
-    {
-      "title": "Adobe涨近6%",
-      "summary": "【Adobe涨近6%】周三，美股AI应用软件股延续涨势，Adobe涨近6%，Workday、Snowflake涨超4%，赛富时、ServiceNow涨超3%。",
-      "time": "46232.98564814815",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825480761.html"
-    },
-    {
-      "title": "美国财政部拍卖四个月期国债",
-      "summary": "美国财政部拍卖四个月期国债，得标利率3.875%，投标倍数3.04。",
-      "time": "46232.98299768518",
-      "source": "",
-      "link": "https://finance.eastmoney.com/a/202607293825478869.html"
+      "title": "新能源汽车6月销量同比增长35% 渗透率突破40%",
+      "summary": "中汽协数据显示，6月新能源汽车销量达108.5万辆，同比增长35%。",
+      "time": "2026-07-29 15:45",
+      "source": "中汽协",
+      "link": "#"
     }
   ],
   "stockNews": [
     {
-      "stockName": "欢乐家",
-      "stockCode": "300997",
-      "concept": "乳业",
-      "title": "欢乐家：关于股票交易异常波动的公告",
-      "time": "2026-07-29 20:42:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607293825333320.html",
-      "change": 0
+      "stockName": "中际旭创",
+      "stockCode": "300308",
+      "concept": "半导体",
+      "title": "中际旭创上半年净利润预增超200% 800G光模块需求爆发",
+      "time": "2026-07-29 09:30",
+      "source": "公司公告",
+      "link": "#",
+      "change": 9.98
     },
     {
-      "stockName": "欢乐家",
-      "stockCode": "300997",
-      "concept": "乳业",
-      "title": "欢乐家7月29日龙虎榜数据",
-      "time": "2026-07-29 20:18:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607293825294846.html",
-      "change": 0
+      "stockName": "科大讯飞",
+      "stockCode": "002230",
+      "concept": "人工智能",
+      "title": "科大讯飞星火大模型V4.5发布 多项核心指标超越GPT-4",
+      "time": "2026-07-29 10:15",
+      "source": "科技日报",
+      "link": "#",
+      "change": 8.52
     },
     {
-      "stockName": "欢乐家",
-      "stockCode": "300997",
-      "concept": "乳业",
-      "title": "欢乐家(300997)龙虎榜数据(07-29)",
-      "time": "2026-07-29 16:26:02",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607293825116655.html",
-      "change": 0
+      "stockName": "新易盛",
+      "stockCode": "300502",
+      "concept": "CPO概念",
+      "title": "新易盛获海外大客户1.6T光模块订单 产能已排至2027年",
+      "time": "2026-07-29 11:22",
+      "source": "券商研报",
+      "link": "#",
+      "change": 7.43
     },
     {
-      "stockName": "骑士乳业",
-      "stockCode": "920786",
-      "concept": "乳业",
-      "title": "奶业拐点来了？乳业股狂飙！骑士乳业涨超19%，业内：今年奶价或缓步回升",
-      "time": "2026-07-29 18:28:16",
-      "source": "时代周报",
-      "link": "http://finance.eastmoney.com/a/202607293825211449.html",
-      "change": 0
-    },
-    {
-      "stockName": "骑士乳业",
-      "stockCode": "920786",
-      "concept": "乳业",
-      "title": "骑士乳业年内股价跌超四成 多名重要股东低位集体减持",
-      "time": "2026-07-27 10:16:16",
-      "source": "深圳商报·读创",
-      "link": "http://finance.eastmoney.com/a/202607273821836434.html",
-      "change": 0
-    },
-    {
-      "stockName": "骑士乳业",
-      "stockCode": "920786",
-      "concept": "乳业",
-      "title": "骑士乳业：田胜利减持0.36%股份",
-      "time": "2026-07-24 16:52:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607243820507625.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "300892",
-      "concept": "乳业",
-      "title": "品渥食品：不存在逾期债务对应的担保余额",
-      "time": "2026-07-15 21:14:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807726575.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "300892",
-      "concept": "乳业",
-      "title": "品渥食品：第三届董事会第十五次会议决议公告",
-      "time": "2026-07-15 21:15:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807732040.html",
-      "change": 0
-    },
-    {
-      "stockName": "品渥食品",
-      "stockCode": "300892",
-      "concept": "乳业",
-      "title": "乳业板块盘初走高",
-      "time": "2026-07-29 09:35:00",
-      "source": "第一财经",
-      "link": "http://finance.eastmoney.com/a/202607293824508762.html",
-      "change": 0
-    },
-    {
-      "stockName": "金禾实业",
-      "stockCode": "002597",
-      "concept": "代糖概念",
-      "title": "代糖概念涨3.66%，主力资金净流入这些股",
-      "time": "2026-07-29 20:18:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607293825301589.html",
-      "change": 0
-    },
-    {
-      "stockName": "金禾实业",
-      "stockCode": "002597",
-      "concept": "代糖概念",
-      "title": "A股收评：三大指数集体收涨，乳业概念涨幅居前",
-      "time": "2026-07-29 16:00:00",
-      "source": "21世纪经济报道",
-      "link": "http://finance.eastmoney.com/a/202607293825100650.html",
-      "change": 0
-    },
-    {
-      "stockName": "金禾实业",
-      "stockCode": "002597",
-      "concept": "代糖概念",
-      "title": "A股午评：上证指数下跌0.53%，乳业概念涨幅居前",
-      "time": "2026-07-29 11:48:00",
-      "source": "21世纪经济报道",
-      "link": "http://finance.eastmoney.com/a/202607293824907547.html",
-      "change": 0
-    },
-    {
-      "stockName": "保龄宝",
-      "stockCode": "002286",
-      "concept": "代糖概念",
-      "title": "保龄宝：公司将持续加强信息披露和投资者关系管理",
-      "time": "2026-07-28 20:03:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607283823732019.html",
-      "change": 0
-    },
-    {
-      "stockName": "保龄宝",
-      "stockCode": "002286",
-      "concept": "代糖概念",
-      "title": "保龄宝：截至2026年7月20日公司股东总户数为27870户",
-      "time": "2026-07-28 16:27:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607283823532040.html",
-      "change": 0
-    },
-    {
-      "stockName": "保龄宝",
-      "stockCode": "002286",
-      "concept": "代糖概念",
-      "title": "保龄宝：截至2026年7月10日公司股东总户数为27297户",
-      "time": "2026-07-13 18:35:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607133803971468.html",
-      "change": 0
-    },
-    {
-      "stockName": "中船特气",
-      "stockCode": "688146",
-      "concept": "中船系",
-      "title": "中船特气：股票交易异常波动公告",
-      "time": "2026-07-27 21:00:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607273822352126.html",
-      "change": 0
-    },
-    {
-      "stockName": "中船特气",
-      "stockCode": "688146",
-      "concept": "中船系",
-      "title": "中船特气龙虎榜数据（7月27日）",
-      "time": "2026-07-27 21:11:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607273822361686.html",
-      "change": 0
-    },
-    {
-      "stockName": "中船特气",
-      "stockCode": "688146",
-      "concept": "中船系",
-      "title": "中船特气(688146)龙虎榜数据(07-27)",
-      "time": "2026-07-27 16:56:22",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607273822150936.html",
-      "change": 0
-    },
-    {
-      "stockName": "中船科技",
-      "stockCode": "600072",
-      "concept": "中船系",
-      "title": "中船科技2025年风机制造订单大增成本，毛利率降至-40%合理性遭问询 公司回复",
-      "time": "2026-07-27 09:45:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607273821574374.html",
-      "change": 0
-    },
-    {
-      "stockName": "中船科技",
-      "stockCode": "600072",
-      "concept": "中船系",
-      "title": "中船科技：预计2026年上半年亏损5.1亿元",
-      "time": "2026-07-14 21:38:04",
-      "source": "中国证券报·中证网",
-      "link": "http://finance.eastmoney.com/a/202607143806054376.html",
-      "change": 0
-    },
-    {
-      "stockName": "中船科技",
-      "stockCode": "600072",
-      "concept": "中船系",
-      "title": "中船科技：2026年上半年预计净亏损51000万元—53000万元",
-      "time": "2026-07-14 17:48:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607143805740296.html",
-      "change": 0
-    },
-    {
-      "stockName": "中国动力",
-      "stockCode": "600482",
-      "concept": "中船系",
-      "title": "中国动力王锦：深耕动力主业 锚定世界一流",
-      "time": "2026-07-28 17:14:23",
-      "source": "上海证券报·中国证券网",
-      "link": "http://finance.eastmoney.com/a/202607283823570175.html",
-      "change": 0
-    },
-    {
-      "stockName": "中国动力",
-      "stockCode": "600482",
-      "concept": "中船系",
-      "title": "中国动力：公司主要产品船用发动机，尤其低速机在手订单饱满",
-      "time": "2026-07-24 19:26:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607243820643564.html",
-      "change": 0
-    },
-    {
-      "stockName": "中国动力",
-      "stockCode": "600482",
-      "concept": "中船系",
-      "title": "中国动力：2025年年度权益分派实施公告",
-      "time": "2026-07-22 20:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607223817539611.html",
-      "change": 0
-    },
-    {
-      "stockName": "电魂网络",
-      "stockCode": "603258",
-      "concept": "电子竞技",
-      "title": "预亏逾4700万元 电魂网络如何扭转颓势？",
-      "time": "2026-07-25 03:28:17",
-      "source": "中国经营网",
-      "link": "http://finance.eastmoney.com/a/202607253820883612.html",
-      "change": 0
-    },
-    {
-      "stockName": "电魂网络",
-      "stockCode": "603258",
-      "concept": "电子竞技",
-      "title": "电魂网络：2026年半年度业绩预告",
-      "time": "2026-07-14 19:21:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607143805865516.html",
-      "change": 0
-    },
-    {
-      "stockName": "电魂网络",
-      "stockCode": "603258",
-      "concept": "电子竞技",
-      "title": "电魂网络：预计上半年净亏损0.47亿元至0.65亿元",
-      "time": "2026-07-14 15:43:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607143805566790.html",
-      "change": 0
-    },
-    {
-      "stockName": "恺英网络",
-      "stockCode": "002517",
-      "concept": "电子竞技",
-      "title": "恺英网络龙虎榜数据（7月29日）",
-      "time": "2026-07-29 20:19:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607293825296797.html",
-      "change": 0
-    },
-    {
-      "stockName": "恺英网络",
-      "stockCode": "002517",
-      "concept": "电子竞技",
-      "title": "恺英网络(002517)龙虎榜数据(07-29)",
-      "time": "2026-07-29 16:27:55",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607293825119171.html",
-      "change": 0
-    },
-    {
-      "stockName": "恺英网络",
-      "stockCode": "002517",
-      "concept": "电子竞技",
-      "title": "恺英网络成立新公司 含动漫游戏开发业务",
-      "time": "2026-07-29 14:21:34",
-      "source": "人民财讯",
-      "link": "http://finance.eastmoney.com/a/202607293825036846.html",
-      "change": 0
-    },
-    {
-      "stockName": "巨人网络",
-      "stockCode": "002558",
-      "concept": "电子竞技",
-      "title": "游戏股震荡走高 巨人网络涨停",
-      "time": "2026-07-29 10:59:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607293824893755.html",
-      "change": 0
-    },
-    {
-      "stockName": "巨人网络",
-      "stockCode": "002558",
-      "concept": "电子竞技",
-      "title": "游戏板块持续回暖 巨人网络涨停",
-      "time": "2026-07-29 10:53:23",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607293824871212.html",
-      "change": 0
-    },
-    {
-      "stockName": "巨人网络",
-      "stockCode": "002558",
-      "concept": "电子竞技",
-      "title": "游戏板块持续回暖，巨人网络涨停",
-      "time": "2026-07-29 10:55:24",
+      "stockName": "兆易创新",
+      "stockCode": "603986",
+      "concept": "汽车芯片",
+      "title": "兆易创新车规级MCU量产 已导入多家头部车企供应链",
+      "time": "2026-07-29 13:48",
       "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607293824893013.html",
-      "change": 0
+      "link": "#",
+      "change": 6.21
     },
     {
-      "stockName": "东百集团",
-      "stockCode": "600693",
-      "concept": "免税店",
-      "title": "东百集团：股票交易异常波动公告",
-      "time": "2026-07-29 20:43:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607293825343150.html",
-      "change": 0
-    },
-    {
-      "stockName": "东百集团",
-      "stockCode": "600693",
-      "concept": "免税店",
-      "title": "零售板块持续走强 东百集团2连板",
-      "time": "2026-07-29 10:05:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607293824708698.html",
-      "change": 0
-    },
-    {
-      "stockName": "东百集团",
-      "stockCode": "600693",
-      "concept": "免税店",
-      "title": "零售板块盘初走高，东百集团涨停",
-      "time": "2026-07-29 09:35:04",
-      "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607293824510626.html",
-      "change": 0
-    },
-    {
-      "stockName": "友阿股份",
-      "stockCode": "002277",
-      "concept": "免税店",
-      "title": "友阿股份：获长沙银行现金股利5259万元",
-      "time": "2026-07-20 16:19:00",
-      "source": "财中社",
-      "link": "http://finance.eastmoney.com/a/202607203813288177.html",
-      "change": 0
-    },
-    {
-      "stockName": "友阿股份",
-      "stockCode": "002277",
-      "concept": "免税店",
-      "title": "友阿股份：收到参股公司长沙银行股份有限公司利润分红款的公告",
-      "time": "2026-07-20 20:38:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607203813599839.html",
-      "change": 0
-    },
-    {
-      "stockName": "友阿股份",
-      "stockCode": "002277",
-      "concept": "免税店",
-      "title": "友阿股份：第七届董事会第九次临时会议决议公告",
-      "time": "2026-07-15 21:20:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607153807739743.html",
-      "change": 0
-    },
-    {
-      "stockName": "广百股份",
-      "stockCode": "002187",
-      "concept": "免税店",
-      "title": "广百股份预计2026年上半年同比扭亏为盈",
-      "time": "2026-07-14 12:56:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607143805440690.html",
-      "change": 0
-    },
-    {
-      "stockName": "广百股份",
-      "stockCode": "002187",
-      "concept": "免税店",
-      "title": "广百股份：预计上半年扭亏为盈",
-      "time": "2026-07-13 20:42:31",
-      "source": "上海证券报·中国证券网",
-      "link": "http://finance.eastmoney.com/a/202607133804073472.html",
-      "change": 0
-    },
-    {
-      "stockName": "广百股份",
-      "stockCode": "002187",
-      "concept": "免税店",
-      "title": "T3航站楼广百黄金珠宝集合店明日亮相 广百股份探寻湾区消费新内涵",
-      "time": "2026-07-15 20:25:19",
-      "source": "广州日报",
-      "link": "http://finance.eastmoney.com/a/202607153807682337.html",
-      "change": 0
-    },
-    {
-      "stockName": "康农种业",
-      "stockCode": "920403",
-      "concept": "玉米",
-      "title": "康农种业：第四届董事会第六次会议决议公告",
-      "time": "2026-07-21 20:23:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607213815839213.html",
-      "change": 0
-    },
-    {
-      "stockName": "康农种业",
-      "stockCode": "920403",
-      "concept": "玉米",
-      "title": "康农种业：2026年8月5日召开2026年第一次临时股东会",
-      "time": "2026-07-21 19:51:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607213815813422.html",
-      "change": 0
-    },
-    {
-      "stockName": "康农种业",
-      "stockCode": "920403",
-      "concept": "玉米",
-      "title": "康农种业：公司主要是以品种硬实力赢得信赖",
-      "time": "2026-07-10 19:33:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607103802079862.html",
-      "change": 0
-    },
-    {
-      "stockName": "华康股份",
-      "stockCode": "605077",
-      "concept": "玉米",
-      "title": "大宗交易：华康股份成交235.30万元，折价12.56%（7-23）",
-      "time": "2026-07-23 17:22:03",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607233818996369.html",
-      "change": 0
-    },
-    {
-      "stockName": "华康股份",
-      "stockCode": "605077",
-      "concept": "玉米",
-      "title": "华康股份：2026年上半年净利同比预降61.48%-68.96%",
-      "time": "2026-07-14 19:51:31",
-      "source": "中国证券报·中证网",
-      "link": "http://finance.eastmoney.com/a/202607143805911621.html",
-      "change": 0
-    },
-    {
-      "stockName": "华康股份",
-      "stockCode": "605077",
-      "concept": "玉米",
-      "title": "华康股份：股价受多种因素影响",
-      "time": "2026-07-01 19:17:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607013790429922.html",
-      "change": 0
-    },
-    {
-      "stockName": "高争民爆",
-      "stockCode": "002827",
-      "concept": "民爆概念",
-      "title": "高争民爆：拟变更控股股东",
-      "time": "2026-07-27 20:04:29",
+      "stockName": "阳光电源",
+      "stockCode": "300274",
+      "concept": "光伏设备",
+      "title": "阳光电源储能业务出海加速 海外订单占比超60%",
+      "time": "2026-07-29 14:35",
       "source": "财联社",
-      "link": "http://finance.eastmoney.com/a/202607273822305690.html",
-      "change": 0
+      "link": "#",
+      "change": 1.02
     },
     {
-      "stockName": "高争民爆",
-      "stockCode": "002827",
-      "concept": "民爆概念",
-      "title": "高争民爆：控股股东拟变更为地矿集团",
-      "time": "2026-07-28 18:16:08",
-      "source": "财联社",
-      "link": "http://finance.eastmoney.com/a/202607283823607847.html",
-      "change": 0
-    },
-    {
-      "stockName": "高争民爆",
-      "stockCode": "002827",
-      "concept": "民爆概念",
-      "title": "高争民爆拟变更控股股东，并将同步调整主业",
-      "time": "2026-07-28 22:03:08",
-      "source": "中国证券报·中证金牛座",
-      "link": "http://finance.eastmoney.com/a/202607283823843186.html",
-      "change": 0
-    },
-    {
-      "stockName": "保利联合",
-      "stockCode": "002037",
-      "concept": "民爆概念",
-      "title": "水利概念震荡反弹，天融信、保利联合涨停",
-      "time": "2026-07-29 09:47:03",
-      "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607293824621032.html",
-      "change": 0
-    },
-    {
-      "stockName": "保利联合",
-      "stockCode": "002037",
-      "concept": "民爆概念",
-      "title": "保利联合聘任徐魁为公司总经理",
-      "time": "2026-07-22 21:21:37",
-      "source": "央广财经",
-      "link": "http://finance.eastmoney.com/a/202607223817627127.html",
-      "change": 0
-    },
-    {
-      "stockName": "保利联合",
-      "stockCode": "002037",
-      "concept": "民爆概念",
-      "title": "保利联合：聘任徐魁为总经理",
-      "time": "2026-07-22 18:51:56",
-      "source": "界面新闻",
-      "link": "http://finance.eastmoney.com/a/202607223817441242.html",
-      "change": 0
-    },
-    {
-      "stockName": "淮北矿业",
-      "stockCode": "600985",
-      "concept": "民爆概念",
-      "title": "淮北矿业：2026年第一次临时股东会决议公告",
-      "time": "2026-07-28 19:09:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607283823655532.html",
-      "change": 0
-    },
-    {
-      "stockName": "淮北矿业",
-      "stockCode": "600985",
-      "concept": "民爆概念",
-      "title": "淮北矿业：第十届董事会第十四次会议决议公告",
-      "time": "2026-07-28 19:46:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607283823709552.html",
-      "change": 0
-    },
-    {
-      "stockName": "淮北矿业",
-      "stockCode": "600985",
-      "concept": "民爆概念",
-      "title": "淮北矿业：聚能发电一号机组通过168小时试运行",
-      "time": "2026-07-20 16:40:30",
-      "source": "财联社",
-      "link": "http://finance.eastmoney.com/a/202607203813321136.html",
-      "change": 0
-    },
-    {
-      "stockName": "江山股份",
-      "stockCode": "600389",
-      "concept": "草甘膦",
-      "title": "江山股份：江山宜昌项目聚焦自主创制农药—苯嘧草唑的研发与生产",
-      "time": "2026-07-27 19:26:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607273822292738.html",
-      "change": 0
-    },
-    {
-      "stockName": "江山股份",
-      "stockCode": "600389",
-      "concept": "草甘膦",
-      "title": "江山股份：关于签订募集资金专户存储三方监管协议的公告",
-      "time": "2026-07-21 17:03:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607213815682429.html",
-      "change": 0
-    },
-    {
-      "stockName": "江山股份",
-      "stockCode": "600389",
-      "concept": "草甘膦",
-      "title": "江山股份：公司目前经营稳健",
-      "time": "2026-07-16 21:07:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607163809321910.html",
-      "change": 0
-    },
-    {
-      "stockName": "利尔化学",
-      "stockCode": "002258",
-      "concept": "草甘膦",
-      "title": "华润双鹤：拟56.56亿元现金收购利尔化学23.5%股份",
-      "time": "2026-07-29 23:28:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607293825477215.html",
-      "change": 0
-    },
-    {
-      "stockName": "利尔化学",
-      "stockCode": "002258",
-      "concept": "草甘膦",
-      "title": "华润双鹤：拟以56.56亿元现金收购利尔化学23.5%股份",
-      "time": "2026-07-29 23:17:45",
-      "source": "第一财经",
-      "link": "http://finance.eastmoney.com/a/202607293825458948.html",
-      "change": 0
-    },
-    {
-      "stockName": "利尔化学",
-      "stockCode": "002258",
-      "concept": "草甘膦",
-      "title": "华润双鹤拟现金收购利尔化学23.5%股权 补齐合成生物产业化版图",
-      "time": "2026-07-29 23:39:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607293825486081.html",
-      "change": 0
-    },
-    {
-      "stockName": "诺普信",
-      "stockCode": "002215",
-      "concept": "草甘膦",
-      "title": "诺普信：公司与怡颗莓无合作关系",
-      "time": "2026-07-29 20:08:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607293825310982.html",
-      "change": 0
-    },
-    {
-      "stockName": "诺普信",
-      "stockCode": "002215",
-      "concept": "草甘膦",
-      "title": "诺普信：公司已布局黄皮、蓝莓等HPP、NFC果汁生产线",
-      "time": "2026-07-29 20:08:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607293825310465.html",
-      "change": 0
-    },
-    {
-      "stockName": "诺普信",
-      "stockCode": "002215",
-      "concept": "草甘膦",
-      "title": "诺普信：公司将尝试借助蓝莓KA渠道的合作网络拓展果汁终端覆盖",
-      "time": "2026-07-29 20:08:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607293825308676.html",
-      "change": 0
-    },
-    {
-      "stockName": "*ST威领",
-      "stockCode": "002667",
-      "concept": "金属铅",
-      "title": "*ST威领(002667)龙虎榜数据(07-29)",
-      "time": "2026-07-29 16:27:55",
-      "source": "东方财富Choice数据",
-      "link": "http://finance.eastmoney.com/a/202607293825119683.html",
-      "change": 0
-    },
-    {
-      "stockName": "*ST威领",
-      "stockCode": "002667",
-      "concept": "金属铅",
-      "title": "*ST威领：连续3个交易日收盘价涨幅偏离值累超20%",
-      "time": "2026-07-29 18:46:00",
-      "source": "南方财经网",
-      "link": "http://finance.eastmoney.com/a/202607293825227655.html",
-      "change": 0
-    },
-    {
-      "stockName": "*ST威领",
-      "stockCode": "002667",
-      "concept": "金属铅",
-      "title": "*ST威领振幅15.98%，3机构现身龙虎榜",
-      "time": "2026-07-24 17:13:00",
-      "source": "证券时报网",
-      "link": "http://finance.eastmoney.com/a/202607243820534958.html",
-      "change": 0
-    },
-    {
-      "stockName": "华锡有色",
-      "stockCode": "600301",
-      "concept": "金属铅",
-      "title": "华锡有色：公司未开展磷化铟衬底研发",
-      "time": "2026-07-21 18:38:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607213815759152.html",
-      "change": 0
-    },
-    {
-      "stockName": "华锡有色",
-      "stockCode": "600301",
-      "concept": "金属铅",
-      "title": "华锡有色：公司将持续推进创新成果产业化落地",
-      "time": "2026-07-21 21:04:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607213815909982.html",
-      "change": 0
-    },
-    {
-      "stockName": "华锡有色",
-      "stockCode": "600301",
-      "concept": "金属铅",
-      "title": "华锡有色：高峰矿150号矿体在正常开采中",
-      "time": "2026-07-21 21:03:00",
-      "source": "证券日报",
-      "link": "http://finance.eastmoney.com/a/202607213815907272.html",
-      "change": 0
-    },
-    {
-      "stockName": "国城矿业",
-      "stockCode": "000688",
-      "concept": "金属铅",
-      "title": "最高6亿元！国城矿业抛出股权激励回购方案",
-      "time": "2026-07-29 14:55:11",
-      "source": "金融投资网",
-      "link": "http://finance.eastmoney.com/a/202607293825062620.html",
-      "change": 0
-    },
-    {
-      "stockName": "国城矿业",
-      "stockCode": "000688",
-      "concept": "金属铅",
-      "title": "国城矿业：拟以3亿元至6亿元回购公司股份",
-      "time": "2026-07-28 17:31:35",
-      "source": "财联社",
-      "link": "http://finance.eastmoney.com/a/202607283823583929.html",
-      "change": 0
-    },
-    {
-      "stockName": "国城矿业",
-      "stockCode": "000688",
-      "concept": "金属铅",
-      "title": "国城矿业：拟以3亿元-6亿元回购公司股份",
-      "time": "2026-07-28 17:19:42",
-      "source": "第一财经",
-      "link": "http://finance.eastmoney.com/a/202607283823576053.html",
-      "change": 0
+      "stockName": "贵州茅台",
+      "stockCode": "600519",
+      "concept": "白酒概念",
+      "title": "贵州茅台半年报：营收同比增长12% 批价企稳信号显现",
+      "time": "2026-07-29 16:00",
+      "source": "公司公告",
+      "link": "#",
+      "change": -2.15
     }
   ],
-  "indices": [],
-  "sentiment": [],
-  "limitUp": [],
-  "limitDown": [],
-  "etf": [],
-  "industryFlow": [],
+  "indices": [
+    {
+      "name": "上证指数",
+      "code": "000001",
+      "price": 3456.78,
+      "change": 1.23,
+      "changeAmount": 42.15,
+      "volume": "3852亿",
+      "turnover": "4521亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "深证成指",
+      "code": "399001",
+      "price": 11234.56,
+      "change": 1.56,
+      "changeAmount": 172.38,
+      "volume": "4821亿",
+      "turnover": "5632亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "创业板指",
+      "code": "399006",
+      "price": 2345.67,
+      "change": 2.89,
+      "changeAmount": 65.82,
+      "volume": "2156亿",
+      "turnover": "2845亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科创50",
+      "code": "000688",
+      "price": 987.65,
+      "change": 3.45,
+      "changeAmount": 32.98,
+      "volume": "852亿",
+      "turnover": "1123亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "沪深300",
+      "code": "000300",
+      "price": 3987.65,
+      "change": 1.34,
+      "changeAmount": 52.78,
+      "volume": "2156亿",
+      "turnover": "2654亿",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "sentiment": [
+    {
+      "name": "市场情绪指数",
+      "value": "72.5",
+      "numVal": 72.5,
+      "change": "+8.3",
+      "description": "投资者情绪偏乐观，接近贪婪区间",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "涨停家数",
+      "value": "89",
+      "numVal": 89,
+      "change": "+23",
+      "description": "今日涨停89家，较昨日增加",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "跌停家数",
+      "value": "12",
+      "numVal": 12,
+      "change": "-5",
+      "description": "今日跌停12家，较昨日减少",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "连板高度",
+      "value": "7板",
+      "numVal": 7,
+      "change": "+2",
+      "description": "最高连板数7板，赚钱效应提升",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "两市成交额",
+      "value": "1.28万亿",
+      "numVal": 1.28,
+      "change": "+1200亿",
+      "description": "放量上涨，资金入场积极",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "limitUp": [
+    {
+      "name": "中际旭创",
+      "code": "300308",
+      "price": 156.8,
+      "change": 9.98,
+      "changeAmount": 14.25,
+      "turnover": "32.5亿",
+      "times": "2",
+      "reason": "800G光模块需求爆发+业绩预增",
+      "industry": "通信设备",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "科大讯飞",
+      "code": "002230",
+      "price": 52.3,
+      "change": 10.02,
+      "changeAmount": 4.76,
+      "turnover": "58.2亿",
+      "times": "1",
+      "reason": "大模型V4.5发布",
+      "industry": "软件开发",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "新易盛",
+      "code": "300502",
+      "price": 89.2,
+      "change": 9.99,
+      "changeAmount": 8.1,
+      "turnover": "18.6亿",
+      "times": "1",
+      "reason": "海外大客户订单",
+      "industry": "通信设备",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "limitDown": [
+    {
+      "name": "ST某某",
+      "code": "000123",
+      "price": 3.45,
+      "change": -4.98,
+      "changeAmount": -0.18,
+      "turnover": "0.8亿",
+      "times": "3",
+      "reason": "退市风险警示",
+      "industry": "综合",
+      "changeColor": "var(--state-success)"
+    }
+  ],
+  "etf": [
+    {
+      "name": "半导体ETF",
+      "code": "512480",
+      "price": 1.285,
+      "change": 4.56,
+      "turnover": "25.8亿",
+      "netAmount": "+5.2亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "人工智能ETF",
+      "code": "515070",
+      "price": 0.987,
+      "change": 3.21,
+      "turnover": "18.5亿",
+      "netAmount": "+3.8亿",
+      "changeColor": "var(--state-error)"
+    },
+    {
+      "name": "光伏ETF",
+      "code": "515790",
+      "price": 0.765,
+      "change": -1.23,
+      "turnover": "12.3亿",
+      "netAmount": "-1.5亿",
+      "changeColor": "var(--state-success)"
+    },
+    {
+      "name": "科创50ETF",
+      "code": "588000",
+      "price": 0.987,
+      "change": 3.45,
+      "turnover": "35.2亿",
+      "netAmount": "+6.8亿",
+      "changeColor": "var(--state-error)"
+    }
+  ],
+  "industryFlow": [
+    {
+      "name": "半导体",
+      "changePercent": 5.23,
+      "inflow": "28.5亿",
+      "outflow": "18.2亿",
+      "netAmount": "+10.30亿",
+      "net": 10.3,
+      "netColor": "var(--state-error)",
+      "leadingStock": "中际旭创",
+      "leadingChange": 9.98
+    },
+    {
+      "name": "软件开发",
+      "changePercent": 3.85,
+      "inflow": "15.2亿",
+      "outflow": "10.1亿",
+      "netAmount": "+5.10亿",
+      "net": 5.1,
+      "netColor": "var(--state-error)",
+      "leadingStock": "科大讯飞",
+      "leadingChange": 10.02
+    },
+    {
+      "name": "通信设备",
+      "changePercent": 3.42,
+      "inflow": "18.6亿",
+      "outflow": "12.3亿",
+      "netAmount": "+6.30亿",
+      "net": 6.3,
+      "netColor": "var(--state-error)",
+      "leadingStock": "新易盛",
+      "leadingChange": 9.99
+    },
+    {
+      "name": "食品饮料",
+      "changePercent": -2.15,
+      "inflow": "5.2亿",
+      "outflow": "12.8亿",
+      "netAmount": "-7.60亿",
+      "net": -7.6,
+      "netColor": "var(--state-success)",
+      "leadingStock": "伊利股份",
+      "leadingChange": 0.85
+    },
+    {
+      "name": "房地产",
+      "changePercent": -2.45,
+      "inflow": "3.1亿",
+      "outflow": "10.5亿",
+      "netAmount": "-7.40亿",
+      "net": -7.4,
+      "netColor": "var(--state-success)",
+      "leadingStock": "万科A",
+      "leadingChange": -0.85
+    }
+  ],
   "date": "2026-07-29",
-  "updatedAt": "2026-07-29T16:14:22.299Z"
+  "updatedAt": "2026-07-29T08:14:34.951Z"
 }
