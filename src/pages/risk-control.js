@@ -25,8 +25,8 @@ const CHECKLIST_DEFS = [
   },
   {
     title: '单月累计亏损达到3%',
-    trigger: '本月累计亏损 / 账户总金额 >= 3%',
-    source: '本月累计盈亏 & 账户总金额'
+    trigger: '本月累计亏损 / 本金 >= 3%',
+    source: '本月累计盈亏 & 本金'
   },
   {
     title: '发生浮亏补仓',
@@ -35,7 +35,7 @@ const CHECKLIST_DEFS = [
   },
   {
     title: '单只持仓超过20%',
-    trigger: '任意单只股票持仓市值 / 账户总金额 > 20%',
+    trigger: '任意单只股票持仓市值 / 本金 > 20%',
     source: '交易记录页面 (个股持仓明细)'
   },
   {
@@ -427,7 +427,7 @@ export function createRiskControlPage(root) {
     } else {
       states[1] = 'safe'
       if (totalFund <= 0) {
-        setChecklistStatus(1, 'safe', '请先填写账户总金额')
+        setChecklistStatus(1, 'safe', '请先填写本金')
       } else {
         setChecklistStatus(1, 'safe', '本月无亏损或未录入盈亏')
       }
@@ -481,7 +481,7 @@ export function createRiskControlPage(root) {
       setChecklistStatus(3, 'pending', '暂无持仓数据')
     } else {
       states[3] = 'pending'
-      setChecklistStatus(3, 'pending', '请先填写账户总金额')
+      setChecklistStatus(3, 'pending', '请先填写本金')
     }
 
     updateCircuitBanner(states)

@@ -5,7 +5,7 @@ import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsSet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, emit, DATA_EVENTS } from '../utils/events.js'
 
-// 账户总金额 key（从 risk-control 复用）
+// 本金 key（从 risk-control 复用）
 const RC_FUND_KEY = STORAGE_KEYS.riskCtrl + 'total_fund'
 const RC_COMPLIANT_KEY = STORAGE_KEYS.riskCtrl + 'compliant_count'
 
@@ -83,13 +83,13 @@ export function createOverviewPage(root) {
     const stockValue = activeHoldings.reduce((s, h) => s + (parseFloat(h.quantity) || 0) * (parseFloat(h.currentPrice) || 0), 0)
     // 总持仓成本
     const totalHoldingCost = activeHoldings.reduce((s, h) => s + (parseFloat(h.buyPrice) || 0) * (parseFloat(h.quantity) || 0), 0)
-    // 可用资金 = 账户总金额 - 总持仓成本
+    // 剩余可用金额 = 本金 - 总持仓成本
     const available = totalFund - totalHoldingCost
-    // 当前总资产 = 股票市值 + 可用资金
+    // 当前总资产 = 股票市值 + 剩余可用金额
     const totalAsset = stockValue + available
-    // 累计盈亏 = 当前总资产 - 账户总金额
+    // 累计盈亏 = 当前总资产 - 本金
     const totalPnl = totalAsset - totalFund
-    // 盈亏占比 = 累计盈亏 / 账户总金额
+    // 盈亏占比 = 累计盈亏 / 本金
     const pnlPct = totalFund > 0 ? (totalPnl / totalFund * 100) : 0
 
     // 持仓浮动盈亏
@@ -139,14 +139,14 @@ export function createOverviewPage(root) {
           <h3 style="font-size:var(--text-h3); font-weight:var(--weight-semibold); color:var(--ink); margin:0;">关键指标</h3>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          ${kpiCard('账户总金额', 'landmark', fmt(m.totalFund) + '元', 'var(--ink)', true, '可编辑')}
-          ${kpiCard('当前总资产', 'coins', hasData ? fmt(m.totalAsset) + '元' : '--', 'var(--ink)', false, '市值 + 可用')}
+          ${kpiCard('本金', 'landmark', fmt(m.totalFund) + '元', 'var(--ink)', true, '可编辑')}
+          ${kpiCard('当前总资产', 'coins', hasData ? fmt(m.totalAsset) + '元' : '--', 'var(--ink)', false, '市值 + 剩余可用')}
           ${kpiCard('股票市值', 'trending-up', hasData ? fmt(m.stockValue) + '元' : '--', 'var(--ink)', false, 'Σ持仓数×现价')}
-          ${kpiCard('可用资金', 'wallet', hasData ? fmt(m.available) + '元' : '--', 'var(--ink)', false, '账户总金额 - 持仓成本')}
-          ${kpiCard('累积盈亏', 'trending-up', hasData ? fmtSigned(m.totalPnl) + '元' : '--', pnlColor(m.totalPnl), false, '总资产 - 账户总金额')}
+          ${kpiCard('剩余可用金额', 'wallet', hasData ? fmt(m.available) + '元' : '--', 'var(--ink)', false, '本金 - 持仓成本')}
+          ${kpiCard('累积盈亏', 'trending-up', hasData ? fmtSigned(m.totalPnl) + '元' : '--', pnlColor(m.totalPnl), false, '总资产 - 本金')}
           ${kpiCard('本月累计盈亏', 'arrow-down-up', hasData ? fmtSigned(m.monthlyPnl) + '元' : '--', pnlColor(m.monthlyPnl), false, '持仓浮动盈亏合计')}
           ${kpiCard('今日盈亏', 'zap', hasData ? fmtSigned(m.todayPnl) + '元' : '--', pnlColor(m.todayPnl), false, 'Σ(现价-昨收)×持仓')}
-          ${kpiCard('盈亏占比', 'percent', hasData ? fmtSigned(m.pnlPct) + '%' : '--', pnlColor(m.pnlPct), false, '累计盈亏/账户总金额')}
+          ${kpiCard('盈亏占比', 'percent', hasData ? fmtSigned(m.pnlPct) + '%' : '--', pnlColor(m.pnlPct), false, '累计盈亏/本金')}
           ${positionPctCard(m.positionPct)}
         </div>
       </section>
@@ -264,7 +264,7 @@ export function createOverviewPage(root) {
       </section>
     `
 
-    // 填入账户总金额编辑值
+    // 填入本金编辑值
     const editEl = root.querySelector('#kpi-edit-totalFund')
     if (editEl) editEl.value = state.totalFund
 
