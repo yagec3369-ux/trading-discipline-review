@@ -10,7 +10,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 45,
       "leadingStock": "中芯国际",
-      "leadingCode": "688981",
+      "leadingCode": "",
       "leadingChange": 5.2,
       "leadingPrice": 78.5
     },
@@ -24,7 +24,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 68,
       "leadingStock": "科大讯飞",
-      "leadingCode": "002230",
+      "leadingCode": "",
       "leadingChange": 4.15,
       "leadingPrice": 52.3
     },
@@ -38,7 +38,7 @@
       "netColor": "var(--state-success)",
       "stockCount": 52,
       "leadingStock": "宁德时代",
-      "leadingCode": "300750",
+      "leadingCode": "",
       "leadingChange": -1.2,
       "leadingPrice": 198.5
     },
@@ -52,7 +52,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 85,
       "leadingStock": "恒瑞医药",
-      "leadingCode": "600276",
+      "leadingCode": "",
       "leadingChange": 2.1,
       "leadingPrice": 45.8
     },
@@ -66,7 +66,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 38,
       "leadingStock": "隆基绿能",
-      "leadingCode": "601012",
+      "leadingCode": "",
       "leadingChange": 3.4,
       "leadingPrice": 22.5
     }
@@ -391,5 +391,5 @@
     }
   ],
   "date": "2026-07-29",
-  "updatedAt": "2026-07-29T01:37:56.283Z"
+  "updatedAt": "2026-07-29T02:09:56.476Z"
 }
