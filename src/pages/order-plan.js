@@ -2,8 +2,12 @@ import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, off, notifyDataChange, DATA_EVENTS } from '../utils/events.js'
+import { fetchStockQuotes } from '../utils/stock-quote.js'
 
 const R_UNIT = 1000
+
+// 计划股票实时行情缓存：{ code: { price, changePct, updatedAt } }
+let _planQuotes = {}
 
 // 同步更新与计划关联的交易记录和持仓
 // 支持通过 fromPlanId 关联，也支持通过股票代码+类型匹配旧数据
@@ -224,6 +228,51 @@ export function createOrderPlanPage(root) {
     `
     refreshIcons()
     bindEvents()
+    // 异步刷新行情，不阻塞首次渲染
+    scheduleQuoteRefresh()
+  }
+
+  let _quoteRefreshTimer = null
+  let _quoteRefreshing = false
+
+  function scheduleQuoteRefresh(delay = 200) {
+    if (_quoteRefreshTimer) clearTimeout(_quoteRefreshTimer)
+    _quoteRefreshTimer = setTimeout(() => {
+      _quoteRefreshTimer = null
+      refreshPlanQuotes()
+    }, delay)
+  }
+
+  async function refreshPlanQuotes() {
+    if (_quoteRefreshing) return
+    const codes = plans
+      .filter((p) => p.code)
+      .map((p) => p.code)
+    if (codes.length === 0) return
+    _quoteRefreshing = true
+    try {
+      const quotes = await fetchStockQuotes(codes)
+      let changed = false
+      for (const code of codes) {
+        if (quotes[code]) {
+          const prev = _planQuotes[code]
+          const next = {
+            price: quotes[code].price,
+            changePct: quotes[code].changePct,
+            updatedAt: Date.now()
+          }
+          if (!prev || prev.price !== next.price || prev.changePct !== next.changePct) {
+            _planQuotes[code] = next
+            changed = true
+          }
+        }
+      }
+      if (changed) render()
+    } catch (e) {
+      console.warn('[order-plan] 行情刷新失败:', e && e.message)
+    } finally {
+      _quoteRefreshing = false
+    }
   }
 
   function planCardHTML(p) {
@@ -237,17 +286,61 @@ export function createOrderPlanPage(root) {
 
     const nrColor = p.maxLossNR > 0 && p.expectedGainNR > 0 && p.expectedGainNR >= p.maxLossNR * 2 ? 'var(--state-success)' : p.maxLossNR > 0 ? 'var(--state-warning)' : 'var(--ink-3)'
 
+    // 当前价（优先取实时行情，无则回退到当日收盘价/买入价）
+    const quote = _planQuotes[p.code]
+    const currentPrice = quote ? quote.price : (p.currentPrice || p.dailyClose || '--')
+    const changePct = quote ? quote.changePct : null
+    const priceColor = changePct == null
+      ? 'var(--ink)'
+      : changePct > 0
+        ? 'var(--price-up)'
+        : changePct < 0
+          ? 'var(--price-down)'
+          : 'var(--ink)'
+    const currentPriceText = currentPrice && currentPrice !== '--'
+      ? Number(currentPrice).toFixed(2)
+      : '--'
+    const changePctText = changePct == null
+      ? ''
+      : (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%'
+
+    // 计划买入价/卖出价（展示用）
+    const buyPriceText = p.buyPrice ? Number(p.buyPrice).toFixed(2) : '--'
+    const sellPriceText = p.sellPrice ? Number(p.sellPrice).toFixed(2) : '--'
+
     return `
       <div class="plan-card" data-id="${p.id}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;">
         <div class="plan-card-header flex items-center justify-between px-4 sm:px-5 py-3" style="cursor:pointer; user-select:none; border-bottom:1px solid var(--line);">
-          <div class="flex items-center gap-3 min-w-0 flex-1">
+          <div class="flex items-center gap-3 min-w-0 flex-1 flex-wrap">
             <i class="expand-chevron" data-lucide="chevron-right" style="width:16px; height:16px; color:var(--ink-3); transition:transform 0.2s; transform:rotate(${expanded ? '90deg' : '0deg'}); flex-shrink:0;"></i>
             <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escHtml(p.name)}</span>
             <span style="font-size:var(--text-caption); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(p.code)}</span>
             <span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:${opBg}; color:${opColor}; font-weight:var(--weight-medium);">${opLabel}</span>
             ${p.logicStatus === 'valid' ? '<span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:var(--state-success-bg); color:var(--state-success); font-weight:var(--weight-medium);">逻辑有效</span>' : p.logicStatus === 'invalid' ? '<span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:var(--state-error-bg); color:var(--state-error); font-weight:var(--weight-medium);">逻辑失效</span>' : ''}
+
+            <!-- 计划买入价 / 计划卖出价 / 当前价 -->
+            <div class="flex items-center gap-3 flex-wrap" style="margin-left:auto;">
+              ${(p.operationType === 'buy' || p.operationType === 't0') ? `
+                <div class="inline-flex flex-col" style="line-height:1.1;">
+                  <span style="font-size:10px; color:var(--ink-3);">计划买入</span>
+                  <span style="font-size:var(--text-caption); color:var(--state-error); font-weight:var(--weight-semibold); font-family:var(--font-mono);">${buyPriceText}</span>
+                </div>
+              ` : ''}
+              ${(p.operationType === 'sell' || p.operationType === 't0') ? `
+                <div class="inline-flex flex-col" style="line-height:1.1;">
+                  <span style="font-size:10px; color:var(--ink-3);">计划卖出</span>
+                  <span style="font-size:var(--text-caption); color:var(--state-success); font-weight:var(--weight-semibold); font-family:var(--font-mono);">${sellPriceText}</span>
+                </div>
+              ` : ''}
+              <div class="inline-flex flex-col" style="line-height:1.1;">
+                <span style="font-size:10px; color:var(--ink-3);">当前价</span>
+                <span style="font-size:var(--text-caption); color:${priceColor}; font-weight:var(--weight-semibold); font-family:var(--font-mono);">
+                  ${currentPriceText}${changePctText ? ` <span style="font-size:10px;">${changePctText}</span>` : ''}
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-2 shrink-0" style="margin-left:8px;">
             <span style="font-size:var(--text-caption); color:${nrColor}; font-weight:var(--weight-medium);">${p.expectedGainNR || 0}R / ${p.maxLossNR || 0}R</span>
             <button class="edit-plan-btn" data-id="${p.id}" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px;" title="编辑基本信息">
               <i data-lucide="edit-3" style="width:14px; height:14px;"></i>
@@ -379,6 +472,20 @@ export function createOrderPlanPage(root) {
     const sellAmount = (parseFloat(sellPrice) || 0) * (parseInt(sellShares, 10) || 0)
     const income = isT0 ? (sellAmount - buyAmount) : null
 
+    // 当前价（实时行情优先，回退到 dailyClose）
+    const quote = _planQuotes[p.code]
+    const currentPrice = quote ? quote.price : (p.dailyClose || null)
+    const changePct = quote ? quote.changePct : null
+    const currentPriceText = currentPrice ? Number(currentPrice).toFixed(2) : '--'
+    const changePctText = changePct == null ? '' : (changePct >= 0 ? '+' : '') + changePct.toFixed(2) + '%'
+    const priceColor = changePct == null
+      ? 'var(--ink)'
+      : changePct > 0
+        ? 'var(--price-up)'
+        : changePct < 0
+          ? 'var(--price-down)'
+          : 'var(--ink)'
+
     return `
       <div class="archived-row px-4 py-3" style="background:var(--bg); border:1px solid var(--line); border-radius:var(--r-sm);">
         <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
@@ -395,19 +502,29 @@ export function createOrderPlanPage(root) {
         <div class="flex items-center gap-4 flex-wrap" style="font-size:var(--text-caption);">
           ${buyPrice ? `
             <div class="flex items-center gap-1">
-              <span style="color:var(--ink-3);">买入价</span>
+              <span style="color:var(--ink-3);">计划买入</span>
               <span style="color:var(--state-error); font-weight:var(--weight-medium); font-family:var(--font-mono);">${escHtml(buyPrice)}</span>
             </div>
+          ` : ''}
+          ${sellPrice ? `
+            <div class="flex items-center gap-1">
+              <span style="color:var(--ink-3);">计划卖出</span>
+              <span style="color:var(--state-success); font-weight:var(--weight-medium); font-family:var(--font-mono);">${escHtml(sellPrice)}</span>
+            </div>
+          ` : ''}
+          <div class="flex items-center gap-1">
+            <span style="color:var(--ink-3);">当前价</span>
+            <span style="color:${priceColor}; font-weight:var(--weight-medium); font-family:var(--font-mono);">
+              ${currentPriceText}${changePctText ? ` <span style="font-size:10px;">${changePctText}</span>` : ''}
+            </span>
+          </div>
+          ${buyShares ? `
             <div class="flex items-center gap-1">
               <span style="color:var(--ink-3);">买入量</span>
               <span style="color:var(--ink); font-family:var(--font-mono);">${escHtml(buyShares)}</span>
             </div>
           ` : ''}
-          ${sellPrice ? `
-            <div class="flex items-center gap-1">
-              <span style="color:var(--ink-3);">卖出价</span>
-              <span style="color:var(--state-success); font-weight:var(--weight-medium); font-family:var(--font-mono);">${escHtml(sellPrice)}</span>
-            </div>
+          ${sellShares ? `
             <div class="flex items-center gap-1">
               <span style="color:var(--ink-3);">卖出量</span>
               <span style="color:var(--ink); font-family:var(--font-mono);">${escHtml(sellShares)}</span>
@@ -983,11 +1100,45 @@ export function createOrderPlanPage(root) {
     historyDialogEl = null
   }
 
+  let _planChangeListener = null
+  let _tradeChangeListener = null
+  let _holdingChangeListener = null
+
   return {
-    mount() { render() },
+    mount() {
+      render()
+      _planChangeListener = () => {
+        plans = loadPlans()
+        render()
+      }
+      _tradeChangeListener = () => {
+        // 交易变更可能联动计划，重渲染并刷新行情
+        plans = loadPlans()
+        render()
+        scheduleQuoteRefresh(100)
+      }
+      _holdingChangeListener = () => {
+        // 持仓现价变化时也更新计划行的当前价（若行情请求失败可作回退）
+        plans = loadPlans()
+        render()
+      }
+      on(DATA_EVENTS.PLANS_CHANGED, _planChangeListener)
+      on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _tradeChangeListener)
+      on(DATA_EVENTS.HOLDINGS_CHANGED, _holdingChangeListener)
+    },
     unmount() {
       closeDialog()
       closeHistoryDialog()
+      if (_planChangeListener) off(DATA_EVENTS.PLANS_CHANGED, _planChangeListener)
+      if (_tradeChangeListener) off(DATA_EVENTS.TRADE_RECORDS_CHANGED, _tradeChangeListener)
+      if (_holdingChangeListener) off(DATA_EVENTS.HOLDINGS_CHANGED, _holdingChangeListener)
+      _planChangeListener = null
+      _tradeChangeListener = null
+      _holdingChangeListener = null
+      if (_quoteRefreshTimer) {
+        clearTimeout(_quoteRefreshTimer)
+        _quoteRefreshTimer = null
+      }
     }
   }
 }
