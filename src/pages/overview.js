@@ -4,6 +4,7 @@ import { refreshIcons } from '../utils/icons.js'
 import { showToast, showSaveStatus, escHtml } from '../utils/ui.js'
 import { lsGet, lsSet, lsGetJSON, lsSetJSON, STORAGE_KEYS } from '../utils/storage.js'
 import { on, emit, DATA_EVENTS } from '../utils/events.js'
+import { fetchStockQuotes } from '../utils/stock-quote.js'
 
 const PREFIX = STORAGE_KEYS.riskCtrl
 const K_DEPOSIT = PREFIX + 'total_deposit'    // 累计转入
@@ -668,8 +669,51 @@ export function createOverviewPage(root) {
     })
   }
 
+  // ── 实时行情刷新 ──────────────────────────────
+  let _quoteRefreshTimer = null
+  let _quoteRefreshing = false
+
+  async function refreshHoldingsQuotes() {
+    if (_quoteRefreshing) return
+    _quoteRefreshing = true
+    try {
+      const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
+      const codes = holdings.filter((h) => h.code).map((h) => h.code)
+      if (codes.length === 0) return
+
+      const quotes = await fetchStockQuotes(codes)
+      let updated = 0
+      const now = Date.now()
+      for (const h of holdings) {
+        if (h.code && quotes[h.code]) {
+          h.currentPrice = quotes[h.code].price
+          h.priceChangePct = quotes[h.code].changePct
+          h.priceUpdatedAt = now
+          updated++
+        }
+      }
+      if (updated > 0) {
+        lsSetJSON(STORAGE_KEYS.holdings, holdings)
+        emit(DATA_EVENTS.HOLDINGS_CHANGED)
+      }
+    } catch (e) {
+      console.warn('[overview] 行情刷新失败:', e.message)
+    } finally {
+      _quoteRefreshing = false
+    }
+  }
+
   return {
-    mount() { render() },
-    unmount() {}
+    mount() {
+      render()
+      refreshHoldingsQuotes()
+      _quoteRefreshTimer = setInterval(refreshHoldingsQuotes, 30000)
+    },
+    unmount() {
+      if (_quoteRefreshTimer) {
+        clearInterval(_quoteRefreshTimer)
+        _quoteRefreshTimer = null
+      }
+    }
   }
 }
