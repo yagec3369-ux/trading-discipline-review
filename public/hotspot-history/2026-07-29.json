@@ -10,7 +10,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 35,
       "leadingStock": "欢乐家",
-      "leadingCode": "",
+      "leadingCode": "300997",
       "leadingChange": 20,
       "leadingPrice": 18
     },
@@ -24,7 +24,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 24,
       "leadingStock": "欢乐家",
-      "leadingCode": "",
+      "leadingCode": "300997",
       "leadingChange": 20,
       "leadingPrice": 18
     },
@@ -38,7 +38,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 20,
       "leadingStock": "中船特气",
-      "leadingCode": "",
+      "leadingCode": "688146",
       "leadingChange": 9.2,
       "leadingPrice": 301.17
     },
@@ -52,7 +52,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 37,
       "leadingStock": "电魂网络",
-      "leadingCode": "",
+      "leadingCode": "603258",
       "leadingChange": 10.03,
       "leadingPrice": 12.62
     },
@@ -66,7 +66,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 26,
       "leadingStock": "东百集团",
-      "leadingCode": "",
+      "leadingCode": "600693",
       "leadingChange": 9.99,
       "leadingPrice": 9.47
     },
@@ -80,7 +80,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 57,
       "leadingStock": "电魂网络",
-      "leadingCode": "",
+      "leadingCode": "603258",
       "leadingChange": 10.03,
       "leadingPrice": 12.62
     },
@@ -94,7 +94,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 33,
       "leadingStock": "骑士乳业",
-      "leadingCode": "",
+      "leadingCode": "920786",
       "leadingChange": 18.21,
       "leadingPrice": 7.14
     },
@@ -108,7 +108,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 25,
       "leadingStock": "高争民爆",
-      "leadingCode": "",
+      "leadingCode": "002827",
       "leadingChange": 10,
       "leadingPrice": 28.59
     },
@@ -122,7 +122,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 19,
       "leadingStock": "江山股份",
-      "leadingCode": "",
+      "leadingCode": "600389",
       "leadingChange": 4.74,
       "leadingPrice": 20.32
     },
@@ -206,7 +206,7 @@
       "netColor": "var(--state-error)",
       "stockCount": 37,
       "leadingStock": "*ST威领",
-      "leadingCode": "",
+      "leadingCode": "002667",
       "leadingChange": 10.02,
       "leadingPrice": 10.65
     },
@@ -1175,6 +1175,218 @@
       "change": 0
     }
   ],
+  "conceptStocks": [
+    {
+      "concept": "乳业",
+      "rank": 1,
+      "code": "300997",
+      "name": "欢乐家",
+      "changePercent": 20
+    },
+    {
+      "concept": "乳业",
+      "rank": 2,
+      "code": "920786",
+      "name": "骑士乳业",
+      "changePercent": 18.21
+    },
+    {
+      "concept": "乳业",
+      "rank": 3,
+      "code": "300892",
+      "name": "品渥食品",
+      "changePercent": 12.55
+    },
+    {
+      "concept": "代糖概念",
+      "rank": 1,
+      "code": "300997",
+      "name": "欢乐家",
+      "changePercent": 20
+    },
+    {
+      "concept": "代糖概念",
+      "rank": 2,
+      "code": "002597",
+      "name": "金禾实业",
+      "changePercent": 10.01
+    },
+    {
+      "concept": "代糖概念",
+      "rank": 3,
+      "code": "002286",
+      "name": "保龄宝",
+      "changePercent": 9.99
+    },
+    {
+      "concept": "中船系",
+      "rank": 1,
+      "code": "688146",
+      "name": "中船特气",
+      "changePercent": 9.2
+    },
+    {
+      "concept": "中船系",
+      "rank": 2,
+      "code": "600072",
+      "name": "中船科技",
+      "changePercent": 4.15
+    },
+    {
+      "concept": "中船系",
+      "rank": 3,
+      "code": "600482",
+      "name": "中国动力",
+      "changePercent": 3.75
+    },
+    {
+      "concept": "电子竞技",
+      "rank": 1,
+      "code": "603258",
+      "name": "电魂网络",
+      "changePercent": 10.03
+    },
+    {
+      "concept": "电子竞技",
+      "rank": 2,
+      "code": "002517",
+      "name": "恺英网络",
+      "changePercent": 10.02
+    },
+    {
+      "concept": "电子竞技",
+      "rank": 3,
+      "code": "002558",
+      "name": "巨人网络",
+      "changePercent": 9.99
+    },
+    {
+      "concept": "免税店",
+      "rank": 1,
+      "code": "600693",
+      "name": "东百集团",
+      "changePercent": 9.99
+    },
+    {
+      "concept": "免税店",
+      "rank": 2,
+      "code": "002277",
+      "name": "友阿股份",
+      "changePercent": 7.89
+    },
+    {
+      "concept": "免税店",
+      "rank": 3,
+      "code": "002187",
+      "name": "广百股份",
+      "changePercent": 4.02
+    },
+    {
+      "concept": "手机游戏",
+      "rank": 1,
+      "code": "603258",
+      "name": "电魂网络",
+      "changePercent": 10.03
+    },
+    {
+      "concept": "手机游戏",
+      "rank": 2,
+      "code": "002517",
+      "name": "恺英网络",
+      "changePercent": 10.02
+    },
+    {
+      "concept": "手机游戏",
+      "rank": 3,
+      "code": "002558",
+      "name": "巨人网络",
+      "changePercent": 9.99
+    },
+    {
+      "concept": "玉米",
+      "rank": 1,
+      "code": "920786",
+      "name": "骑士乳业",
+      "changePercent": 18.21
+    },
+    {
+      "concept": "玉米",
+      "rank": 2,
+      "code": "920403",
+      "name": "康农种业",
+      "changePercent": 6.62
+    },
+    {
+      "concept": "玉米",
+      "rank": 3,
+      "code": "605077",
+      "name": "华康股份",
+      "changePercent": 5.48
+    },
+    {
+      "concept": "民爆概念",
+      "rank": 1,
+      "code": "002827",
+      "name": "高争民爆",
+      "changePercent": 10
+    },
+    {
+      "concept": "民爆概念",
+      "rank": 2,
+      "code": "002037",
+      "name": "保利联合",
+      "changePercent": 9.98
+    },
+    {
+      "concept": "民爆概念",
+      "rank": 3,
+      "code": "600985",
+      "name": "淮北矿业",
+      "changePercent": 5.58
+    },
+    {
+      "concept": "草甘膦",
+      "rank": 1,
+      "code": "600389",
+      "name": "江山股份",
+      "changePercent": 4.74
+    },
+    {
+      "concept": "草甘膦",
+      "rank": 2,
+      "code": "002258",
+      "name": "利尔化学",
+      "changePercent": 4.7
+    },
+    {
+      "concept": "草甘膦",
+      "rank": 3,
+      "code": "002215",
+      "name": "诺普信",
+      "changePercent": 3.64
+    },
+    {
+      "concept": "金属铅",
+      "rank": 1,
+      "code": "002667",
+      "name": "*ST威领",
+      "changePercent": 10.02
+    },
+    {
+      "concept": "金属铅",
+      "rank": 2,
+      "code": "600301",
+      "name": "华锡有色",
+      "changePercent": 4.42
+    },
+    {
+      "concept": "金属铅",
+      "rank": 3,
+      "code": "000688",
+      "name": "国城矿业",
+      "changePercent": 4.33
+    }
+  ],
   "indices": [],
   "sentiment": [],
   "limitUp": [],
@@ -1182,5 +1394,5 @@
   "etf": [],
   "industryFlow": [],
   "date": "2026-07-29",
-  "updatedAt": "2026-07-29T16:14:22.299Z"
+  "updatedAt": "2026-07-30T05:50:28.145Z"
 }

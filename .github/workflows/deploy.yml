@@ -24,8 +24,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - name: Sync hotspot data (Excel → JSON)
-        run: node scripts/sync-hotspot/sync.js
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

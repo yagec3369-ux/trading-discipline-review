@@ -197,15 +197,25 @@ function matchStockNews(concept, stockNews) {
   })
 }
 
-// 渲染融合页面：概念排行 + 可折叠个股新闻
-function renderConceptWithNews(concepts, stockNews) {
+// 渲染融合页面：概念排行 + 可折叠领涨股/个股新闻
+function renderConceptWithNews(concepts, stockNews, conceptStocks) {
   const data = concepts || SAMPLE_CONCEPTS
   const newsData = stockNews || SAMPLE_STOCK_NEWS
+
+  // 概念领涨股按概念名分组
+  const stocksByConcept = {}
+  if (Array.isArray(conceptStocks)) {
+    for (const cs of conceptStocks) {
+      if (!cs || !cs.concept) continue
+      if (!stocksByConcept[cs.concept]) stocksByConcept[cs.concept] = []
+      stocksByConcept[cs.concept].push(cs)
+    }
+  }
 
   return `
     <div class="mb-4 flex items-center gap-2">
       <i data-lucide="flame" style="width:18px; height:18px; color:var(--state-error);"></i>
-      <span style="font-size:var(--text-body); color:var(--ink-3);">点击概念行展开个股新闻 · 共 ${data.length} 个概念</span>
+      <span style="font-size:var(--text-body); color:var(--ink-3);">点击概念行展开领涨个股与新闻 · 共 ${data.length} 个概念</span>
     </div>
     <div class="flex flex-col gap-2">
       ${data.map((c, i) => {
@@ -213,10 +223,29 @@ function renderConceptWithNews(concepts, stockNews) {
         const leadChange = fmtChange(c.leadingChange)
         const rankColor = i < 3 ? 'var(--state-error)' : 'var(--ink-3)'
         const relatedNews = matchStockNews(c, newsData)
+        // 概念领涨股：先精确匹配概念名，空则模糊兜底（处理“白酒概念” vs “白酒”）
+        let topStocks = stocksByConcept[c.name] || []
+        if (topStocks.length === 0) {
+          const seen = new Set()
+          for (const k of Object.keys(stocksByConcept)) {
+            if (k === c.name) continue
+            if (k.includes(c.name) || c.name.includes(k)) {
+              for (const s of stocksByConcept[k]) {
+                const key = s.code || s.name
+                if (key && !seen.has(key)) { seen.add(key); topStocks.push(s) }
+              }
+            }
+          }
+        }
+        const hasStocks = topStocks.length > 0
         const hasNews = relatedNews.length > 0
+        const hasContent = hasStocks || hasNews
+        const expandLabel = hasStocks
+          ? (hasNews ? `${topStocks.length}只个股 · ${relatedNews.length}条新闻` : `${topStocks.length}只个股`)
+          : (hasNews ? `${relatedNews.length}条新闻` : '无数据')
         return `
           <div class="concept-row" data-idx="${i}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; transition:border-color 0.15s;">
-            <div class="concept-header" data-idx="${i}" style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3) var(--s-4); cursor:${hasNews ? 'pointer' : 'default'}; user-select:none;${hasNews ? '' : 'opacity:0.85;'}">
+            <div class="concept-header" data-idx="${i}" style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-3) var(--s-4); cursor:${hasContent ? 'pointer' : 'default'}; user-select:none;${hasContent ? '' : 'opacity:0.85;'}">
               <span style="font-weight:var(--weight-bold); color:${rankColor}; font-size:var(--text-body-l); min-width:28px; text-align:center;">${i + 1}</span>
               <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); min-width:100px;">${escHtml(c.name)}</span>
               <span style="font-variant-numeric:tabular-nums; color:var(--ink-2); font-size:var(--text-caption); min-width:80px;">${c.index.toFixed(2)}</span>
@@ -224,26 +253,51 @@ function renderConceptWithNews(concepts, stockNews) {
               <span style="font-variant-numeric:tabular-nums; color:${c.netColor}; font-size:var(--text-caption); min-width:80px;">净额 ${escHtml(c.netAmount)}</span>
               <span style="color:var(--ink-2); font-size:var(--text-caption); min-width:90px;">领涨: ${escHtml(c.leadingStock)} <span style="color:${leadChange.color}; font-weight:var(--weight-medium);">${leadChange.text}</span></span>
               <span style="color:var(--ink-3); font-size:var(--text-caption); min-width:60px;">${c.stockCount}只</span>
-              ${hasNews ? `<span class="expand-icon" data-idx="${i}" style="margin-left:auto; color:var(--ink-3); display:inline-flex; align-items:center; gap:4px; font-size:var(--text-caption);"><i data-lucide="chevron-down" style="width:16px; height:16px;"></i>${relatedNews.length}条新闻</span>` : `<span style="margin-left:auto; color:var(--ink-3); font-size:var(--text-caption);">无新闻</span>`}
+              ${hasContent ? `<span class="expand-icon" data-idx="${i}" style="margin-left:auto; color:var(--ink-3); display:inline-flex; align-items:center; gap:4px; font-size:var(--text-caption);"><i data-lucide="chevron-down" style="width:16px; height:16px;"></i>${expandLabel}</span>` : `<span style="margin-left:auto; color:var(--ink-3); font-size:var(--text-caption);">无数据</span>`}
             </div>
             <div class="concept-news" data-idx="${i}" style="display:none; border-top:1px solid var(--line); padding:var(--s-2) var(--s-4); background:var(--bg);">
-              ${relatedNews.map((n) => {
-                const nChange = fmtChange(n.change ?? n.leadingChange ?? 0)
-                const link = n.link && n.link !== '#' ? n.link : '#'
-                return `
-                  <div style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) 0; border-bottom:1px solid var(--line);">
-                    <div style="display:flex; flex-direction:column; min-width:100px;">
-                      <a href="${getStockUrl(escHtml(n.stockCode), escHtml(n.stockName))}" target="_blank" rel="noopener" class="stock-name-link" data-stock-code="${escHtml(n.stockCode)}" data-stock-name="${escHtml(n.stockName)}" title="在同花顺查看 ${escHtml(n.stockName)} 行情" style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand); text-decoration:none; cursor:pointer;">${escHtml(n.stockName)}</a>
-                      <span style="font-size:11px; color:${nChange.color}; font-weight:var(--weight-medium);">${nChange.text}</span>
-                    </div>
-                    ${link !== '#' ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="flex:1; font-size:var(--text-body); color:var(--ink); text-decoration:none; line-height:1.4;${'text-decoration:none;'}" onmouseenter="this.style.color='var(--brand)'" onmouseleave="this.style.color='var(--ink)'">${escHtml(n.title)} <i data-lucide="external-link" style="width:11px; height:11px; display:inline; vertical-align:middle;"></i></a>` : `<span style="flex:1; font-size:var(--text-body); color:var(--ink-2); line-height:1.4;">${escHtml(n.title)}</span>`}
-                    <div style="display:flex; flex-direction:column; align-items:flex-end; min-width:120px;">
-                      <span style="font-size:11px; color:var(--ink-3);">${escHtml(n.time)}</span>
-                      <span style="font-size:11px; color:var(--ink-2);">${escHtml(n.source)}</span>
-                    </div>
+              ${hasStocks ? `
+                <div style="padding:var(--s-2) 0; border-bottom:1px solid var(--line);">
+                  <div style="font-size:11px; color:var(--ink-3); margin-bottom:var(--s-2); display:flex; align-items:center; gap:4px;"><i data-lucide="trending-up" style="width:12px; height:12px;"></i>领涨股 Top${topStocks.length}</div>
+                  <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:var(--s-2);">
+                    ${topStocks.map((s) => {
+                      const sChange = fmtChange(s.changePercent)
+                      const medal = s.rank === 1 ? '🥇' : s.rank === 2 ? '🥈' : s.rank === 3 ? '🥉' : ''
+                      return `
+                      <a href="${getStockUrl(escHtml(s.code), escHtml(s.name))}" target="_blank" rel="noopener" class="stock-name-link" data-stock-code="${escHtml(s.code)}" data-stock-name="${escHtml(s.name)}" title="在同花顺查看 ${escHtml(s.name)} 行情" style="display:flex; align-items:center; gap:var(--s-2); padding:var(--s-2) var(--s-3); background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); text-decoration:none; transition:border-color 0.15s;" onmouseenter="this.style.borderColor='var(--brand)'" onmouseleave="this.style.borderColor='var(--line)'">
+                        ${medal ? `<span style="font-size:14px;">${medal}</span>` : `<span style="font-size:11px; color:var(--ink-3); min-width:16px;">${s.rank || ''}</span>`}
+                        <div style="display:flex; flex-direction:column; line-height:1.2;">
+                          <span style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand);">${escHtml(s.name)}</span>
+                          <span style="font-size:11px; color:var(--ink-3); font-family:var(--font-mono);">${escHtml(s.code)}</span>
+                        </div>
+                        <span style="margin-left:auto; font-size:var(--text-caption); font-weight:var(--weight-semibold); color:${sChange.color}; font-variant-numeric:tabular-nums;">${sChange.text}</span>
+                      </a>
+                    `}).join('')}
                   </div>
-                `
-              }).join('')}
+                </div>
+              ` : ''}
+              ${hasNews ? `
+                <div style="padding:var(--s-2) 0;">
+                  <div style="font-size:11px; color:var(--ink-3); margin-bottom:var(--s-2); display:flex; align-items:center; gap:4px;"><i data-lucide="newspaper" style="width:12px; height:12px;"></i>相关个股新闻</div>
+                  ${relatedNews.map((n) => {
+                    const nChange = fmtChange(n.change ?? n.leadingChange ?? 0)
+                    const link = n.link && n.link !== '#' ? n.link : '#'
+                    return `
+                      <div style="display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) 0; border-bottom:1px solid var(--line);">
+                        <div style="display:flex; flex-direction:column; min-width:100px;">
+                          <a href="${getStockUrl(escHtml(n.stockCode), escHtml(n.stockName))}" target="_blank" rel="noopener" class="stock-name-link" data-stock-code="${escHtml(n.stockCode)}" data-stock-name="${escHtml(n.stockName)}" title="在同花顺查看 ${escHtml(n.stockName)} 行情" style="font-size:var(--text-body); font-weight:var(--weight-bold); color:var(--brand); text-decoration:none; cursor:pointer;">${escHtml(n.stockName)}</a>
+                          <span style="font-size:11px; color:${nChange.color}; font-weight:var(--weight-medium);">${nChange.text}</span>
+                        </div>
+                        ${link !== '#' ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="flex:1; font-size:var(--text-body); color:var(--ink); text-decoration:none; line-height:1.4;" onmouseenter="this.style.color='var(--brand)'" onmouseleave="this.style.color='var(--ink)'">${escHtml(n.title)} <i data-lucide="external-link" style="width:11px; height:11px; display:inline; vertical-align:middle;"></i></a>` : `<span style="flex:1; font-size:var(--text-body); color:var(--ink-2); line-height:1.4;">${escHtml(n.title)}</span>`}
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; min-width:120px;">
+                          <span style="font-size:11px; color:var(--ink-3);">${escHtml(n.time)}</span>
+                          <span style="font-size:11px; color:var(--ink-2);">${escHtml(n.source)}</span>
+                        </div>
+                      </div>
+                    `
+                  }).join('')}
+                </div>
+              ` : ''}
             </div>
           </div>
         `
@@ -663,6 +717,10 @@ export function createMarketHotPage(root) {
     const src = currentData
     return src?.concepts?.length > 0 ? src.concepts : SAMPLE_CONCEPTS
   }
+  function getConceptStocks() {
+    const src = currentData
+    return src?.conceptStocks?.length > 0 ? src.conceptStocks : []
+  }
   function getFinanceNews() {
     const src = currentData
     const news = src?.financeNews?.length > 0 ? src.financeNews : SAMPLE_FINANCE_NEWS
@@ -811,7 +869,7 @@ export function createMarketHotPage(root) {
         </div>
       </div>
 
-      ${activeTab === 'rank' ? renderConceptWithNews(concepts, stockNews) : ''}
+      ${activeTab === 'rank' ? renderConceptWithNews(concepts, stockNews, getConceptStocks()) : ''}
       ${activeTab === 'finance' ? renderFinanceNews(financeNews) : ''}
       ${activeTab === 'indices' ? renderIndices(getIndices()) : ''}
       ${activeTab === 'sentiment' ? renderSentiment(getSentiment()) : ''}

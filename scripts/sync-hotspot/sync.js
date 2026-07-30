@@ -70,12 +70,30 @@ function parseExcel(filePath) {
   const concepts = parseSheet(wb, '热点概念榜', parseConcept)
   const financeNews = parseSheet(wb, '财经新闻', (r) => parseNews(r, 'finance'))
   const stockNews = parseSheet(wb, '个股新闻', (r) => parseNews(r, 'stock'))
+  const conceptStocks = parseSheet(wb, '概念领涨股Top3', parseConceptStock)
   const indices = parseSheet(wb, '指数行情', parseIndex)
   const sentiment = parseSheet(wb, '市场情绪', parseSentiment)
   const limitUp = parseSheet(wb, '涨停明细', (r) => parseLimit(r, 'up'))
   const limitDown = parseSheet(wb, '跌停明细', (r) => parseLimit(r, 'down'))
   const etf = parseSheet(wb, 'ETF', parseETF)
   const industryFlow = parseSheet(wb, '行业资金流', parseIndustryFlow)
+
+  // 用概念领涨股Top3 回填概念榜缺失的领涨股代码，并把个股按概念分组
+  const stocksByConcept = {}
+  for (const cs of conceptStocks) {
+    if (!stocksByConcept[cs.concept]) stocksByConcept[cs.concept] = []
+    stocksByConcept[cs.concept].push(cs)
+  }
+  for (const c of concepts) {
+    const list = stocksByConcept[c.name]
+    if (!list || list.length === 0) continue
+    const top1 = list.find((s) => s.rank === 1) || list[0]
+    if (top1) {
+      if (!c.leadingCode) c.leadingCode = top1.code
+      if (!c.leadingStock) c.leadingStock = top1.name
+      if (!c.leadingChange) c.leadingChange = top1.changePercent
+    }
+  }
 
   const dateMatch = path.basename(filePath).match(/(\d{8})/)
   const dateStr = dateMatch
@@ -86,6 +104,7 @@ function parseExcel(filePath) {
     concepts,
     financeNews,
     stockNews,
+    conceptStocks,
     indices,
     sentiment,
     limitUp,
@@ -94,6 +113,20 @@ function parseExcel(filePath) {
     industryFlow,
     date: dateStr,
     updatedAt: new Date().toISOString()
+  }
+}
+
+// 解析「概念领涨股Top3」sheet：每个概念的 Top3 领涨股明细
+function parseConceptStock(r) {
+  const concept = col(r, '概念', '概念名称', '板块')
+  const name = col(r, '股票名称', '名称')
+  if (!concept || !name) return null
+  return {
+    concept,
+    rank: colInt(r, '排名'),
+    code: col(r, '股票代码', '代码'),
+    name,
+    changePercent: colNum(r, '涨跌幅(%)', '涨跌幅', '涨幅')
   }
 }
 
