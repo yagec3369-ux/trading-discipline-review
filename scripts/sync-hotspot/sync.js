@@ -333,6 +333,12 @@ function generateLogicLibrary(data) {
 
 function main() {
   const latestFile = findLatestHotFile(REPORTS_DIR)
+
+  if (!latestFile) {
+    console.log('[skip] 未找到 Excel，跳过热点数据同步（保留现有 public/market-hot.json）')
+    return
+  }
+
   console.log('读取文件:', latestFile)
 
   const data = parseExcel(latestFile)
