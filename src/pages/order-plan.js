@@ -10,80 +10,64 @@ const R_UNIT = 1000
 let _planQuotes = {}
 
 // 同步更新与计划关联的交易记录和持仓
-// 支持通过 fromPlanId 关联，也支持通过股票代码+类型匹配旧数据
-function syncTradeRecordsWithPlan(planId, oldPriceData, newPriceData, planType, planCode, planName) {
+// 三种场景：
+//   场景1：计划修改 + 执行未执行(buyStatus/sellStatus = pending) → 只改计划本身，无交易记录需要同步
+//   场景2：计划修改 + 执行已执行(buyStatus/sellStatus = executed) → 改计划 + 同步交易记录 + 更新持仓(仅买入腿)
+//   场景3：计划修改 + 执行已取消/弃用(cancelled/discarded) → 交易记录不应该存在，只改计划
+//
+// 规则：只有 executed 的腿对应的交易记录需要同步修改；卖出腿不修改持仓（卖出已完成，持仓已扣减）
+function syncTradeRecordsWithPlan(planId, oldPriceData, newPriceData, oldPlanType, newPlanType, planCode, planName, buyStatus, sellStatus) {
   const trades = lsGetJSON(STORAGE_KEYS.tradeRecords, []) || []
   const holdings = lsGetJSON(STORAGE_KEYS.holdings, []) || []
   let changed = false
   let holdingsChanged = false
 
-  console.log('[syncTradeRecordsWithPlan] start', {
-    planId,
-    planCode,
-    planName,
-    planType,
-    oldPriceData,
-    newPriceData,
-    totalTrades: trades.length
-  })
+  const opType = newPlanType || oldPlanType || 'buy'
+  const hasBuyLeg = opType === 'buy' || opType === 't0'
+  const hasSellLeg = opType === 'sell' || opType === 't0'
+  const buyExecuted = hasBuyLeg && buyStatus === 'executed'
+  const sellExecuted = hasSellLeg && sellStatus === 'executed'
 
-  // 查找所有与该计划关联的交易记录
-  // 优先通过 fromPlanId 匹配，其次通过股票代码+交易类型匹配（兼容旧数据）
+  // 未执行/已取消/已弃用的腿，其交易记录不应该被修改
+  // 只有 executed 的腿的交易记录才需要同步
+  const buyNeedSync = buyExecuted
+  const sellNeedSync = sellExecuted
+
+  // 查找与该计划关联的交易记录（fromPlanId 匹配）
   const relatedTrades = trades.filter(t => {
     if (t.fromPlanId === planId) return true
-    // 旧数据可能没有 fromPlanId，通过股票代码和类型匹配
+    // 兼容旧数据：没有 fromPlanId 时通过代码+类型匹配
     if (!t.fromPlanId && planCode && t.code === planCode) {
-      // 对于做T计划，买入和卖出都需要匹配
-      if (planType === 't0') return true
-      // 对于单买入/单卖出计划，只匹配对应类型
-      if (planType === 'buy' && t.type === 'buy') return true
-      if (planType === 'sell' && t.type === 'sell') return true
+      if (opType === 't0') return true
+      if (opType === 'buy' && t.type === 'buy') return true
+      if (opType === 'sell' && t.type === 'sell') return true
     }
     return false
   })
 
-  console.log('[syncTradeRecordsWithPlan] relatedTrades found:', relatedTrades.map(t => ({
-    id: t.id,
-    type: t.type,
-    code: t.code,
-    fromPlanId: t.fromPlanId,
-    actualShares: t.actualShares,
-    actualPrice: t.actualPrice
-  })))
-
   for (const trade of relatedTrades) {
-    const type = trade.type // 'buy' or 'sell'
-    const oldPrice = type === 'buy' ? oldPriceData.buyPrice : oldPriceData.sellPrice
-    const newPrice = type === 'buy' ? newPriceData.buyPrice : newPriceData.sellPrice
-    const oldShares = type === 'buy' ? oldPriceData.buyShares : oldPriceData.sellShares
-    const newShares = type === 'buy' ? newPriceData.buyShares : newPriceData.sellShares
+    const isBuy = trade.type === 'buy'
+    const isSell = trade.type === 'sell'
+
+    // 场景3：已取消/已弃用的腿，如果有交易记录，不能修改它们
+    // 场景1：未执行的腿，不可能有交易记录（如果有，也是脏数据，不修改）
+    if (isBuy && !buyNeedSync) continue
+    if (isSell && !sellNeedSync) continue
+
+    // 场景2：已执行的腿，同步修改交易记录
+    const oldPrice = isBuy ? oldPriceData.buyPrice : oldPriceData.sellPrice
+    const newPrice = isBuy ? newPriceData.buyPrice : newPriceData.sellPrice
+    const oldShares = isBuy ? oldPriceData.buyShares : oldPriceData.sellShares
+    const newShares = isBuy ? newPriceData.buyShares : newPriceData.sellShares
 
     const priceChanged = parseFloat(oldPrice) !== parseFloat(newPrice)
     const sharesChanged = parseInt(oldShares, 10) !== parseInt(newShares, 10)
-
-    console.log('[syncTradeRecordsWithPlan] checking trade:', {
-      tradeId: trade.id,
-      type,
-      oldPrice,
-      newPrice,
-      oldShares,
-      newShares,
-      priceChanged,
-      sharesChanged
-    })
-
     if (!priceChanged && !sharesChanged) continue
 
-    // 为旧数据补充 fromPlanId
-    if (!trade.fromPlanId) {
-      trade.fromPlanId = planId
-      console.log('[syncTradeRecordsWithPlan] assigned fromPlanId to old trade:', trade.id)
-    }
+    // 确保关联 fromPlanId
+    if (!trade.fromPlanId) trade.fromPlanId = planId
 
-    // 计算数量差额，用于调整持仓
-    const shareDiff = (parseInt(newShares, 10) || 0) - (parseInt(oldShares, 10) || 0)
-
-    // 更新交易记录
+    // 更新交易记录价格/股数
     trade.planPrice = newPrice
     trade.actualPrice = newPrice
     trade.planShares = newShares
@@ -93,75 +77,42 @@ function syncTradeRecordsWithPlan(planId, oldPriceData, newPriceData, planType, 
     trade.actualAmount = newAmount
     changed = true
 
-    console.log('[syncTradeRecordsWithPlan] updated trade:', {
-      tradeId: trade.id,
-      newPrice,
-      newShares,
-      newAmount
-    })
+    // 场景2中，只有【买入腿】修改持仓；卖出腿不修改持仓（卖出已完成，不应改变历史持仓）
+    if (isBuy) {
+      const existingHolding = holdings.find(h => h.code === trade.code)
+      if (existingHolding) {
+        const oldQty = parseInt(existingHolding.quantity, 10) || 0
+        const oldCost = parseFloat(existingHolding.buyPrice) || 0
+        const oldTotalCost = oldCost * oldQty
 
-    // 更新持仓：使用金额差进行增量调整
-    const existingHolding = holdings.find(h => h.code === trade.code)
-    if (existingHolding) {
-      const oldQty = parseInt(existingHolding.quantity, 10) || 0
-      const oldCost = parseFloat(existingHolding.buyPrice) || 0
-      const oldTotalCost = oldCost * oldQty
+        const shareDiff = (parseInt(newShares, 10) || 0) - (parseInt(oldShares, 10) || 0)
+        const oldAmount = (parseFloat(oldPrice) || 0) * (parseInt(oldShares, 10) || 0)
+        const newAmountCalc = (parseFloat(newPrice) || 0) * (parseInt(newShares, 10) || 0)
+        const amountDiff = newAmountCalc - oldAmount
 
-      const oldAmount = (parseFloat(oldPrice) || 0) * (parseInt(oldShares, 10) || 0)
-      const newAmountCalc = (parseFloat(newPrice) || 0) * (parseInt(newShares, 10) || 0)
-      const amountDiff = newAmountCalc - oldAmount
-
-      console.log('[syncTradeRecordsWithPlan] holding before:', {
-        code: trade.code,
-        oldQty,
-        oldCost,
-        oldTotalCost,
-        shareDiff,
-        amountDiff
-      })
-
-      if (type === 'buy') {
         const newQty = Math.max(0, oldQty + shareDiff)
         if (newQty > 0) {
-          existingHolding.buyPrice = (oldTotalCost + amountDiff) / newQty
-        } else if (newQty === 0) {
-          existingHolding.buyPrice = oldCost
+          // 加权平均：用新投入额 / 新股数 计算新的平均成本
+          const newTotalCost = Math.max(0, oldTotalCost + amountDiff)
+          existingHolding.buyPrice = +(newTotalCost / newQty).toFixed(4)
         }
         existingHolding.quantity = newQty
-        existingHolding.currentPrice = newPrice || existingHolding.currentPrice
-        holdingsChanged = true
-      } else if (type === 'sell') {
-        const newQty = Math.max(0, oldQty - shareDiff)
-        if (newQty > 0) {
-          existingHolding.buyPrice = (oldTotalCost - amountDiff) / newQty
-        } else if (newQty === 0) {
-          existingHolding.buyPrice = oldCost
-        }
-        existingHolding.quantity = newQty
-        existingHolding.currentPrice = newPrice || existingHolding.currentPrice
+        existingHolding.currentPrice = parseFloat(newPrice) || existingHolding.currentPrice
         holdingsChanged = true
       }
-
-      console.log('[syncTradeRecordsWithPlan] holding after:', {
-        code: trade.code,
-        newQty: existingHolding.quantity,
-        newBuyPrice: existingHolding.buyPrice
-      })
     }
+    // 注意：isSell 时不修改 holdings！卖出腿已完成，持仓已正确扣减，不应再回溯修改
   }
 
   if (changed) {
     lsSetJSON(STORAGE_KEYS.tradeRecords, trades)
     notifyDataChange(DATA_EVENTS.TRADE_RECORDS_CHANGED)
-    console.log('[syncTradeRecordsWithPlan] saved trade records, changed:', changed)
   }
   if (holdingsChanged) {
     lsSetJSON(STORAGE_KEYS.holdings, holdings)
     notifyDataChange(DATA_EVENTS.HOLDINGS_CHANGED)
-    console.log('[syncTradeRecordsWithPlan] saved holdings, changed:', holdingsChanged)
   }
 
-  console.log('[syncTradeRecordsWithPlan] done, result:', changed || holdingsChanged)
   return changed || holdingsChanged
 }
 
@@ -310,37 +261,38 @@ export function createOrderPlanPage(root) {
 
     return `
       <div class="plan-card" data-id="${p.id}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden;">
-        <div class="plan-card-header flex items-center justify-between px-4 sm:px-5 py-3" style="cursor:pointer; user-select:none; border-bottom:1px solid var(--line);">
-          <div class="flex items-center gap-3 min-w-0 flex-1 flex-wrap">
+        <div class="plan-card-header flex items-center gap-3 px-4 sm:px-5 py-3" style="cursor:pointer; user-select:none; border-bottom:1px solid var(--line); flex-wrap:wrap;">
+          <div class="flex items-center gap-3 min-w-0" style="flex:0 1 auto; min-width:0;">
             <i class="expand-chevron" data-lucide="chevron-right" style="width:16px; height:16px; color:var(--ink-3); transition:transform 0.2s; transform:rotate(${expanded ? '90deg' : '0deg'}); flex-shrink:0;"></i>
             <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escHtml(p.name)}</span>
             <span style="font-size:var(--text-caption); color:var(--ink-3); font-family:var(--font-mono);">${escHtml(p.code)}</span>
             <span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:${opBg}; color:${opColor}; font-weight:var(--weight-medium);">${opLabel}</span>
             ${p.logicStatus === 'valid' ? '<span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:var(--state-success-bg); color:var(--state-success); font-weight:var(--weight-medium);">逻辑有效</span>' : p.logicStatus === 'invalid' ? '<span class="inline-flex items-center px-2 py-0.5" style="font-size:11px; border-radius:var(--r-sm); background:var(--state-error-bg); color:var(--state-error); font-weight:var(--weight-medium);">逻辑失效</span>' : ''}
+          </div>
 
-            <!-- 计划买入价 / 计划卖出价 / 当前价 -->
-            <div class="flex items-center gap-3 flex-wrap" style="margin-left:auto;">
-              ${(p.operationType === 'buy' || p.operationType === 't0') ? `
-                <div class="inline-flex flex-col" style="line-height:1.1;">
-                  <span style="font-size:10px; color:var(--ink-3);">计划买入</span>
-                  <span style="font-size:var(--text-caption); color:var(--state-error); font-weight:var(--weight-semibold); font-family:var(--font-mono);">${buyPriceText}</span>
-                </div>
-              ` : ''}
-              ${(p.operationType === 'sell' || p.operationType === 't0') ? `
-                <div class="inline-flex flex-col" style="line-height:1.1;">
-                  <span style="font-size:10px; color:var(--ink-3);">计划卖出</span>
-                  <span style="font-size:var(--text-caption); color:var(--state-success); font-weight:var(--weight-semibold); font-family:var(--font-mono);">${sellPriceText}</span>
-                </div>
-              ` : ''}
+          <!-- 计划买入价 / 计划卖出价 / 当前价：独立 flex 项 -->
+          <div class="flex items-center gap-4" style="flex:0 0 auto;">
+            ${(p.operationType === 'buy' || p.operationType === 't0') ? `
               <div class="inline-flex flex-col" style="line-height:1.1;">
-                <span style="font-size:10px; color:var(--ink-3);">当前价</span>
-                <span style="font-size:var(--text-caption); color:${priceColor}; font-weight:var(--weight-semibold); font-family:var(--font-mono);">
-                  ${currentPriceText}${changePctText ? ` <span style="font-size:10px;">${changePctText}</span>` : ''}
-                </span>
+                <span style="font-size:10px; color:var(--ink-3);">计划买入</span>
+                <span style="font-size:var(--text-caption); color:var(--state-error); font-weight:var(--weight-semibold); font-family:var(--font-mono);">${buyPriceText}</span>
               </div>
+            ` : ''}
+            ${(p.operationType === 'sell' || p.operationType === 't0') ? `
+              <div class="inline-flex flex-col" style="line-height:1.1;">
+                <span style="font-size:10px; color:var(--ink-3);">计划卖出</span>
+                <span style="font-size:var(--text-caption); color:var(--state-success); font-weight:var(--weight-semibold); font-family:var(--font-mono);">${sellPriceText}</span>
+              </div>
+            ` : ''}
+            <div class="inline-flex flex-col" style="line-height:1.1;">
+              <span style="font-size:10px; color:var(--ink-3);">当前价</span>
+              <span style="font-size:var(--text-caption); color:${priceColor}; font-weight:var(--weight-semibold); font-family:var(--font-mono);">
+                ${currentPriceText}${changePctText ? ` <span style="font-size:10px;">${changePctText}</span>` : ''}
+              </span>
             </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0" style="margin-left:8px;">
+
+          <div class="flex items-center gap-2 shrink-0" style="margin-left:auto; flex:0 0 auto;">
             <span style="font-size:var(--text-caption); color:${nrColor}; font-weight:var(--weight-medium);">${p.expectedGainNR || 0}R / ${p.maxLossNR || 0}R</span>
             <button class="edit-plan-btn" data-id="${p.id}" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:2px;" title="编辑基本信息">
               <i data-lucide="edit-3" style="width:14px; height:14px;"></i>
@@ -989,8 +941,10 @@ export function createOrderPlanPage(root) {
       if (editItem) {
         const idx = plans.findIndex((pl) => pl.id === editItem.id)
         if (idx !== -1) {
-          // 获取旧的价格数据用于同步交易记录
           const oldPlan = plans[idx]
+          const oldPlanType = oldPlan.operationType || 'buy'
+          const oldBuyStatus = oldPlan.buyStatus || 'pending'
+          const oldSellStatus = oldPlan.sellStatus || 'pending'
           const oldPriceData = {
             buyPrice: oldPlan.buyPrice || 0,
             buyShares: oldPlan.buyShares || 0,
@@ -1006,7 +960,25 @@ export function createOrderPlanPage(root) {
           }
           
           // 同步更新已生成的交易记录和持仓
-          syncTradeRecordsWithPlan(editItem.id, oldPriceData, priceData, operationType, code, name)
+          // 只有 buyStatus/sellStatus 为 'executed' 的腿对应的交易记录才需要同步
+          const syncResult = syncTradeRecordsWithPlan(
+            editItem.id,
+            oldPriceData,
+            priceData,
+            oldPlanType,
+            operationType,
+            code,
+            name,
+            oldBuyStatus,
+            oldSellStatus
+          )
+          
+          notifyDataChange(DATA_EVENTS.PLANS_CHANGED)
+          if (syncResult) {
+            showToast('已更新：计划、执行情况、交易记录、持仓均已同步')
+          } else {
+            showToast('计划已更新（执行情况将自动刷新）')
+          }
         }
       } else {
         const newPlan = {
@@ -1034,10 +1006,8 @@ export function createOrderPlanPage(root) {
         plans.push(newPlan)
       }
       savePlans(plans)
-      notifyDataChange(DATA_EVENTS.PLANS_CHANGED)
       closeDialog()
       render()
-      showToast(editItem ? '已更新，交易记录已同步' : '已添加')
     })
   }
 

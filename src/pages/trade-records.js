@@ -137,8 +137,39 @@ export function createTradeRecordsPage(root) {
     const typeBg = isBuy ? 'var(--state-error-bg)' : 'var(--state-success-bg)'
     const statusColor = t.status === '违规' ? 'var(--state-error)' : 'var(--state-success)'
     const statusBg = t.status === '违规' ? 'var(--state-error-bg)' : 'var(--state-success-bg)'
-    const priceLabel = isBuy ? '买入价' : '卖出价'
-    const amountLabel = isBuy ? '买入金额' : '卖出金额'
+
+    // 计划价 vs 实际价
+    const planPrice = t.planPrice != null ? Number(t.planPrice) : null
+    const actualPrice = t.actualPrice != null ? Number(t.actualPrice) : null
+    const hasDiff = planPrice != null && actualPrice != null && Math.abs(planPrice - actualPrice) > 0.0001
+    const priceDiff = hasDiff ? (actualPrice - planPrice) : 0
+    const priceDiffPct = hasDiff && planPrice > 0 ? (priceDiff / planPrice) * 100 : 0
+    // 偏差颜色：买入时实际价高于计划 = 不利（红），卖出时实际价低于计划 = 不利（红）
+    const diffBad = hasDiff && ((isBuy && priceDiff > 0) || (!isBuy && priceDiff < 0))
+    const diffColor = !hasDiff
+      ? 'var(--ink-3)'
+      : diffBad
+        ? 'var(--state-error)'
+        : 'var(--state-success)'
+    const diffText = !hasDiff
+      ? '与计划一致'
+      : (diffBad ? '不利偏离' : '有利偏离') + ' ' + (priceDiff >= 0 ? '+' : '') + priceDiff.toFixed(2) + ' (' + (priceDiffPct >= 0 ? '+' : '') + priceDiffPct.toFixed(2) + '%)'
+
+    const planShares = t.planShares != null ? Number(t.planShares) : null
+    const actualShares = t.actualShares != null ? Number(t.actualShares) : null
+    const sharesText = actualShares != null
+      ? (planShares != null && actualShares !== planShares
+          ? actualShares + ' / 计划 ' + planShares
+          : actualShares)
+      : '--'
+
+    const planAmount = t.planAmount != null ? Number(t.planAmount) : null
+    const actualAmount = t.actualAmount != null ? Number(t.actualAmount) : null
+    const amountText = actualAmount != null
+      ? (planAmount != null && Math.abs(actualAmount - planAmount) > 0.01
+          ? actualAmount.toLocaleString() + ' / 计划 ' + planAmount.toLocaleString()
+          : actualAmount.toLocaleString())
+      : '--'
 
     return `
       <div class="trade-card" data-trade-idx="${idx}" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow-card); overflow:hidden;">
@@ -150,24 +181,32 @@ export function createTradeRecordsPage(root) {
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <span class="inline-flex items-center px-2.5 py-0.5" style="font-size:var(--text-caption); font-weight:var(--weight-medium); color:${statusColor}; border-radius:var(--r-sm); background:${statusBg};">${escHtml(t.status)}</span>
-            ${t.fromPlanId ? '<span style="font-size:11px; color:var(--brand); display:inline-flex; align-items:center; gap:2px;"><i data-lucide="link" style="width:11px; height:11px;"></i>计划内</span>' : ''}
+            ${t.fromPlanId ? '<span style="font-size:11px; color:var(--brand); display:inline-flex; align-items:center; gap:2px;"><i data-lucide="link" style="width:11px; height:11px;"></i>计划内</span>' : '<span style="font-size:11px; color:var(--ink-3); display:inline-flex; align-items:center; gap:2px;"><i data-lucide="alert-triangle" style="width:11px; height:11px;"></i>无计划</span>'}
           </div>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4 sm:px-5 py-3">
           <div>
-            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${priceLabel}</span>
-            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${escHtml(t.actualPrice || t.planPrice || '--')}</span>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">计划${isBuy ? '买入' : '卖出'}价</span>
+            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${planPrice != null ? planPrice.toFixed(2) : '--'}</span>
+          </div>
+          <div>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">实际${isBuy ? '买入' : '卖出'}价</span>
+            <span style="font-size:var(--text-body); color:${typeColor}; font-family:var(--font-mono); font-weight:var(--weight-semibold);">${actualPrice != null ? actualPrice.toFixed(2) : '--'}</span>
+          </div>
+          <div>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">偏差</span>
+            <span style="font-size:var(--text-body); color:${diffColor}; font-family:var(--font-mono); font-weight:var(--weight-medium);">${diffText}</span>
           </div>
           <div>
             <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">股数</span>
-            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${escHtml(t.actualShares || t.planShares || '--')}</span>
+            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${sharesText}</span>
           </div>
           <div>
-            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${amountLabel}</span>
-            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${t.actualAmount ? Number(t.actualAmount).toLocaleString() : (t.actualShares && t.actualPrice ? (Number(t.actualShares) * Number(t.actualPrice)).toLocaleString() : '--')}</span>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${isBuy ? '买入' : '卖出'}金额</span>
+            <span style="font-size:var(--text-body); color:var(--ink); font-family:var(--font-mono); font-weight:var(--weight-medium);">${amountText}</span>
           </div>
           <div>
-            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">买入情绪</span>
+            <span style="font-size:var(--text-caption); color:var(--ink-3); display:block; margin-bottom:2px;">${isBuy ? '买入' : '卖出'}情绪</span>
             <span style="font-size:var(--text-body); color:var(--ink);">${escHtml(t.emotion || '--')}</span>
           </div>
         </div>
