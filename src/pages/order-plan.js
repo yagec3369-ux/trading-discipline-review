@@ -959,6 +959,9 @@ export function createOrderPlanPage(root) {
             expectedGainNR, maxLossNR
           }
           
+          // 先保存到 localStorage，确保后续事件监听器 loadPlans() 能读到最新数据
+          savePlans(plans)
+          
           // 同步更新已生成的交易记录和持仓
           // 只有 buyStatus/sellStatus 为 'executed' 的腿对应的交易记录才需要同步
           const syncResult = syncTradeRecordsWithPlan(
@@ -973,6 +976,7 @@ export function createOrderPlanPage(root) {
             oldSellStatus
           )
           
+          // 通知其他页面刷新（此时 localStorage 已有最新数据）
           notifyDataChange(DATA_EVENTS.PLANS_CHANGED)
           if (syncResult) {
             showToast('已更新：计划、执行情况、交易记录、持仓均已同步')
