@@ -184,6 +184,7 @@ export function createOrderPlanPage(root) {
   }
 
   let _quoteRefreshTimer = null
+  let _quoteLoopTimer = null
   let _quoteRefreshing = false
 
   function scheduleQuoteRefresh(delay = 200) {
@@ -1099,6 +1100,9 @@ export function createOrderPlanPage(root) {
       on(DATA_EVENTS.PLANS_CHANGED, _planChangeListener)
       on(DATA_EVENTS.TRADE_RECORDS_CHANGED, _tradeChangeListener)
       on(DATA_EVENTS.HOLDINGS_CHANGED, _holdingChangeListener)
+      // 定时循环刷新实时行情（当前价）
+      scheduleQuoteRefresh(200)
+      _quoteLoopTimer = setInterval(() => refreshPlanQuotes(), 30000)
     },
     unmount() {
       closeDialog()
@@ -1112,6 +1116,10 @@ export function createOrderPlanPage(root) {
       if (_quoteRefreshTimer) {
         clearTimeout(_quoteRefreshTimer)
         _quoteRefreshTimer = null
+      }
+      if (_quoteLoopTimer) {
+        clearInterval(_quoteLoopTimer)
+        _quoteLoopTimer = null
       }
     }
   }

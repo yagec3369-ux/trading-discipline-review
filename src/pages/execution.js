@@ -733,6 +733,7 @@ export function createExecutionPage(root) {
 
   let _listener = null
   let _quoteRefreshTimer = null
+  let _quoteLoopTimer = null
   let _quoteRefreshing = false
 
   function scheduleQuoteRefresh(delay = 200) {
@@ -788,6 +789,8 @@ export function createExecutionPage(root) {
       on(DATA_EVENTS.HOLDINGS_CHANGED, _listener)
       render()
       scheduleQuoteRefresh(150)
+      // 定时循环刷新实时行情（当前价）
+      _quoteLoopTimer = setInterval(() => refreshPlanQuotes(), 30000)
     },
     unmount() {
       closeCancelDialog()
@@ -800,6 +803,10 @@ export function createExecutionPage(root) {
       if (_quoteRefreshTimer) {
         clearTimeout(_quoteRefreshTimer)
         _quoteRefreshTimer = null
+      }
+      if (_quoteLoopTimer) {
+        clearInterval(_quoteLoopTimer)
+        _quoteLoopTimer = null
       }
     }
   }
