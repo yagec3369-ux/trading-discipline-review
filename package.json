@@ -6,6 +6,7 @@
   "description": "交易纪律复盘系统 - 基于设计稿实现的多端适配 SPA",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/sync-hotspot/sync.js",
     "build": "vite build",
     "preview": "vite preview --host"
   },
