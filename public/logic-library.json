@@ -1,2112 +1,2110 @@
 {
   "stocks": [
     {
-      "name": "华光环能",
-      "code": "600475",
+      "name": "利和兴",
+      "code": "301013",
       "tags": [
         {
-          "name": "信托概念",
-          "count": 5
+          "name": "共封装光学(CPO)",
+          "count": 4
         },
         {
-          "name": "化债概念(AMC概念)",
+          "name": "存储芯片",
+          "count": 2
+        },
+        {
+          "name": "富士康概念",
+          "count": 2
+        },
+        {
+          "name": "PCB概念",
           "count": 1
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 9.98,
+          "date": "2026-07-31",
+          "change": 19.99,
           "concepts": [
             {
-              "name": "信托概念",
-              "conceptChange": 1.04
+              "name": "共封装光学(CPO)",
+              "conceptChange": null
             },
             {
-              "name": "化债概念(AMC概念)",
+              "name": "存储芯片",
+              "conceptChange": 8.79
+            },
+            {
+              "name": "富士康概念",
+              "conceptChange": 7.81
+            },
+            {
+              "name": "PCB概念",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "MLCC概念盘初走强，利和兴20cm涨停",
+              "link": "http://finance.eastmoney.com/a/202607313827819060.html",
+              "source": "界面新闻",
+              "time": "2026-07-31 09:44:41"
+            },
+            {
+              "title": "利和兴：上海宇量昇是公司客户 但业务占比较小",
+              "link": "http://finance.eastmoney.com/a/202607303826410036.html",
+              "source": "上海证券报·中国证券网",
+              "time": "2026-07-30 11:14:58"
+            },
+            {
+              "title": "利和兴：公司将主动对接上下游客户，持续优化迭代高端和车规MLCC产品品质",
+              "link": "http://finance.eastmoney.com/a/202607303826728510.html",
+              "source": "证券日报",
+              "time": "2026-07-30 16:16:00"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "信托概念涨1.04%，主力资金净流入8股",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "MLCC概念盘初走强，利和兴20cm涨停",
+          "link": "http://finance.eastmoney.com/a/202607313827819060.html",
+          "source": "界面新闻",
+          "time": "2026-07-31 09:44:41",
+          "tag": "news"
         },
         {
-          "title": "化债概念(AMC概念)概念上涨0.92%，7股主力资金净流入超千万元",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "利和兴：上海宇量昇是公司客户 但业务占比较小",
+          "link": "http://finance.eastmoney.com/a/202607303826410036.html",
+          "source": "上海证券报·中国证券网",
+          "time": "2026-07-30 11:14:58",
+          "tag": "news"
         },
         {
-          "title": "尾盘异动！000636、600663、600475、001309，涨停",
-          "tag": "announcement",
-          "source": "中国基金报"
+          "title": "利和兴：公司将主动对接上下游客户，持续优化迭代高端和车规MLCC产品品质",
+          "link": "http://finance.eastmoney.com/a/202607303826728510.html",
+          "source": "证券日报",
+          "time": "2026-07-30 16:16:00",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "利尔化学",
-      "code": "002258",
+      "name": "臻宝科技",
+      "code": "688797",
       "tags": [
         {
-          "name": "草甘膦",
+          "name": "国家大基金持股",
+          "count": 4
+        },
+        {
+          "name": "科创次新股",
+          "count": 2
+        },
+        {
+          "name": "存储芯片",
+          "count": 1
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 16.91,
+          "concepts": [
+            {
+              "name": "国家大基金持股",
+              "conceptChange": null
+            },
+            {
+              "name": "存储芯片",
+              "conceptChange": null
+            },
+            {
+              "name": "科创次新股",
+              "conceptChange": 8.67
+            }
+          ],
+          "newsList": [
+            {
+              "title": "臻宝科技：关于变更持续督导保荐代表人的公告",
+              "link": "http://finance.eastmoney.com/a/202607303826975639.html",
+              "source": "证券日报",
+              "time": "2026-07-30 20:51:00"
+            },
+            {
+              "title": "半导体板块探底回升 臻宝科技涨超13%",
+              "link": "http://finance.eastmoney.com/a/202607213814845720.html",
+              "source": "每日经济新闻",
+              "time": "2026-07-21 10:45:43"
+            },
+            {
+              "title": "臻宝科技龙虎榜：营业部净卖出2.11亿元",
+              "link": "http://finance.eastmoney.com/a/202607103802181866.html",
+              "source": "证券时报网",
+              "time": "2026-07-10 22:31:00"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "臻宝科技：关于变更持续督导保荐代表人的公告",
+          "link": "http://finance.eastmoney.com/a/202607303826975639.html",
+          "source": "证券日报",
+          "time": "2026-07-30 20:51:00",
+          "tag": "news"
+        },
+        {
+          "title": "半导体板块探底回升 臻宝科技涨超13%",
+          "link": "http://finance.eastmoney.com/a/202607213814845720.html",
+          "source": "每日经济新闻",
+          "time": "2026-07-21 10:45:43",
+          "tag": "news"
+        },
+        {
+          "title": "臻宝科技龙虎榜：营业部净卖出2.11亿元",
+          "link": "http://finance.eastmoney.com/a/202607103802181866.html",
+          "source": "证券时报网",
+          "time": "2026-07-10 22:31:00",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "芯朋微",
+      "code": "688508",
+      "tags": [
+        {
+          "name": "国家大基金持股",
+          "count": 4
+        },
+        {
+          "name": "中芯国际概念",
+          "count": 2
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 17.02,
+          "concepts": [
+            {
+              "name": "国家大基金持股",
+              "conceptChange": null
+            },
+            {
+              "name": "中芯国际概念",
+              "conceptChange": 8.18
+            }
+          ],
+          "newsList": [
+            {
+              "title": "芯朋微：第五届董事会第二十八次会议决议公告",
+              "link": "http://finance.eastmoney.com/a/202607283823820372.html",
+              "source": "证券日报",
+              "time": "2026-07-28 21:57:00"
+            },
+            {
+              "title": "芯朋微：2026年限制性股票激励计划（草案）摘要公告",
+              "link": "http://finance.eastmoney.com/a/202607283823788935.html",
+              "source": "证券日报",
+              "time": "2026-07-28 21:25:00"
+            },
+            {
+              "title": "芯朋微：公司将于2026年8月13日召开2026年第二次临时股东会",
+              "link": "http://finance.eastmoney.com/a/202607283823753572.html",
+              "source": "证券日报",
+              "time": "2026-07-28 20:32:00"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "芯朋微：第五届董事会第二十八次会议决议公告",
+          "link": "http://finance.eastmoney.com/a/202607283823820372.html",
+          "source": "证券日报",
+          "time": "2026-07-28 21:57:00",
+          "tag": "news"
+        },
+        {
+          "title": "芯朋微：2026年限制性股票激励计划（草案）摘要公告",
+          "link": "http://finance.eastmoney.com/a/202607283823788935.html",
+          "source": "证券日报",
+          "time": "2026-07-28 21:25:00",
+          "tag": "news"
+        },
+        {
+          "title": "芯朋微：公司将于2026年8月13日召开2026年第二次临时股东会",
+          "link": "http://finance.eastmoney.com/a/202607283823753572.html",
+          "source": "证券日报",
+          "time": "2026-07-28 20:32:00",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "炬光科技",
+      "code": "688167",
+      "tags": [
+        {
+          "name": "存储芯片",
+          "count": 4
+        },
+        {
+          "name": "光刻机",
+          "count": 1
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 16.96,
+          "concepts": [
+            {
+              "name": "存储芯片",
+              "conceptChange": null
+            },
+            {
+              "name": "光刻机",
+              "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "炬光科技：公司持续关注高速光互联市场发展机会",
+              "link": "http://finance.eastmoney.com/a/202607243820753952.html",
+              "source": "证券日报",
+              "time": "2026-07-24 21:24:00"
+            },
+            {
+              "title": "【调研快报】炬光科技接待财通基金等41家机构调研",
+              "link": "http://finance.eastmoney.com/a/202607243820596592.html",
+              "source": "东方财富Choice数据",
+              "time": "2026-07-24 18:24:42"
+            },
+            {
+              "title": "炬光科技：公司将光通信和消费电子作为未来重点成长方向",
+              "link": "http://finance.eastmoney.com/a/202607243820788226.html",
+              "source": "证券日报",
+              "time": "2026-07-24 21:38:00"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "炬光科技：公司持续关注高速光互联市场发展机会",
+          "link": "http://finance.eastmoney.com/a/202607243820753952.html",
+          "source": "证券日报",
+          "time": "2026-07-24 21:24:00",
+          "tag": "news"
+        },
+        {
+          "title": "【调研快报】炬光科技接待财通基金等41家机构调研",
+          "link": "http://finance.eastmoney.com/a/202607243820596592.html",
+          "source": "东方财富Choice数据",
+          "time": "2026-07-24 18:24:42",
+          "tag": "news"
+        },
+        {
+          "title": "炬光科技：公司将光通信和消费电子作为未来重点成长方向",
+          "link": "http://finance.eastmoney.com/a/202607243820788226.html",
+          "source": "证券日报",
+          "time": "2026-07-24 21:38:00",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "先锋精科",
+      "code": "688605",
+      "tags": [
+        {
+          "name": "光刻机",
+          "count": 4
+        },
+        {
+          "name": "中芯国际概念",
+          "count": 1
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 14.87,
+          "concepts": [
+            {
+              "name": "光刻机",
+              "conceptChange": null
+            },
+            {
+              "name": "中芯国际概念",
+              "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "先锋精科股价又创新高，今日涨10.04%",
+              "link": "http://finance.eastmoney.com/a/202607103801079735.html",
+              "source": "证券时报网",
+              "time": "2026-07-10 09:38:00"
+            },
+            {
+              "title": "先锋精科持续走强，股价再创新高",
+              "link": "http://finance.eastmoney.com/a/202607093799987816.html",
+              "source": "证券时报网",
+              "time": "2026-07-09 15:13:00"
+            },
+            {
+              "title": "先锋精科涨15.22% 二机构合计净买入5800.50万元",
+              "link": "http://finance.eastmoney.com/a/202607073797085835.html",
+              "source": "证券时报网",
+              "time": "2026-07-07 22:21:00"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "先锋精科股价又创新高，今日涨10.04%",
+          "link": "http://finance.eastmoney.com/a/202607103801079735.html",
+          "source": "证券时报网",
+          "time": "2026-07-10 09:38:00",
+          "tag": "news"
+        },
+        {
+          "title": "先锋精科持续走强，股价再创新高",
+          "link": "http://finance.eastmoney.com/a/202607093799987816.html",
+          "source": "证券时报网",
+          "time": "2026-07-09 15:13:00",
+          "tag": "news"
+        },
+        {
+          "title": "先锋精科涨15.22% 二机构合计净买入5800.50万元",
+          "link": "http://finance.eastmoney.com/a/202607073797085835.html",
+          "source": "证券时报网",
+          "time": "2026-07-07 22:21:00",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "鸿仕达",
+      "code": "920125",
+      "tags": [
+        {
+          "name": "先进封装",
+          "count": 5
+        },
+        {
+          "name": "PCB概念",
+          "count": 2
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 24.66,
+          "concepts": [
+            {
+              "name": "先进封装",
+              "conceptChange": 8.36
+            },
+            {
+              "name": "PCB概念",
+              "conceptChange": 7.8
+            }
+          ],
+          "newsList": [
+            {
+              "title": "鸿仕达：公司半年度利润增长主要有两点原因",
+              "link": "http://finance.eastmoney.com/a/202607223817652970.html",
+              "source": "证券日报",
+              "time": "2026-07-22 21:24:00"
+            },
+            {
+              "title": "鸿仕达：研发中心和装备扩产均按照募投项目规划在推进",
+              "link": "http://finance.eastmoney.com/a/202607223817656210.html",
+              "source": "证券日报",
+              "time": "2026-07-22 21:30:00"
+            },
+            {
+              "title": "【调研快报】鸿仕达接待中金公司等12家机构调研",
+              "link": "http://finance.eastmoney.com/a/202607223817333752.html",
+              "source": "东方财富Choice数据",
+              "time": "2026-07-22 17:10:08"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "鸿仕达：公司半年度利润增长主要有两点原因",
+          "link": "http://finance.eastmoney.com/a/202607223817652970.html",
+          "source": "证券日报",
+          "time": "2026-07-22 21:24:00",
+          "tag": "news"
+        },
+        {
+          "title": "鸿仕达：研发中心和装备扩产均按照募投项目规划在推进",
+          "link": "http://finance.eastmoney.com/a/202607223817656210.html",
+          "source": "证券日报",
+          "time": "2026-07-22 21:30:00",
+          "tag": "news"
+        },
+        {
+          "title": "【调研快报】鸿仕达接待中金公司等12家机构调研",
+          "link": "http://finance.eastmoney.com/a/202607223817333752.html",
+          "source": "东方财富Choice数据",
+          "time": "2026-07-22 17:10:08",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "方邦股份",
+      "code": "688020",
+      "tags": [
+        {
+          "name": "先进封装",
+          "count": 4
+        },
+        {
+          "name": "PCB概念",
+          "count": 1
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 20,
+          "concepts": [
+            {
+              "name": "先进封装",
+              "conceptChange": null
+            },
+            {
+              "name": "PCB概念",
+              "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "方邦股份涨停 86只科创板股涨超10%",
+              "link": "http://finance.eastmoney.com/a/202607313827871896.html",
+              "source": "证券时报网",
+              "time": "2026-07-31 09:52:00"
+            },
+            {
+              "title": "方邦股份7月2日龙虎榜数据",
+              "link": "http://finance.eastmoney.com/a/202607023792178411.html",
+              "source": "证券时报网",
+              "time": "2026-07-02 21:24:00"
+            },
+            {
+              "title": "方邦股份：相关新产品占营收比例较小",
+              "link": "http://finance.eastmoney.com/a/202606303788716913.html",
+              "source": "国际金融报",
+              "time": "2026-06-30 20:31:54"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "方邦股份涨停 86只科创板股涨超10%",
+          "link": "http://finance.eastmoney.com/a/202607313827871896.html",
+          "source": "证券时报网",
+          "time": "2026-07-31 09:52:00",
+          "tag": "news"
+        },
+        {
+          "title": "方邦股份7月2日龙虎榜数据",
+          "link": "http://finance.eastmoney.com/a/202607023792178411.html",
+          "source": "证券时报网",
+          "time": "2026-07-02 21:24:00",
+          "tag": "news"
+        },
+        {
+          "title": "方邦股份：相关新产品占营收比例较小",
+          "link": "http://finance.eastmoney.com/a/202606303788716913.html",
+          "source": "国际金融报",
+          "time": "2026-06-30 20:31:54",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "盛科通信",
+      "code": "688702",
+      "tags": [
+        {
+          "name": "国家大基金持股",
           "count": 5
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 9.99,
+          "date": "2026-07-31",
+          "change": 18.08,
           "concepts": [
             {
-              "name": "草甘膦",
-              "conceptChange": 1.98
+              "name": "国家大基金持股",
+              "conceptChange": 9.1
+            }
+          ],
+          "newsList": [
+            {
+              "title": "盛科通信-U大宗交易成交1999.99万元",
+              "link": "http://finance.eastmoney.com/a/202607233819218571.html",
+              "source": "证券时报网",
+              "time": "2026-07-23 21:06:00"
+            },
+            {
+              "title": "大宗交易：盛科通信成交1999.99万元，折价2.54%（7-23）",
+              "link": "http://finance.eastmoney.com/a/202607233818997918.html",
+              "source": "东方财富Choice数据",
+              "time": "2026-07-23 17:22:22"
+            },
+            {
+              "title": "中证500ETF华夏（512500）震荡上行，盛科通信上涨超13%",
+              "link": "http://finance.eastmoney.com/a/202607223816957889.html",
+              "source": "每日经济新闻",
+              "time": "2026-07-22 10:47:51"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "华润双鹤入主 利尔化学午收涨停",
-          "tag": "announcement",
-          "source": "新京报"
+          "title": "盛科通信-U大宗交易成交1999.99万元",
+          "link": "http://finance.eastmoney.com/a/202607233819218571.html",
+          "source": "证券时报网",
+          "time": "2026-07-23 21:06:00",
+          "tag": "news"
         },
         {
-          "title": "利尔化学龙虎榜数据（7月30日）",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "大宗交易：盛科通信成交1999.99万元，折价2.54%（7-23）",
+          "link": "http://finance.eastmoney.com/a/202607233818997918.html",
+          "source": "东方财富Choice数据",
+          "time": "2026-07-23 17:22:22",
+          "tag": "news"
         },
         {
-          "title": "利尔化学(002258)龙虎榜数据(07-30)",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "中证500ETF华夏（512500）震荡上行，盛科通信上涨超13%",
+          "link": "http://finance.eastmoney.com/a/202607223816957889.html",
+          "source": "每日经济新闻",
+          "time": "2026-07-22 10:47:51",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "江山股份",
-      "code": "600389",
+      "name": "智立方",
+      "code": "301312",
       "tags": [
         {
-          "name": "草甘膦",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 5.51,
-          "concepts": [
-            {
-              "name": "草甘膦",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "江山股份：江山宜昌项目聚焦自主创制农药—苯嘧草唑的研发与生产",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "江山股份：关于签订募集资金专户存储三方监管协议的公告",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "江山股份：公司目前经营稳健",
-          "tag": "announcement",
-          "source": "证券日报"
-        }
-      ]
-    },
-    {
-      "name": "国光股份",
-      "code": "002749",
-      "tags": [
-        {
-          "name": "草甘膦",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 3.88,
-          "concepts": [
-            {
-              "name": "草甘膦",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "国光股份：公司及控股子公司不存在逾期担保",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "国光股份：取得1项专利证书",
-          "tag": "announcement",
-          "source": "南方财经网"
-        },
-        {
-          "title": "国光股份：关于取得发明专利证书的公告",
-          "tag": "announcement",
-          "source": "证券日报"
-        }
-      ]
-    },
-    {
-      "name": "均瑶健康",
-      "code": "605388",
-      "tags": [
-        {
-          "name": "白酒概念",
+          "name": "共封装光学(CPO)",
           "count": 5
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 10.07,
+          "date": "2026-07-31",
+          "change": 20,
           "concepts": [
             {
-              "name": "白酒概念",
-              "conceptChange": 1.83
+              "name": "共封装光学(CPO)",
+              "conceptChange": 8.85
+            }
+          ],
+          "newsList": [
+            {
+              "title": "智立方最新股东户数环比下降6.69% 筹码趋向集中",
+              "link": "http://finance.eastmoney.com/a/202607223817353550.html",
+              "source": "证券时报网",
+              "time": "2026-07-22 17:23:00"
+            },
+            {
+              "title": "智立方：截至2026年7月20日公司股东户数为16172户",
+              "link": "http://finance.eastmoney.com/a/202607223817541454.html",
+              "source": "证券日报",
+              "time": "2026-07-22 20:16:00"
+            },
+            {
+              "title": "智立方：公司在光通信半导体领域围绕光芯片制造及封装工艺形成了较完整的设备布局",
+              "link": "http://finance.eastmoney.com/a/202607193811833977.html",
+              "source": "证券日报",
+              "time": "2026-07-19 16:28:00"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "均瑶健康(605388)龙虎榜数据(07-30)",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "智立方最新股东户数环比下降6.69% 筹码趋向集中",
+          "link": "http://finance.eastmoney.com/a/202607223817353550.html",
+          "source": "证券时报网",
+          "time": "2026-07-22 17:23:00",
+          "tag": "news"
         },
         {
-          "title": "乳业概念表现活跃 均瑶健康直线涨停",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "智立方：截至2026年7月20日公司股东户数为16172户",
+          "link": "http://finance.eastmoney.com/a/202607223817541454.html",
+          "source": "证券日报",
+          "time": "2026-07-22 20:16:00",
+          "tag": "news"
         },
         {
-          "title": "乳业概念表现活跃 均瑶健康直线涨停",
-          "tag": "announcement",
-          "source": "财联社"
+          "title": "智立方：公司在光通信半导体领域围绕光芯片制造及封装工艺形成了较完整的设备布局",
+          "link": "http://finance.eastmoney.com/a/202607193811833977.html",
+          "source": "证券日报",
+          "time": "2026-07-19 16:28:00",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "金徽酒",
-      "code": "603919",
+      "name": "生益电子",
+      "code": "688183",
       "tags": [
         {
-          "name": "白酒概念",
+          "name": "共封装光学(CPO)",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 10.03,
+          "date": "2026-07-31",
+          "change": 19.99,
           "concepts": [
             {
-              "name": "白酒概念",
+              "name": "共封装光学(CPO)",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "金梓才调仓了！“亚军基”近一月大跌38%，中际旭创、生益电子被调出前十大重仓股",
+              "link": "http://finance.eastmoney.com/a/202607213815830970.html",
+              "source": "时代周报",
+              "time": "2026-07-21 20:10:36"
+            },
+            {
+              "title": "生益电子预计上半年净利10.82亿—11.37亿元",
+              "link": "http://finance.eastmoney.com/a/202607133804045911.html",
+              "source": "北京商报",
+              "time": "2026-07-13 20:26:06"
+            },
+            {
+              "title": "生益电子半年报业绩预计翻倍！算力PCB产能落地见效",
+              "link": "http://finance.eastmoney.com/a/202607143805549687.html",
+              "source": "每日经济新闻",
+              "time": "2026-07-14 09:50:09"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "金徽酒(603919)龙虎榜数据(07-30)",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "金梓才调仓了！“亚军基”近一月大跌38%，中际旭创、生益电子被调出前十大重仓股",
+          "link": "http://finance.eastmoney.com/a/202607213815830970.html",
+          "source": "时代周报",
+          "time": "2026-07-21 20:10:36",
+          "tag": "news"
         },
         {
-          "title": "金徽酒涨停，3机构龙虎榜上净卖出3108.28万元",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "生益电子预计上半年净利10.82亿—11.37亿元",
+          "link": "http://finance.eastmoney.com/a/202607133804045911.html",
+          "source": "北京商报",
+          "time": "2026-07-13 20:26:06",
+          "tag": "news"
         },
         {
-          "title": "舍得、金徽酒等涨停，白酒板块本月已反弹15%",
-          "tag": "announcement",
-          "source": "21世纪经济报道"
+          "title": "生益电子半年报业绩预计翻倍！算力PCB产能落地见效",
+          "link": "http://finance.eastmoney.com/a/202607143805549687.html",
+          "source": "每日经济新闻",
+          "time": "2026-07-14 09:50:09",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "舍得酒业",
-      "code": "600702",
+      "name": "强一股份",
+      "code": "688809",
       "tags": [
         {
-          "name": "白酒概念",
+          "name": "科创次新股",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 10.01,
+          "date": "2026-07-31",
+          "change": 15.86,
           "concepts": [
             {
-              "name": "白酒概念",
+              "name": "科创次新股",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "强一股份：拟使用10.27亿元超募资金投资在建项目并延期部分募投项目",
+              "link": "http://finance.eastmoney.com/a/202607243820775070.html",
+              "source": "财联社",
+              "time": "2026-07-24 21:51:44"
+            },
+            {
+              "title": "强一股份斥资超10亿元超募资金投资探针卡研发生产，顺客户高要求延期一募投项目",
+              "link": "http://finance.eastmoney.com/a/202607253821115077.html",
+              "source": "深圳商报·读创",
+              "time": "2026-07-25 12:34:21"
+            },
+            {
+              "title": "强一股份实控人离婚 公司称股份分割后仍合并计算大股东身份",
+              "link": "http://finance.eastmoney.com/a/202607213815781591.html",
+              "source": "证券日报",
+              "time": "2026-07-21 18:56:00"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "白酒概念震荡走强 舍得酒业涨停",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "强一股份：拟使用10.27亿元超募资金投资在建项目并延期部分募投项目",
+          "link": "http://finance.eastmoney.com/a/202607243820775070.html",
+          "source": "财联社",
+          "time": "2026-07-24 21:51:44",
+          "tag": "news"
         },
         {
-          "title": "白酒概念震荡走强 舍得酒业涨停",
-          "tag": "announcement",
-          "source": "财联社"
+          "title": "强一股份斥资超10亿元超募资金投资探针卡研发生产，顺客户高要求延期一募投项目",
+          "link": "http://finance.eastmoney.com/a/202607253821115077.html",
+          "source": "深圳商报·读创",
+          "time": "2026-07-25 12:34:21",
+          "tag": "news"
         },
         {
-          "title": "白酒股异动拉升 舍得酒业涨停",
-          "tag": "announcement",
-          "source": "南方财经网"
+          "title": "强一股份实控人离婚 公司称股份分割后仍合并计算大股东身份",
+          "link": "http://finance.eastmoney.com/a/202607213815781591.html",
+          "source": "证券日报",
+          "time": "2026-07-21 18:56:00",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "博拓生物",
-      "code": "688767",
+      "name": "联讯仪器",
+      "code": "688808",
       "tags": [
         {
-          "name": "芬太尼",
+          "name": "科创次新股",
+          "count": 4
+        }
+      ],
+      "appearances": [
+        {
+          "date": "2026-07-31",
+          "change": 15.66,
+          "concepts": [
+            {
+              "name": "科创次新股",
+              "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "CPO概念集体反弹 联讯仪器涨超15%",
+              "link": "http://finance.eastmoney.com/a/202607313827799242.html",
+              "source": "证券时报网",
+              "time": "2026-07-31 09:42:00"
+            },
+            {
+              "title": "CPO概念盘初集体反弹，新易盛、联讯仪器涨超15%",
+              "link": "http://finance.eastmoney.com/a/202607313827764816.html",
+              "source": "界面新闻",
+              "time": "2026-07-31 09:36:41"
+            },
+            {
+              "title": "联讯仪器：关于更换持续督导保荐代表人的公告",
+              "link": "http://finance.eastmoney.com/a/202607293825273747.html",
+              "source": "证券日报",
+              "time": "2026-07-29 19:54:00"
+            }
+          ]
+        }
+      ],
+      "news": [
+        {
+          "title": "CPO概念集体反弹 联讯仪器涨超15%",
+          "link": "http://finance.eastmoney.com/a/202607313827799242.html",
+          "source": "证券时报网",
+          "time": "2026-07-31 09:42:00",
+          "tag": "news"
+        },
+        {
+          "title": "CPO概念盘初集体反弹，新易盛、联讯仪器涨超15%",
+          "link": "http://finance.eastmoney.com/a/202607313827764816.html",
+          "source": "界面新闻",
+          "time": "2026-07-31 09:36:41",
+          "tag": "news"
+        },
+        {
+          "title": "联讯仪器：关于更换持续督导保荐代表人的公告",
+          "link": "http://finance.eastmoney.com/a/202607293825273747.html",
+          "source": "证券日报",
+          "time": "2026-07-29 19:54:00",
+          "tag": "news"
+        }
+      ]
+    },
+    {
+      "name": "芯碁微装",
+      "code": "688630",
+      "tags": [
+        {
+          "name": "光刻机",
           "count": 5
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 3.62,
+          "date": "2026-07-31",
+          "change": 18.94,
           "concepts": [
             {
-              "name": "芬太尼",
-              "conceptChange": 1.36
+              "name": "光刻机",
+              "conceptChange": 8.43
+            }
+          ],
+          "newsList": [
+            {
+              "title": "港股硬件设备股持续走高 芯碁微装涨超16%",
+              "link": "http://finance.eastmoney.com/a/202607273822079866.html",
+              "source": "东方财富Choice数据",
+              "time": "2026-07-27 15:35:42"
+            },
+            {
+              "title": "港股硬件设备股持续走高，芯碁微装涨超17%",
+              "link": "http://finance.eastmoney.com/a/202607273822087679.html",
+              "source": "界面新闻",
+              "time": "2026-07-27 15:41:27"
+            },
+            {
+              "title": "港股PCB概念股午后集体冲高 芯碁微装大涨超14%",
+              "link": "http://finance.eastmoney.com/a/202607273822039456.html",
+              "source": "东方财富Choice数据",
+              "time": "2026-07-27 14:40:52"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "博拓生物参投健达九州数亿元A轮融资 两年内四度落子构建脑机接口全生态链",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "港股硬件设备股持续走高 芯碁微装涨超16%",
+          "link": "http://finance.eastmoney.com/a/202607273822079866.html",
+          "source": "东方财富Choice数据",
+          "time": "2026-07-27 15:35:42",
+          "tag": "news"
         },
         {
-          "title": "芬太尼概念涨1.36%，主力资金净流入3股",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "港股硬件设备股持续走高，芯碁微装涨超17%",
+          "link": "http://finance.eastmoney.com/a/202607273822087679.html",
+          "source": "界面新闻",
+          "time": "2026-07-27 15:41:27",
+          "tag": "news"
         },
         {
-          "title": "健达九州完成数亿元人民币A轮融资",
-          "tag": "announcement",
-          "source": "界面新闻"
+          "title": "港股PCB概念股午后集体冲高 芯碁微装大涨超14%",
+          "link": "http://finance.eastmoney.com/a/202607273822039456.html",
+          "source": "东方财富Choice数据",
+          "time": "2026-07-27 14:40:52",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "万孚生物",
-      "code": "300482",
+      "name": "光智科技",
+      "code": "300489",
       "tags": [
         {
-          "name": "芬太尼",
+          "name": "先进封装",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 2.13,
+          "date": "2026-07-31",
+          "change": 20,
           "concepts": [
             {
-              "name": "芬太尼",
+              "name": "先进封装",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "光智科技：控股股东自愿承诺不减持公司股票",
+              "link": "http://finance.eastmoney.com/a/202607303826857156.html",
+              "source": "财联社",
+              "time": "2026-07-30 18:44:06"
+            },
+            {
+              "title": "光智科技：部分董事、高管及核心人员拟增持公司股份",
+              "link": "http://finance.eastmoney.com/a/202607303826852342.html",
+              "source": "财联社",
+              "time": "2026-07-30 18:43:30"
+            },
+            {
+              "title": "光智科技龙虎榜数据（7月30日）",
+              "link": "http://finance.eastmoney.com/a/202607303826815831.html",
+              "source": "证券时报网",
+              "time": "2026-07-30 17:45:00"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "万孚生物：首次回购6.52万股",
-          "tag": "announcement",
-          "source": "南方财经网"
+          "title": "光智科技：控股股东自愿承诺不减持公司股票",
+          "link": "http://finance.eastmoney.com/a/202607303826857156.html",
+          "source": "财联社",
+          "time": "2026-07-30 18:44:06",
+          "tag": "news"
         },
         {
-          "title": "万孚生物：首次回购公司股份65200股",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "光智科技：部分董事、高管及核心人员拟增持公司股份",
+          "link": "http://finance.eastmoney.com/a/202607303826852342.html",
+          "source": "财联社",
+          "time": "2026-07-30 18:43:30",
+          "tag": "news"
         },
         {
-          "title": "万孚生物首次回购6.52万股公司股份",
-          "tag": "announcement",
-          "source": "北京商报"
+          "title": "光智科技龙虎榜数据（7月30日）",
+          "link": "http://finance.eastmoney.com/a/202607303826815831.html",
+          "source": "证券时报网",
+          "time": "2026-07-30 17:45:00",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "国药现代",
-      "code": "600420",
+      "name": "兴福电子",
+      "code": "688545",
       "tags": [
         {
-          "name": "芬太尼",
+          "name": "中芯国际概念",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 1.61,
+          "date": "2026-07-31",
+          "change": 15.66,
           "concepts": [
             {
-              "name": "芬太尼",
+              "name": "中芯国际概念",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "兴福电子子公司年产4万吨超高纯电子化学品项目投产",
+              "link": "http://finance.eastmoney.com/a/202607173810122731.html",
+              "source": "上海证券报·中国证券网",
+              "time": "2026-07-17 09:57:17"
+            },
+            {
+              "title": "科创板晚报|容百科技Q2净利预计环比增662%-834% 大基金减持德邦科技、兴福电子",
+              "link": "http://finance.eastmoney.com/a/202607063795391838.html",
+              "source": "科创板日报",
+              "time": "2026-07-06 21:04:09"
+            },
+            {
+              "title": "兴福电子：国家集成电路基金二期6月17日至7月6日减持360万股 持股比例降至5.94%",
+              "link": "http://finance.eastmoney.com/a/202607063795232498.html",
+              "source": "财联社",
+              "time": "2026-07-06 17:46:15"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "国药现代：乳果糖口服溶液药品补充申请获批准",
-          "tag": "announcement",
-          "source": "财中社"
+          "title": "兴福电子子公司年产4万吨超高纯电子化学品项目投产",
+          "link": "http://finance.eastmoney.com/a/202607173810122731.html",
+          "source": "上海证券报·中国证券网",
+          "time": "2026-07-17 09:57:17",
+          "tag": "news"
         },
         {
-          "title": "国药现代：公司经营管理稳定有序",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "科创板晚报|容百科技Q2净利预计环比增662%-834% 大基金减持德邦科技、兴福电子",
+          "link": "http://finance.eastmoney.com/a/202607063795391838.html",
+          "source": "科创板日报",
+          "time": "2026-07-06 21:04:09",
+          "tag": "news"
         },
         {
-          "title": "国药现代：二级市场股价表现受多重因素综合影响",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "兴福电子：国家集成电路基金二期6月17日至7月6日减持360万股 持股比例降至5.94%",
+          "link": "http://finance.eastmoney.com/a/202607063795232498.html",
+          "source": "财联社",
+          "time": "2026-07-06 17:46:15",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "潜能恒信",
-      "code": "300191",
+      "name": "大族数控",
+      "code": "301200",
       "tags": [
         {
-          "name": "可燃冰",
+          "name": "玻璃基板",
           "count": 5
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 7.1,
+          "date": "2026-07-31",
+          "change": 17.69,
           "concepts": [
             {
-              "name": "可燃冰",
-              "conceptChange": 1.12
+              "name": "玻璃基板",
+              "conceptChange": 8.08
+            }
+          ],
+          "newsList": [
+            {
+              "title": "大族数控大涨6.55% 预计上半年净利润暴增",
+              "link": "http://finance.eastmoney.com/a/202607103801081496.html",
+              "source": "证券时报网",
+              "time": "2026-07-10 09:38:00"
+            },
+            {
+              "title": "大族数控上半年净利润预计增长241.85%~279.84%",
+              "link": "http://finance.eastmoney.com/a/202607093800367820.html",
+              "source": "证券时报网",
+              "time": "2026-07-09 21:55:00"
+            },
+            {
+              "title": "大族数控：预计2026年上半年净利同比增长241.85%-279.84%",
+              "link": "http://finance.eastmoney.com/a/202607093800316637.html",
+              "source": "中国证券报·中证网",
+              "time": "2026-07-09 21:29:55"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "潜能恒信：公司将持续夯实与中海油的合作基础，把握机会争取更多南海优质合同区块",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "大族数控大涨6.55% 预计上半年净利润暴增",
+          "link": "http://finance.eastmoney.com/a/202607103801081496.html",
+          "source": "证券时报网",
+          "time": "2026-07-10 09:38:00",
+          "tag": "news"
         },
         {
-          "title": "潜能恒信：公司现在的主营收入来自油气开采",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "大族数控上半年净利润预计增长241.85%~279.84%",
+          "link": "http://finance.eastmoney.com/a/202607093800367820.html",
+          "source": "证券时报网",
+          "time": "2026-07-09 21:55:00",
+          "tag": "news"
         },
         {
-          "title": "潜能恒信：公司将与中国海油尽快联合完成合同区整体储量估算及申报",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "大族数控：预计2026年上半年净利同比增长241.85%-279.84%",
+          "link": "http://finance.eastmoney.com/a/202607093800316637.html",
+          "source": "中国证券报·中证网",
+          "time": "2026-07-09 21:29:55",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "新锦动力",
-      "code": "300157",
+      "name": "沃尔德",
+      "code": "688028",
       "tags": [
         {
-          "name": "可燃冰",
+          "name": "玻璃基板",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 3.37,
+          "date": "2026-07-31",
+          "change": 15.97,
           "concepts": [
             {
-              "name": "可燃冰",
+              "name": "玻璃基板",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "沃尔德：公司始终高度重视市值管理工作",
+              "link": "http://finance.eastmoney.com/a/202607303826893035.html",
+              "source": "证券日报",
+              "time": "2026-07-30 19:11:00"
+            },
+            {
+              "title": "沃尔德陈继锋：金刚石不只是“硬” 还有其他应用方向",
+              "link": "http://finance.eastmoney.com/a/202607283822501116.html",
+              "source": "上海证券报",
+              "time": "2026-07-28 02:03:19"
+            },
+            {
+              "title": "【调研快报】沃尔德接待中信建投等14家机构调研",
+              "link": "http://finance.eastmoney.com/a/202607233818993354.html",
+              "source": "东方财富Choice数据",
+              "time": "2026-07-23 17:19:04"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "新锦动力：获中亚两项燃机大修订单 燃气轮机事业公司已全面运营",
-          "tag": "announcement",
-          "source": "人民财讯"
+          "title": "沃尔德：公司始终高度重视市值管理工作",
+          "link": "http://finance.eastmoney.com/a/202607303826893035.html",
+          "source": "证券日报",
+          "time": "2026-07-30 19:11:00",
+          "tag": "news"
         },
         {
-          "title": "新锦动力：获中亚两项燃机大修订单 燃气轮机事业公司已全面运营",
-          "tag": "announcement",
-          "source": "证券时报网"
+          "title": "沃尔德陈继锋：金刚石不只是“硬” 还有其他应用方向",
+          "link": "http://finance.eastmoney.com/a/202607283822501116.html",
+          "source": "上海证券报",
+          "time": "2026-07-28 02:03:19",
+          "tag": "news"
         },
         {
-          "title": "新锦动力：燃气轮机MRO业务新增2800万元合同",
-          "tag": "announcement",
-          "source": "上海证券报·中国证券网"
+          "title": "【调研快报】沃尔德接待中信建投等14家机构调研",
+          "link": "http://finance.eastmoney.com/a/202607233818993354.html",
+          "source": "东方财富Choice数据",
+          "time": "2026-07-23 17:19:04",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "中海油服",
-      "code": "601808",
+      "name": "力诺药包",
+      "code": "301188",
       "tags": [
         {
-          "name": "可燃冰",
+          "name": "玻璃基板",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 3,
+          "date": "2026-07-31",
+          "change": 15.34,
           "concepts": [
             {
-              "name": "可燃冰",
+              "name": "玻璃基板",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "力诺药包：公司不存在逾期担保",
+              "link": "http://finance.eastmoney.com/a/202607283823710723.html",
+              "source": "证券日报",
+              "time": "2026-07-28 19:46:00"
+            },
+            {
+              "title": "力诺药包：多位股东减持完毕",
+              "link": "http://finance.eastmoney.com/a/202607163809127629.html",
+              "source": "南方财经网",
+              "time": "2026-07-16 17:21:00"
+            },
+            {
+              "title": "力诺药包：关于公司股东股份减持计划实施完成的公告",
+              "link": "http://finance.eastmoney.com/a/202607163809328166.html",
+              "source": "证券日报",
+              "time": "2026-07-16 21:13:00"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "中海油服：2026年第一次临时股东会决议公告",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "力诺药包：公司不存在逾期担保",
+          "link": "http://finance.eastmoney.com/a/202607283823710723.html",
+          "source": "证券日报",
+          "time": "2026-07-28 19:46:00",
+          "tag": "news"
         },
         {
-          "title": "中海油服：2026年7月29日召开2026年第一次临时股东会",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "力诺药包：多位股东减持完毕",
+          "link": "http://finance.eastmoney.com/a/202607163809127629.html",
+          "source": "南方财经网",
+          "time": "2026-07-16 17:21:00",
+          "tag": "news"
         },
         {
-          "title": "中海油服：董事长赵顺强辞职 刘建忠接任首席执行官 尚捷任总裁",
-          "tag": "announcement",
-          "source": "财中社"
+          "title": "力诺药包：关于公司股东股份减持计划实施完成的公告",
+          "link": "http://finance.eastmoney.com/a/202607163809328166.html",
+          "source": "证券日报",
+          "time": "2026-07-16 21:13:00",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "南天信息",
-      "code": "000948",
+      "name": "罗博特科",
+      "code": "300757",
       "tags": [
         {
-          "name": "信托概念",
+          "name": "富士康概念",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 6.36,
+          "date": "2026-07-31",
+          "change": 19.14,
           "concepts": [
             {
-              "name": "信托概念",
+              "name": "富士康概念",
               "conceptChange": null
+            }
+          ],
+          "newsList": [
+            {
+              "title": "罗博特科：关于签订日常经营重大合同的公告",
+              "link": "http://finance.eastmoney.com/a/202607273822383744.html",
+              "source": "证券日报",
+              "time": "2026-07-27 21:26:00"
+            },
+            {
+              "title": "罗博特科：子公司签订1.29亿元自动化制造设备合同",
+              "link": "http://finance.eastmoney.com/a/202607273822275124.html",
+              "source": "财联社",
+              "time": "2026-07-27 19:27:55"
+            },
+            {
+              "title": "罗博特科：签订约1.29亿元自动化制造设备及服务订单",
+              "link": "http://finance.eastmoney.com/a/202607273822300662.html",
+              "source": "第一财经",
+              "time": "2026-07-27 19:47:45"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "南天信息(000948)龙虎榜数据(07-30)",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "罗博特科：关于签订日常经营重大合同的公告",
+          "link": "http://finance.eastmoney.com/a/202607273822383744.html",
+          "source": "证券日报",
+          "time": "2026-07-27 21:26:00",
+          "tag": "news"
         },
         {
-          "title": "南天信息：关于控股股东部分股份解除质押的公告",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "罗博特科：子公司签订1.29亿元自动化制造设备合同",
+          "link": "http://finance.eastmoney.com/a/202607273822275124.html",
+          "source": "财联社",
+          "time": "2026-07-27 19:27:55",
+          "tag": "news"
         },
         {
-          "title": "南天信息：控股股东工投集团解押1540万股",
-          "tag": "announcement",
-          "source": "财中社"
+          "title": "罗博特科：签订约1.29亿元自动化制造设备及服务订单",
+          "link": "http://finance.eastmoney.com/a/202607273822300662.html",
+          "source": "第一财经",
+          "time": "2026-07-27 19:47:45",
+          "tag": "news"
         }
       ]
     },
     {
-      "name": "浦发银行",
-      "code": "600000",
+      "name": "欧陆通",
+      "code": "300870",
       "tags": [
         {
-          "name": "信托概念",
+          "name": "富士康概念",
           "count": 4
         }
       ],
       "appearances": [
         {
-          "date": "2026-07-30",
-          "change": 4.63,
+          "date": "2026-07-31",
+          "change": 16.01,
           "concepts": [
             {
-              "name": "信托概念",
+              "name": "富士康概念",
               "conceptChange": null
             }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "浦发银行助力农发行首期柜台债券成功发行",
-          "tag": "announcement",
-          "source": "上海证券报·中国证券网"
-        },
-        {
-          "title": "浦发银行“耐心资本”陪伴长鑫科技穿越产业周期",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "浦发银行陪伴长鑫科技穿越产业周期",
-          "tag": "announcement",
-          "source": "上海证券报·中国证券网"
-        }
-      ]
-    },
-    {
-      "name": "西藏天路",
-      "code": "600326",
-      "tags": [
-        {
-          "name": "同花顺中特估100",
-          "count": 5
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 5.43,
-          "concepts": [
+          ],
+          "newsList": [
             {
-              "name": "同花顺中特估100",
-              "conceptChange": 0.99
+              "title": "欧陆通：公司及子公司未发生逾期担保",
+              "link": "http://finance.eastmoney.com/a/202607283823670622.html",
+              "source": "证券日报",
+              "time": "2026-07-28 19:19:00"
+            },
+            {
+              "title": "欧陆通：公司已陆续为浪潮信息、富士康等国内知名服务器系统厂商出货",
+              "link": "http://finance.eastmoney.com/a/202607203813531911.html",
+              "source": "证券日报",
+              "time": "2026-07-20 19:45:00"
+            },
+            {
+              "title": "欧陆通：公司目前生产经营情况正常",
+              "link": "http://finance.eastmoney.com/a/202607083798468831.html",
+              "source": "证券日报",
+              "time": "2026-07-08 17:19:00"
             }
           ]
         }
       ],
       "news": [
         {
-          "title": "水泥概念异动拉升 西藏天路涨停",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
+          "title": "欧陆通：公司及子公司未发生逾期担保",
+          "link": "http://finance.eastmoney.com/a/202607283823670622.html",
+          "source": "证券日报",
+          "time": "2026-07-28 19:19:00",
+          "tag": "news"
         },
         {
-          "title": "西藏天路：2026年第二次临时股东会决议公告",
-          "tag": "announcement",
-          "source": "证券日报"
+          "title": "欧陆通：公司已陆续为浪潮信息、富士康等国内知名服务器系统厂商出货",
+          "link": "http://finance.eastmoney.com/a/202607203813531911.html",
+          "source": "证券日报",
+          "time": "2026-07-20 19:45:00",
+          "tag": "news"
         },
         {
-          "title": "西藏天路：截至7月10日公司股东人数为152210户",
-          "tag": "announcement",
-          "source": "证券日报"
-        }
-      ]
-    },
-    {
-      "name": "中远海能",
-      "code": "600026",
-      "tags": [
-        {
-          "name": "同花顺中特估100",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 4.53,
-          "concepts": [
-            {
-              "name": "同花顺中特估100",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "港股中远海能反弹逾6%",
-          "tag": "announcement",
-          "source": "每日经济新闻"
-        },
-        {
-          "title": "中远海能：2026年第二次临时股东会决议公告",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "港股中远海能跌超4%",
-          "tag": "announcement",
-          "source": "每日经济新闻"
-        }
-      ]
-    },
-    {
-      "name": "中国电信",
-      "code": "601728",
-      "tags": [
-        {
-          "name": "同花顺中特估100",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 4.01,
-          "concepts": [
-            {
-              "name": "同花顺中特估100",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "安徽省省长王清宪与中国电信集团总经理刘桂清举行工作会谈",
-          "tag": "announcement",
-          "source": "证券时报网"
-        },
-        {
-          "title": "《财富》世界500强发布 中国电信与互联网企业表现抢眼",
-          "tag": "announcement",
-          "source": "人民邮电报"
-        },
-        {
-          "title": "中国电信8月1日起停止第三方互联网办卡，移动、联通暂未发布类似公告",
-          "tag": "announcement",
-          "source": "红星资本局"
-        }
-      ]
-    },
-    {
-      "name": "钱江摩托",
-      "code": "000913",
-      "tags": [
-        {
-          "name": "高股息精选",
-          "count": 5
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 7.04,
-          "concepts": [
-            {
-              "name": "高股息精选",
-              "conceptChange": 0.93
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "钱江摩托：公司2025年度实现营业收入54.14亿元",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "钱江摩托：2026年上半年净利同比预降59.15%-66.57%",
-          "tag": "announcement",
-          "source": "中国证券报·中证网"
-        },
-        {
-          "title": "钱江摩托：上半年净利润同比预降59.15%—66.57%",
-          "tag": "announcement",
-          "source": "证券时报网"
-        }
-      ]
-    },
-    {
-      "name": "苏泊尔",
-      "code": "002032",
-      "tags": [
-        {
-          "name": "高股息精选",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 5.15,
-          "concepts": [
-            {
-              "name": "高股息精选",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "外销订单减少及费用增加拖累业绩 苏泊尔上半年营收净利双降",
-          "tag": "announcement",
-          "source": "经济参考报"
-        },
-        {
-          "title": "【调研快报】苏泊尔接待国联民生证券等24家机构调研",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
-        },
-        {
-          "title": "苏泊尔：三、四季度原材料成本压力预计将持续存在 正采取措施降低不利影响",
-          "tag": "announcement",
-          "source": "人民财讯"
-        }
-      ]
-    },
-    {
-      "name": "菜百股份",
-      "code": "605599",
-      "tags": [
-        {
-          "name": "高股息精选",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 4.83,
-          "concepts": [
-            {
-              "name": "高股息精选",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "菜百股份：公司正积极筹备高端子品牌“菜百典藏”",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "菜百股份：公司始终注重经营管理能力的持续提升",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "菜百股份：公司在电商领域已形成较为稳固的渠道格局",
-          "tag": "announcement",
-          "source": "证券日报"
-        }
-      ]
-    },
-    {
-      "name": "亿利达",
-      "code": "002686",
-      "tags": [
-        {
-          "name": "化债概念(AMC概念)",
-          "count": 5
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 10.04,
-          "concepts": [
-            {
-              "name": "化债概念(AMC概念)",
-              "conceptChange": 0.92
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "亿利达：控股股东、实控人变更事项获反垄断审查通过",
-          "tag": "announcement",
-          "source": "证券时报网"
-        },
-        {
-          "title": "亿利达：公司不存在逾期担保",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "亿利达：2026年上半年净利同比预降96.25%-97.5%",
-          "tag": "announcement",
-          "source": "中国证券报·中证网"
-        }
-      ]
-    },
-    {
-      "name": "金桥信息",
-      "code": "603918",
-      "tags": [
-        {
-          "name": "化债概念(AMC概念)",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 6.51,
-          "concepts": [
-            {
-              "name": "化债概念(AMC概念)",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "金桥信息(603918)龙虎榜数据(07-28)",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
-        },
-        {
-          "title": "金桥信息涨停，沪股通龙虎榜上买入987.11万元，卖出717.11万元",
-          "tag": "announcement",
-          "source": "证券时报网"
-        },
-        {
-          "title": "金桥信息：预计2026年上半年亏损3090万元-4610万元",
-          "tag": "announcement",
-          "source": "中国证券报·中证网"
-        }
-      ]
-    },
-    {
-      "name": "ST龙大",
-      "code": "002726",
-      "tags": [
-        {
-          "name": "猪肉",
-          "count": 5
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 5.29,
-          "concepts": [
-            {
-              "name": "猪肉",
-              "conceptChange": 0.87
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "ST龙大：公司股票交易可能被实施退市风险警示",
-          "tag": "announcement",
-          "source": "南方财经网"
-        },
-        {
-          "title": "ST龙大(002726)龙虎榜数据(07-30)",
-          "tag": "announcement",
-          "source": "东方财富Choice数据"
-        },
-        {
-          "title": "ST龙大：连续3个交易日收盘价涨幅偏离值累超20%",
-          "tag": "announcement",
-          "source": "南方财经网"
-        }
-      ]
-    },
-    {
-      "name": "克明食品",
-      "code": "002661",
-      "tags": [
-        {
-          "name": "猪肉",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 3.44,
-          "concepts": [
-            {
-              "name": "猪肉",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "克明食品：回购股份注销完成，总股本减少2.79%",
-          "tag": "announcement",
-          "source": "新京报"
-        },
-        {
-          "title": "克明食品：关于回购股份注销完成暨控股股东及其一致行动人权益变动被动触及1%整数倍的公告",
-          "tag": "announcement",
-          "source": "证券日报"
-        },
-        {
-          "title": "克明食品：截至2026年7月20日公司股东总户数为24516户",
-          "tag": "announcement",
-          "source": "证券日报"
-        }
-      ]
-    },
-    {
-      "name": "双汇发展",
-      "code": "000895",
-      "tags": [
-        {
-          "name": "猪肉",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 2.99,
-          "concepts": [
-            {
-              "name": "猪肉",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "食品ETF华夏（159151）涨幅领先全市场，持仓股伊利股份、海天味业、双汇发展高股息优势突显",
-          "tag": "announcement",
-          "source": "每日经济新闻"
-        },
-        {
-          "title": "食品ETF华夏连续6个交易日获资金净流入，权重股伊利股份、双汇发展股息率超5%",
-          "tag": "announcement",
-          "source": "每日经济新闻"
-        },
-        {
-          "title": "双汇发展首批捐赠1.5万箱肉制品支援广西抗洪救灾",
-          "tag": "announcement",
-          "source": "证券日报"
-        }
-      ]
-    },
-    {
-      "name": "洋河股份",
-      "code": "002304",
-      "tags": [
-        {
-          "name": "超级品牌",
-          "count": 5
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 4.82,
-          "concepts": [
-            {
-              "name": "超级品牌",
-              "conceptChange": 0.79
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "洋河股份成立文化发展公司",
-          "tag": "announcement",
-          "source": "证券时报网"
-        },
-        {
-          "title": "洋河股份：田某某捏造900多条虚假言论 被判向洋河道歉并赔15万元",
-          "tag": "announcement",
-          "source": "证券时报网"
-        },
-        {
-          "title": "洋河股份牵头建设“企业主导省重点实验室”",
-          "tag": "announcement",
-          "source": "经济参考网"
-        }
-      ]
-    },
-    {
-      "name": "五粮液",
-      "code": "000858",
-      "tags": [
-        {
-          "name": "超级品牌",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 4.51,
-          "concepts": [
-            {
-              "name": "超级品牌",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "五粮液换董秘了｜董秘沙龙",
-          "tag": "announcement",
-          "source": "时代周报"
-        },
-        {
-          "title": "五粮液密集人事调整：宜宾纸业董事长出任五粮液董秘",
-          "tag": "announcement",
-          "source": "证券时报网"
-        },
-        {
-          "title": "五粮液：董事会秘书变更",
-          "tag": "announcement",
-          "source": "上海证券报·中国证券网"
-        }
-      ]
-    },
-    {
-      "name": "上汽集团",
-      "code": "600104",
-      "tags": [
-        {
-          "name": "超级品牌",
-          "count": 4
-        }
-      ],
-      "appearances": [
-        {
-          "date": "2026-07-30",
-          "change": 3.53,
-          "concepts": [
-            {
-              "name": "超级品牌",
-              "conceptChange": null
-            }
-          ]
-        }
-      ],
-      "news": [
-        {
-          "title": "上汽集团四大核心板块迎来人事变动",
-          "tag": "announcement",
-          "source": "每日经济新闻"
-        },
-        {
-          "title": "AI深入研产供销服 上汽集团与飞书达成合作",
-          "tag": "announcement",
-          "source": "中国经营报"
-        },
-        {
-          "title": "上汽集团排名2026世界500强第125位 较去年上升13位",
-          "tag": "announcement",
-          "source": "上海证券报·中国证券网"
+          "title": "欧陆通：公司目前生产经营情况正常",
+          "link": "http://finance.eastmoney.com/a/202607083798468831.html",
+          "source": "证券日报",
+          "time": "2026-07-08 17:19:00",
+          "tag": "news"
         }
       ]
     }
   ],
-  "totalStocks": 29,
+  "totalStocks": 20,
   "auto": [
     {
-      "id": "logic_1785469886276_1",
-      "title": "雷军：小米澎程综合续航最高1705km",
-      "content": "【雷军：小米澎程综合续航最高1705km】在今日的小米澎程技术发布会上，小米集团CEO雷军表示，小米澎程N90 Max的CLTC综合续航最高1705km，这是目前增程SUV达到的最好的表现。",
+      "id": "logic_1785471833299_1",
+      "title": "“十五五”规划109项重大工程加快实施",
+      "content": "【“十五五”规划109项重大工程加快实施】今天上午，国家发展改革委举行7月份新闻发布会。国家发展改革委新闻发言人表示，当前，“十五五”规划109项重大工程加快实施。今年新开工了三峡水运新通道、广州新机场、福建上白石水利枢纽等一批重大工程项目，新藏铁路东西路段、四川都江堰灌区现代化改造等项目前期工作正在加快推进，争取尽早开工建设、形成实物工作量。",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_2",
-      "title": "京东与七腾机器人达成战略合作",
-      "content": "【京东与七腾机器人达成战略合作】7月30日，京东与特种机器人企业七腾机器人达成战略合作，双方聚焦能源石化、煤炭矿山、电力基建、应急安防、轨道交通等场景的机器人应用，推动七腾机器人全系列产品规模落地与普及。",
+      "id": "logic_1785471833299_2",
+      "title": "沪深两市成交额突破1万亿元 较上一个交易日此时放量近3000亿元",
+      "content": "沪深两市成交额突破1万亿元，较上一个交易日此时放量近3000亿元。",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_3",
-      "title": "美股存储概念股盘前走高 闪迪涨超5%",
-      "content": "【美股存储概念股盘前走高 闪迪涨超5%】美股存储概念股盘前走高，闪迪涨超5%，美光科技涨超2%，SK海力士涨近2%。",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_4",
-      "title": "瑞银集团下调高通目标价",
-      "content": "【瑞银集团下调高通目标价】瑞银集团将高通目标价从190美元下调至170美元。",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_5",
-      "title": "联泰环保：上半年净利润为8203.8万元 同比下降2.89%",
-      "content": "【联泰环保：上半年净利润为8203.8万元 同比下降2.89%】联泰环保(603797)7月30日披露半年报：2026年上半年，公司实现营业收入5.21亿元，同比增长0.85%；归属于上市公司股东的净利润为8203.8万元，同比下降2.89%；基本每股收益0.14元。",
-      "tag": "earnings",
+      "id": "logic_1785471833299_3",
+      "title": "费城半导体指数隔夜暴涨9%！半导体设备ETF易方达（159558）涨9.69%，科创50高开超8%",
+      "content": "【费城半导体指数隔夜暴涨9%！半导体设备ETF易方达（159558）涨9.69%，科创50高开超8%】截至2026年7月31日09:40，半导体设备ETF易方达（159558）大幅高开，盘中涨幅达9.69%，报1.121元，盘中最高触及1.124元，最低1.09元，开盘仅10分钟成交额即突破12.06亿元，成交量达10.82亿份，换手率显著放大，市场交投异常活跃。",
+      "tag": "market",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_6",
-      "title": "宇晶股份：拟定增募资1.76亿元 用于大尺寸硅片及碳化硅设备等项目",
-      "content": "【宇晶股份：拟定增募资1.76亿元 用于大尺寸硅片及碳化硅设备等项目】7月30日，宇晶股份(002943.SZ)公告称，公司发布2026年度以简易程序向特定对象发行股票预案，拟募集资金总额不超过1.76亿元，扣除发行费用后用于“8~12英寸大尺寸硅片及碳化硅切磨抛设备研发及产业化项目”、“海外营销服务中心建设项目”及补充流动资金。",
+      "id": "logic_1785471833299_4",
+      "title": "韩股飙升15%创历史最大涨幅，芯片ETF“10CM”涨停",
+      "content": "【韩股飙升15%创历史最大涨幅，芯片ETF“10CM”涨停】今日受海外市场利好情绪影响，A股芯片产业标的重燃情绪迎来反弹。截至2026年7月31日10：00，芯片ETF东财（159599）涨停，涨幅达10.02%，成交量超2.9亿元，换手13.70%，迎来近期交投活跃阶段。成分股澜起科技涨11.88%，寒武纪涨11.38%，兆易创新涨10%，中微公司、北方华创海光信息等领涨。",
       "tag": "industry",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_7",
-      "title": "东鹏饮料：上半年净利润同比增长20.72% 拟每10股派30元",
-      "content": "【东鹏饮料：上半年净利润同比增长20.72% 拟每10股派30元】东鹏饮料(605499.SH)发布2026年半年度报告，实现营业收入124.43亿元，同比增长15.89%；归属于上市公司股东的净利润28.67亿元，同比增长20.72%。公司拟向全体股东每10股派发现金红利30元(含税)。",
-      "tag": "earnings",
+      "id": "logic_1785471833299_5",
+      "title": "刚刚，史诗级大反攻！科创芯片设计ETF天弘、芯片ETF天弘标的指数双双跳涨逾8%",
+      "content": "【刚刚，史诗级大反攻！科创芯片设计ETF天弘、芯片ETF天弘标的指数双双跳涨逾8%】7月31日｜史诗级大反攻，AI硬件股全线大涨，科创芯片设计ETF天弘(589070)标的指数涨9.6%，芯片ETF天弘(159310)标的指数8.8%。",
+      "tag": "market",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_8",
-      "title": "央行行长潘功胜会见哈萨克斯坦国家银行行长苏莱曼诺夫、金融市场监管和发展署署长阿贝尔卡瑟莫娃",
-      "content": "【央行行长潘功胜会见哈萨克斯坦国家银行行长苏莱曼诺夫、金融市场监管和发展署署长阿贝尔卡瑟莫娃】7月30日，中国人民银行行长潘功胜会见哈萨克斯坦国家银行行长苏莱曼诺夫、金融市场监管和发展署署长阿贝尔卡瑟莫娃，双方就全球经济金融形势以及中哈双边金融合作等议题交换了意见。",
+      "id": "logic_1785471833299_6",
+      "title": "松田科技启动IPO辅导",
+      "content": "【松田科技启动IPO辅导】证监会网站披露，广东松田科技股份有限公司于2026年7月30日在广东证监局办理辅导备案登记，拟首次公开发行股票并上市，辅导券商为东方证券。",
       "tag": "policy",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_9",
-      "title": "调价窗口临近 成品油零售价格或遇年内第十涨",
-      "content": "【调价窗口临近 成品油零售价格或遇年内第十涨】国内成品油零售限价将再迎调价窗口。据分析机构数据，本计价周期以来（2026年7月17日24时至7月31日24时），国际原油价格偏强运行，均价水平环比上涨，变化率持续处于正值范围，因此预计本次国内成品油零售限价或再迎上调。据了解，今年以来，国内油价已经历十四轮调整，分别为“九涨四跌一搁浅”。国内汽、柴油价格每吨较去年底分别上涨890元/吨和860元/吨。",
+      "id": "logic_1785471833299_7",
+      "title": "半导体设备板块持续走高 多只ETF封涨停",
+      "content": "【半导体设备板块持续走高 多只ETF封涨停】半导体产业链盘中持续走高，半导体设备ETF华夏（562590）、半导体设备ETF招商（561980）、半导体设备ETF国泰（159516）封涨停，科创半导体设备ETF鹏华（589020）、科创半导体设备ETF华泰柏瑞（588710）均涨超10%。",
+      "tag": "industry",
+      "stockCode": "",
+      "confidence": 0.85,
+      "createdAt": "2026-07-31T04:23:53.299Z"
+    },
+    {
+      "id": "logic_1785471833299_8",
+      "title": "半导体设备ETF批量涨停！全球半导体暴力大反弹",
+      "content": "【半导体设备ETF批量涨停！全球半导体暴力大反弹】7月31日，半导体设备ETF招商（561980）开盘涨停！数据显示，半导体设备ETF招商（561980）近5日四度净流入累计超1亿元，显示部分资金在前期超跌期间持续加码。",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_10",
-      "title": "三环集团：累计回购8.95亿元股份 回购股份方案已实施完毕",
-      "content": "【三环集团：累计回购8.95亿元股份 回购股份方案已实施完毕】三环集团(300408.SZ)公告称，截至公告披露日，本次回购股份方案已实施完毕，公司累计通过股份回购专用证券账户以集中竞价交易方式回购公司A股股份854.73万股，成交总金额为人民币8.95亿元（不含交易费用）。",
+      "id": "logic_1785471833299_9",
+      "title": "科创半导体设备ETF鹏华涨超10%，三重催化助力板块走高",
+      "content": "【科创半导体设备ETF鹏华涨超10%，三重催化助力板块走高】截至2026年7月31日 09:30，上证科创板半导体材料设备主题指数(950125)强势上涨11.26%，成分股芯源微上涨15.47%，微导纳米上涨14.53%，中科飞测上涨14.04%，神工股份，中微公司等个股跟涨。科创半导体设备ETF鹏华(589020)上涨10.83%，最新价报2.42元。",
+      "tag": "industry",
+      "stockCode": "",
+      "confidence": 0.85,
+      "createdAt": "2026-07-31T04:23:53.299Z"
+    },
+    {
+      "id": "logic_1785471833299_10",
+      "title": "半导体ETF鹏华涨超9%，美联储放鸽、海外巨头AI云回报大超预期",
+      "content": "【半导体ETF鹏华涨超9%，美联储放鸽、海外巨头AI云回报大超预期】截至2026年7月31日 09:42，国证半导体芯片指数(980017)强势上涨8.50%，成分股盛科通信上涨15.22%，源杰科技上涨15.07%，芯原股份上涨13.75%，长川科技，拓荆科技等个股跟涨。半导体ETF鹏华(159813)上涨9.04%，最新价报1.51元。",
       "tag": "market",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_11",
-      "title": "先导基电：部分董事及高管拟合计增持不低于1600万元股份",
-      "content": "【先导基电：部分董事及高管拟合计增持不低于1600万元股份】先导基电(600641.SH)公告称，公司实际控制人、董事长兼总裁朱世会、副董事长兼副总裁余舒婷、董事兼首席财务官叶蒙蒙、副总裁兼董事会秘书周伟芳计划自本公告披露之日起6个月内，通过集中竞价交易方式增持公司A股股份，合计拟增持金额不低于1600万元。",
+      "id": "logic_1785471833299_11",
+      "title": "美国二季度增速低于市场预期、美元失守100关口！“金价放大器”黄金股ETF永赢早盘涨超2%",
+      "content": "【美国二季度增速低于市场预期、美元失守100关口！“金价放大器”黄金股ETF永赢早盘涨超2%】场内ETF方面，截至2026年7月31日 09:45，黄金股ETF永赢(517520)上涨2.40%，最新价报1.879元，成交额1.02亿元，换手率0.82%，最新规模123.89亿元（截至7月30日）。成分股株冶集团上涨6.46%，万国黄金集团上涨5.78%，晓程科技上涨5.73%，赤峰黄金、鹏欣资源、西部黄金、招金黄金、中金黄金等个股跟涨。",
       "tag": "market",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_12",
-      "title": "建滔积层板：预计2026年上半年纯利超28亿港元 同比增逾200%",
-      "content": "【建滔积层板：预计2026年上半年纯利超28亿港元 同比增逾200%】建滔积层板在港交所公告，预计截至2026年6月30日止六个月录得纯利超过28亿港元，较2025年同期增长超过200%。纯利大幅上升主要由于市场覆铜面板及其上游物料（包括电子玻璃纤维纱、电子玻璃纤维布及铜箔）持续供不应求，产品单价普遍明显上升，覆铜面板销量亦较2025年同期录得增长。",
-      "tag": "market",
-      "stockCode": "",
-      "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_13",
-      "title": "台积电泄密案：两名涉案前工程师分别被判刑10年、6年",
-      "content": "【台积电泄密案：两名涉案前工程师分别被判刑10年、6年】据中国台湾方面报道，台积电4名前工程师陈力铭、吴秉骏、戈一平、陈韦杰，因窃取、外泄2纳米等机密数据，台“智慧财产及商业法院”一审判处陈力铭10年、吴秉骏3年、戈一平2年、陈韦杰6年有期徒刑。陈力铭、陈韦杰提出上诉，台“最高法院”30日驳回上诉，两人将直接发监执行。（环球网）",
+      "id": "logic_1785471833299_12",
+      "title": "燃气轮机概念震荡走强 隆达股份涨超11%",
+      "content": "燃气轮机概念震荡走强，隆达股份涨超11%，杰瑞股份、联德股份涨超9%，飞沃科技、应流股份、博盈特焊、图南股份、汽轮科技跟涨。",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_14",
-      "title": "雷军：小米汽车累计交付70多万辆",
-      "content": "【雷军：小米汽车累计交付70多万辆】7月30日晚，雷军在小米澎程技术发布会上介绍，2年半的时间，小米汽车发布了两款车——小米SU7和小米YU7。这两款车都成了爆品，并且累计交付70多万辆。",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_15",
-      "title": "先导基电：先导汇芯承诺12个月内不减持",
-      "content": "【先导基电：先导汇芯承诺12个月内不减持】先导基电公告，公司控股股东先导汇芯（上海）科技投资有限公司自愿承诺，自2026年7月30日起12个月内不以任何方式减持其所持有的公司股份。",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_16",
-      "title": "北交所召开公募基金座谈会听取意见建议",
-      "content": "【北交所召开公募基金座谈会听取意见建议】北交所表示，将认真研究与会代表提出的意见建议，积极回应市场关切，协调推进投融资健康发展，不断增强市场内在稳定性。希望公募基金持续加大对北交所的投资力度，支持中小企业创新发展，共同维护市场平稳健康运行。",
-      "tag": "market",
-      "stockCode": "",
-      "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_17",
-      "title": "刚果（金）本轮埃博拉疫情已致超1500人死亡",
-      "content": "【刚果（金）本轮埃博拉疫情已致超1500人死亡】当地时间7月30日，刚果（金）卫生部最新数据显示，该国本轮埃博拉疫情累计确诊3442例，其中死亡1521例，病死率约44%，疫情仍在持续蔓延。",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_18",
-      "title": "上海疾控：近期新冠阳性检出率有所抬升 是低流行区间的正常起伏",
-      "content": "【上海疾控：近期新冠阳性检出率有所抬升 是低流行区间的正常起伏】2026年7月30日，上海市疾控中心发布消息称，近期新冠阳性检出率有所抬升，是低流行区间的正常起伏，不用过度解读、盲目焦虑。根据最新本地研判来看，这只是呼吸道病毒小波动，属于正常流行规律，整体可控、症状温和。",
-      "tag": "news",
-      "stockCode": "",
-      "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
-    },
-    {
-      "id": "logic_1785469886276_19",
-      "title": "信达证券：上半年归母净利润10.97亿元 同比增长7.15%",
-      "content": "【信达证券：上半年归母净利润10.97亿元 同比增长7.15%】信达证券7月30日披露半年报，公司上半年实现营业收入24.35亿元，同比增长19.53%；归属于上市公司股东的净利润10.97亿元，同比增长7.15%；基本每股收益0.3元。",
+      "id": "logic_1785471833299_13",
+      "title": "科创创业人工智能ETF鹏华涨超8%，四大北美科技股AI云回报均大超预期",
+      "content": "【科创创业人工智能ETF鹏华涨超8%，四大北美科技股AI云回报均大超预期】消息面上：1、美联储放鸽子，预计9月也不加息（核心PCE环比0.1%，低于预期0.2%+整体PCE环比转负）。2、知名杠杆基金爆仓，去杠杆化加速。3、四大北美科技股财报均已落地，AI云回报均大超预期+Capex温和上修+自由现金流转负落地。",
       "tag": "earnings",
       "stockCode": "",
       "confidence": 0.85,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.299Z"
     },
     {
-      "id": "logic_1785469886276_20",
-      "title": "上饶银行12.595%股权将被司法拍卖",
-      "content": "【上饶银行12.595%股权将被司法拍卖】7月30日，据阿里拍卖消息，广东省深圳市中级人民法院将于8月26日10时在阿里资产平台上公开拍卖上饶银行股份有限公司55,864,815股的股权，竞价周期1天，延时周期5分钟。",
+      "id": "logic_1785471833299_14",
+      "title": "科创芯片设计ETF鹏华涨超9%，三重利好催化芯片股强势拉升",
+      "content": "【科创芯片设计ETF鹏华涨超9%，三重利好催化芯片股强势拉升】截至2026年7月31日 09:48，上证科创板芯片设计主题指数(950162)强势上涨9.49%，成分股帝奥微上涨17.42%，芯朋微上涨17.19%，杰华特上涨16.65%，新相微，盛科通信等个股跟涨。科创芯片设计ETF鹏华(589170)上涨9.57%，最新价报1.07元。",
+      "tag": "market",
+      "stockCode": "",
+      "confidence": 0.85,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_15",
+      "title": "全球科技大反攻，半导体板块领涨A股，半导体ETF博时(159582)高开涨超8%",
+      "content": "【全球科技大反攻，半导体板块领涨A股，半导体ETF博时(159582)高开涨超8%】2026年7月31日，中证半导体产业指数(931865)强势上涨8.47%，成分股长川科技上涨13.08%，中科飞测上涨12.95%，神工股份上涨11.49%，兴福电子，华峰测控等个股跟涨。半导体ETF博时(159582)上涨8.36%，最新价报0.78元。拉长时间看，截至2026年7月30日，半导体ETF博时近3月累计上涨31.10%。",
+      "tag": "industry",
+      "stockCode": "",
+      "confidence": 0.85,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_16",
+      "title": "范式智能获得浦发银行30亿元意向性融资支持",
+      "content": "【范式智能获得浦发银行30亿元意向性融资支持】范式智能近日与上海浦东发展银行正式签署长期战略合作协议。浦发银行将向范式提供人民币30亿元的意向性融资支持，专项用于AI算力基础设施建设与核心技术迭代。具体而言，这笔融资将重点投向范式的异构芯片集群、底层算力架构上攻坚等核心领域，持续为 HAMi、ModelHub 等范式标杆产品以及 API、Agentic AI 等前沿业务的增长提供稳定的资金保障。",
       "tag": "news",
       "stockCode": "",
       "confidence": 0.7,
-      "createdAt": "2026-07-31T03:51:26.276Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_21",
-      "title": "华润双鹤入主 利尔化学午收涨停",
-      "content": "利尔化学(草甘膦)：华润双鹤入主 利尔化学午收涨停",
+      "id": "logic_1785471833300_17",
+      "title": "长鑫科技成交额超200亿元",
+      "content": "长鑫科技成交额超200亿元，现涨11.52%。",
       "tag": "news",
-      "stockCode": "002258",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "stockCode": "",
+      "confidence": 0.7,
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_22",
-      "title": "利尔化学龙虎榜数据（7月30日）",
-      "content": "利尔化学(草甘膦)：利尔化学龙虎榜数据（7月30日）",
+      "id": "logic_1785471833300_18",
+      "title": "银行板块逆势下挫  “工农中建交”五大行均跌超3%",
+      "content": "【银行板块逆势下挫 “工农中建交”五大行均跌超3%】早盘银行板块逆势下挫，农业银行、建设银行跌超4%，工商银行、中国银行、交通银行、浦发银行、中信银行跌超3%。",
+      "tag": "industry",
+      "stockCode": "",
+      "confidence": 0.85,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_19",
+      "title": "绿的谐波、昊志电机涨超15%！宇树科技8月10日正式打新",
+      "content": "【绿的谐波、昊志电机涨超15%！宇树科技8月10日正式打新】7月31日，科技成长大幅回暖！机器人ETF招商（560770）开盘上涨5.23%，成份股大族激光涨超8%，绿的谐波、昊志电机涨超15%，三花智控、拓普集团纷纷上涨。据Choice，机器人ETF招商（560770）7月累计净申购2.61亿元，资金的\"越跌越买\"态势反映出投资者对机器人赛道长期价值的看好。",
       "tag": "news",
-      "stockCode": "002258",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "stockCode": "",
+      "confidence": 0.7,
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_23",
-      "title": "利尔化学(002258)龙虎榜数据(07-30)",
-      "content": "利尔化学(草甘膦)：利尔化学(002258)龙虎榜数据(07-30)",
+      "id": "logic_1785471833300_20",
+      "title": "创业板指涨6% AI硬件涨幅居前",
+      "content": "创业板指涨幅扩大至6%，上证指数涨1.0%，深证成指涨3.81%。全市场超4500家个股上涨。AI硬件涨幅居前。",
+      "tag": "market",
+      "stockCode": "",
+      "confidence": 0.85,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_21",
+      "title": "盛科通信-U大宗交易成交1999.99万元",
+      "content": "盛科通信(国家大基金持股)：盛科通信-U大宗交易成交1999.99万元",
       "tag": "news",
-      "stockCode": "002258",
+      "stockCode": "688702",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_24",
-      "title": "江山股份：江山宜昌项目聚焦自主创制农药—苯嘧草唑的研发与生产",
-      "content": "江山股份(草甘膦)：江山股份：江山宜昌项目聚焦自主创制农药—苯嘧草唑的研发与生产",
+      "id": "logic_1785471833300_22",
+      "title": "大宗交易：盛科通信成交1999.99万元，折价2.54%（7-23）",
+      "content": "盛科通信(国家大基金持股)：大宗交易：盛科通信成交1999.99万元，折价2.54%（7-23）",
       "tag": "news",
-      "stockCode": "600389",
+      "stockCode": "688702",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_25",
-      "title": "江山股份：关于签订募集资金专户存储三方监管协议的公告",
-      "content": "江山股份(草甘膦)：江山股份：关于签订募集资金专户存储三方监管协议的公告",
+      "id": "logic_1785471833300_23",
+      "title": "中证500ETF华夏（512500）震荡上行，盛科通信上涨超13%",
+      "content": "盛科通信(国家大基金持股)：中证500ETF华夏（512500）震荡上行，盛科通信上涨超13%",
+      "tag": "news",
+      "stockCode": "688702",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_24",
+      "title": "芯朋微：第五届董事会第二十八次会议决议公告",
+      "content": "芯朋微(国家大基金持股)：芯朋微：第五届董事会第二十八次会议决议公告",
       "tag": "announcement",
-      "stockCode": "600389",
+      "stockCode": "688508",
       "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_26",
-      "title": "江山股份：公司目前经营稳健",
-      "content": "江山股份(草甘膦)：江山股份：公司目前经营稳健",
-      "tag": "news",
-      "stockCode": "600389",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_27",
-      "title": "国光股份：公司及控股子公司不存在逾期担保",
-      "content": "国光股份(草甘膦)：国光股份：公司及控股子公司不存在逾期担保",
-      "tag": "news",
-      "stockCode": "002749",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_28",
-      "title": "国光股份：取得1项专利证书",
-      "content": "国光股份(草甘膦)：国光股份：取得1项专利证书",
-      "tag": "news",
-      "stockCode": "002749",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_29",
-      "title": "国光股份：关于取得发明专利证书的公告",
-      "content": "国光股份(草甘膦)：国光股份：关于取得发明专利证书的公告",
+      "id": "logic_1785471833300_25",
+      "title": "芯朋微：2026年限制性股票激励计划（草案）摘要公告",
+      "content": "芯朋微(国家大基金持股)：芯朋微：2026年限制性股票激励计划（草案）摘要公告",
       "tag": "announcement",
-      "stockCode": "002749",
+      "stockCode": "688508",
       "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_30",
-      "title": "均瑶健康(605388)龙虎榜数据(07-30)",
-      "content": "均瑶健康(白酒概念)：均瑶健康(605388)龙虎榜数据(07-30)",
+      "id": "logic_1785471833300_26",
+      "title": "芯朋微：公司将于2026年8月13日召开2026年第二次临时股东会",
+      "content": "芯朋微(国家大基金持股)：芯朋微：公司将于2026年8月13日召开2026年第二次临时股东会",
       "tag": "news",
-      "stockCode": "605388",
+      "stockCode": "688508",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_31",
-      "title": "乳业概念表现活跃 均瑶健康直线涨停",
-      "content": "均瑶健康(白酒概念)：乳业概念表现活跃 均瑶健康直线涨停",
-      "tag": "news",
-      "stockCode": "605388",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_32",
-      "title": "乳业概念表现活跃 均瑶健康直线涨停",
-      "content": "均瑶健康(白酒概念)：乳业概念表现活跃 均瑶健康直线涨停",
-      "tag": "news",
-      "stockCode": "605388",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_33",
-      "title": "金徽酒(603919)龙虎榜数据(07-30)",
-      "content": "金徽酒(白酒概念)：金徽酒(603919)龙虎榜数据(07-30)",
-      "tag": "news",
-      "stockCode": "603919",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_34",
-      "title": "金徽酒涨停，3机构龙虎榜上净卖出3108.28万元",
-      "content": "金徽酒(白酒概念)：金徽酒涨停，3机构龙虎榜上净卖出3108.28万元",
-      "tag": "news",
-      "stockCode": "603919",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_35",
-      "title": "舍得、金徽酒等涨停，白酒板块本月已反弹15%",
-      "content": "金徽酒(白酒概念)：舍得、金徽酒等涨停，白酒板块本月已反弹15%",
-      "tag": "news",
-      "stockCode": "603919",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_36",
-      "title": "白酒概念震荡走强 舍得酒业涨停",
-      "content": "舍得酒业(白酒概念)：白酒概念震荡走强 舍得酒业涨停",
-      "tag": "news",
-      "stockCode": "600702",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_37",
-      "title": "白酒概念震荡走强 舍得酒业涨停",
-      "content": "舍得酒业(白酒概念)：白酒概念震荡走强 舍得酒业涨停",
-      "tag": "news",
-      "stockCode": "600702",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_38",
-      "title": "白酒股异动拉升 舍得酒业涨停",
-      "content": "舍得酒业(白酒概念)：白酒股异动拉升 舍得酒业涨停",
-      "tag": "news",
-      "stockCode": "600702",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_39",
-      "title": "博拓生物参投健达九州数亿元A轮融资 两年内四度落子构建脑机接口全生态链",
-      "content": "博拓生物(芬太尼)：博拓生物参投健达九州数亿元A轮融资 两年内四度落子构建脑机接口全生态链",
-      "tag": "news",
-      "stockCode": "688767",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_40",
-      "title": "芬太尼概念涨1.36%，主力资金净流入3股",
-      "content": "博拓生物(芬太尼)：芬太尼概念涨1.36%，主力资金净流入3股",
-      "tag": "news",
-      "stockCode": "688767",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_41",
-      "title": "健达九州完成数亿元人民币A轮融资",
-      "content": "博拓生物(芬太尼)：健达九州完成数亿元人民币A轮融资",
-      "tag": "news",
-      "stockCode": "688767",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_42",
-      "title": "万孚生物：首次回购6.52万股",
-      "content": "万孚生物(芬太尼)：万孚生物：首次回购6.52万股",
-      "tag": "reduction",
-      "stockCode": "300482",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_43",
-      "title": "万孚生物：首次回购公司股份65200股",
-      "content": "万孚生物(芬太尼)：万孚生物：首次回购公司股份65200股",
-      "tag": "reduction",
-      "stockCode": "300482",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_44",
-      "title": "万孚生物首次回购6.52万股公司股份",
-      "content": "万孚生物(芬太尼)：万孚生物首次回购6.52万股公司股份",
-      "tag": "reduction",
-      "stockCode": "300482",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_45",
-      "title": "国药现代：乳果糖口服溶液药品补充申请获批准",
-      "content": "国药现代(芬太尼)：国药现代：乳果糖口服溶液药品补充申请获批准",
-      "tag": "news",
-      "stockCode": "600420",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_46",
-      "title": "国药现代：公司经营管理稳定有序",
-      "content": "国药现代(芬太尼)：国药现代：公司经营管理稳定有序",
-      "tag": "news",
-      "stockCode": "600420",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_47",
-      "title": "国药现代：二级市场股价表现受多重因素综合影响",
-      "content": "国药现代(芬太尼)：国药现代：二级市场股价表现受多重因素综合影响",
-      "tag": "news",
-      "stockCode": "600420",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_48",
-      "title": "潜能恒信：公司将持续夯实与中海油的合作基础，把握机会争取更多南海优质合同区块",
-      "content": "潜能恒信(可燃冰)：潜能恒信：公司将持续夯实与中海油的合作基础，把握机会争取更多南海优质合同区块",
+      "id": "logic_1785471833300_27",
+      "title": "臻宝科技：关于变更持续督导保荐代表人的公告",
+      "content": "臻宝科技(国家大基金持股)：臻宝科技：关于变更持续督导保荐代表人的公告",
       "tag": "announcement",
-      "stockCode": "300191",
+      "stockCode": "688797",
       "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_49",
-      "title": "潜能恒信：公司现在的主营收入来自油气开采",
-      "content": "潜能恒信(可燃冰)：潜能恒信：公司现在的主营收入来自油气开采",
+      "id": "logic_1785471833300_28",
+      "title": "半导体板块探底回升 臻宝科技涨超13%",
+      "content": "臻宝科技(国家大基金持股)：半导体板块探底回升 臻宝科技涨超13%",
       "tag": "news",
-      "stockCode": "300191",
+      "stockCode": "688797",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_50",
-      "title": "潜能恒信：公司将与中国海油尽快联合完成合同区整体储量估算及申报",
-      "content": "潜能恒信(可燃冰)：潜能恒信：公司将与中国海油尽快联合完成合同区整体储量估算及申报",
-      "tag": "announcement",
-      "stockCode": "300191",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_51",
-      "title": "新锦动力：获中亚两项燃机大修订单 燃气轮机事业公司已全面运营",
-      "content": "新锦动力(可燃冰)：新锦动力：获中亚两项燃机大修订单 燃气轮机事业公司已全面运营",
+      "id": "logic_1785471833300_29",
+      "title": "臻宝科技龙虎榜：营业部净卖出2.11亿元",
+      "content": "臻宝科技(国家大基金持股)：臻宝科技龙虎榜：营业部净卖出2.11亿元",
       "tag": "news",
-      "stockCode": "300157",
+      "stockCode": "688797",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_52",
-      "title": "新锦动力：获中亚两项燃机大修订单 燃气轮机事业公司已全面运营",
-      "content": "新锦动力(可燃冰)：新锦动力：获中亚两项燃机大修订单 燃气轮机事业公司已全面运营",
+      "id": "logic_1785471833300_30",
+      "title": "智立方最新股东户数环比下降6.69% 筹码趋向集中",
+      "content": "智立方(共封装光学(CPO))：智立方最新股东户数环比下降6.69% 筹码趋向集中",
       "tag": "news",
-      "stockCode": "300157",
+      "stockCode": "301312",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_53",
-      "title": "新锦动力：燃气轮机MRO业务新增2800万元合同",
-      "content": "新锦动力(可燃冰)：新锦动力：燃气轮机MRO业务新增2800万元合同",
-      "tag": "announcement",
-      "stockCode": "300157",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_54",
-      "title": "中海油服：2026年第一次临时股东会决议公告",
-      "content": "中海油服(可燃冰)：中海油服：2026年第一次临时股东会决议公告",
-      "tag": "announcement",
-      "stockCode": "601808",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_55",
-      "title": "中海油服：2026年7月29日召开2026年第一次临时股东会",
-      "content": "中海油服(可燃冰)：中海油服：2026年7月29日召开2026年第一次临时股东会",
+      "id": "logic_1785471833300_31",
+      "title": "智立方：截至2026年7月20日公司股东户数为16172户",
+      "content": "智立方(共封装光学(CPO))：智立方：截至2026年7月20日公司股东户数为16172户",
       "tag": "news",
-      "stockCode": "601808",
+      "stockCode": "301312",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_56",
-      "title": "中海油服：董事长赵顺强辞职 刘建忠接任首席执行官 尚捷任总裁",
-      "content": "中海油服(可燃冰)：中海油服：董事长赵顺强辞职 刘建忠接任首席执行官 尚捷任总裁",
+      "id": "logic_1785471833300_32",
+      "title": "智立方：公司在光通信半导体领域围绕光芯片制造及封装工艺形成了较完整的设备布局",
+      "content": "智立方(共封装光学(CPO))：智立方：公司在光通信半导体领域围绕光芯片制造及封装工艺形成了较完整的设备布局",
       "tag": "news",
-      "stockCode": "601808",
+      "stockCode": "301312",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_57",
-      "title": "信托概念涨1.04%，主力资金净流入8股",
-      "content": "华光环能(信托概念)：信托概念涨1.04%，主力资金净流入8股",
+      "id": "logic_1785471833300_33",
+      "title": "MLCC概念盘初走强，利和兴20cm涨停",
+      "content": "利和兴(共封装光学(CPO))：MLCC概念盘初走强，利和兴20cm涨停",
       "tag": "news",
-      "stockCode": "600475",
+      "stockCode": "301013",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_58",
-      "title": "化债概念(AMC概念)概念上涨0.92%，7股主力资金净流入超千万元",
-      "content": "华光环能(信托概念)：化债概念(AMC概念)概念上涨0.92%，7股主力资金净流入超千万元",
+      "id": "logic_1785471833300_34",
+      "title": "利和兴：上海宇量昇是公司客户 但业务占比较小",
+      "content": "利和兴(共封装光学(CPO))：利和兴：上海宇量昇是公司客户 但业务占比较小",
       "tag": "news",
-      "stockCode": "600475",
+      "stockCode": "301013",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_59",
-      "title": "尾盘异动！000636、600663、600475、001309，涨停",
-      "content": "华光环能(信托概念)：尾盘异动！000636、600663、600475、001309，涨停",
+      "id": "logic_1785471833300_35",
+      "title": "利和兴：公司将主动对接上下游客户，持续优化迭代高端和车规MLCC产品品质",
+      "content": "利和兴(共封装光学(CPO))：利和兴：公司将主动对接上下游客户，持续优化迭代高端和车规MLCC产品品质",
       "tag": "news",
-      "stockCode": "600475",
+      "stockCode": "301013",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_60",
-      "title": "南天信息(000948)龙虎榜数据(07-30)",
-      "content": "南天信息(信托概念)：南天信息(000948)龙虎榜数据(07-30)",
+      "id": "logic_1785471833300_36",
+      "title": "金梓才调仓了！“亚军基”近一月大跌38%，中际旭创、生益电子被调出前十大重仓股",
+      "content": "生益电子(共封装光学(CPO))：金梓才调仓了！“亚军基”近一月大跌38%，中际旭创、生益电子被调出前十大重仓股",
       "tag": "news",
-      "stockCode": "000948",
+      "stockCode": "688183",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_61",
-      "title": "南天信息：关于控股股东部分股份解除质押的公告",
-      "content": "南天信息(信托概念)：南天信息：关于控股股东部分股份解除质押的公告",
-      "tag": "announcement",
-      "stockCode": "000948",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_62",
-      "title": "南天信息：控股股东工投集团解押1540万股",
-      "content": "南天信息(信托概念)：南天信息：控股股东工投集团解押1540万股",
+      "id": "logic_1785471833300_37",
+      "title": "生益电子预计上半年净利10.82亿—11.37亿元",
+      "content": "生益电子(共封装光学(CPO))：生益电子预计上半年净利10.82亿—11.37亿元",
       "tag": "news",
-      "stockCode": "000948",
+      "stockCode": "688183",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_63",
-      "title": "浦发银行助力农发行首期柜台债券成功发行",
-      "content": "浦发银行(信托概念)：浦发银行助力农发行首期柜台债券成功发行",
-      "tag": "news",
-      "stockCode": "600000",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_64",
-      "title": "浦发银行“耐心资本”陪伴长鑫科技穿越产业周期",
-      "content": "浦发银行(信托概念)：浦发银行“耐心资本”陪伴长鑫科技穿越产业周期",
-      "tag": "news",
-      "stockCode": "600000",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_65",
-      "title": "浦发银行陪伴长鑫科技穿越产业周期",
-      "content": "浦发银行(信托概念)：浦发银行陪伴长鑫科技穿越产业周期",
-      "tag": "news",
-      "stockCode": "600000",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_66",
-      "title": "水泥概念异动拉升 西藏天路涨停",
-      "content": "西藏天路(同花顺中特估100)：水泥概念异动拉升 西藏天路涨停",
-      "tag": "news",
-      "stockCode": "600326",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_67",
-      "title": "西藏天路：2026年第二次临时股东会决议公告",
-      "content": "西藏天路(同花顺中特估100)：西藏天路：2026年第二次临时股东会决议公告",
-      "tag": "announcement",
-      "stockCode": "600326",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_68",
-      "title": "西藏天路：截至7月10日公司股东人数为152210户",
-      "content": "西藏天路(同花顺中特估100)：西藏天路：截至7月10日公司股东人数为152210户",
-      "tag": "news",
-      "stockCode": "600326",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_69",
-      "title": "港股中远海能反弹逾6%",
-      "content": "中远海能(同花顺中特估100)：港股中远海能反弹逾6%",
-      "tag": "news",
-      "stockCode": "600026",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_70",
-      "title": "中远海能：2026年第二次临时股东会决议公告",
-      "content": "中远海能(同花顺中特估100)：中远海能：2026年第二次临时股东会决议公告",
-      "tag": "announcement",
-      "stockCode": "600026",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_71",
-      "title": "港股中远海能跌超4%",
-      "content": "中远海能(同花顺中特估100)：港股中远海能跌超4%",
-      "tag": "news",
-      "stockCode": "600026",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_72",
-      "title": "安徽省省长王清宪与中国电信集团总经理刘桂清举行工作会谈",
-      "content": "中国电信(同花顺中特估100)：安徽省省长王清宪与中国电信集团总经理刘桂清举行工作会谈",
-      "tag": "news",
-      "stockCode": "601728",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_73",
-      "title": "《财富》世界500强发布 中国电信与互联网企业表现抢眼",
-      "content": "中国电信(同花顺中特估100)：《财富》世界500强发布 中国电信与互联网企业表现抢眼",
-      "tag": "news",
-      "stockCode": "601728",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_74",
-      "title": "中国电信8月1日起停止第三方互联网办卡，移动、联通暂未发布类似公告",
-      "content": "中国电信(同花顺中特估100)：中国电信8月1日起停止第三方互联网办卡，移动、联通暂未发布类似公告",
-      "tag": "announcement",
-      "stockCode": "601728",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_75",
-      "title": "钱江摩托：公司2025年度实现营业收入54.14亿元",
-      "content": "钱江摩托(高股息精选)：钱江摩托：公司2025年度实现营业收入54.14亿元",
-      "tag": "news",
-      "stockCode": "000913",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_76",
-      "title": "钱江摩托：2026年上半年净利同比预降59.15%-66.57%",
-      "content": "钱江摩托(高股息精选)：钱江摩托：2026年上半年净利同比预降59.15%-66.57%",
-      "tag": "news",
-      "stockCode": "000913",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_77",
-      "title": "钱江摩托：上半年净利润同比预降59.15%—66.57%",
-      "content": "钱江摩托(高股息精选)：钱江摩托：上半年净利润同比预降59.15%—66.57%",
+      "id": "logic_1785471833300_38",
+      "title": "生益电子半年报业绩预计翻倍！算力PCB产能落地见效",
+      "content": "生益电子(共封装光学(CPO))：生益电子半年报业绩预计翻倍！算力PCB产能落地见效",
       "tag": "earnings",
-      "stockCode": "000913",
+      "stockCode": "688183",
       "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_78",
-      "title": "外销订单减少及费用增加拖累业绩 苏泊尔上半年营收净利双降",
-      "content": "苏泊尔(高股息精选)：外销订单减少及费用增加拖累业绩 苏泊尔上半年营收净利双降",
-      "tag": "earnings",
-      "stockCode": "002032",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_79",
-      "title": "【调研快报】苏泊尔接待国联民生证券等24家机构调研",
-      "content": "苏泊尔(高股息精选)：【调研快报】苏泊尔接待国联民生证券等24家机构调研",
+      "id": "logic_1785471833300_39",
+      "title": "炬光科技：公司持续关注高速光互联市场发展机会",
+      "content": "炬光科技(存储芯片)：炬光科技：公司持续关注高速光互联市场发展机会",
       "tag": "news",
-      "stockCode": "002032",
+      "stockCode": "688167",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_80",
-      "title": "苏泊尔：三、四季度原材料成本压力预计将持续存在 正采取措施降低不利影响",
-      "content": "苏泊尔(高股息精选)：苏泊尔：三、四季度原材料成本压力预计将持续存在 正采取措施降低不利影响",
+      "id": "logic_1785471833300_40",
+      "title": "【调研快报】炬光科技接待财通基金等41家机构调研",
+      "content": "炬光科技(存储芯片)：【调研快报】炬光科技接待财通基金等41家机构调研",
       "tag": "news",
-      "stockCode": "002032",
+      "stockCode": "688167",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_81",
-      "title": "菜百股份：公司正积极筹备高端子品牌“菜百典藏”",
-      "content": "菜百股份(高股息精选)：菜百股份：公司正积极筹备高端子品牌“菜百典藏”",
+      "id": "logic_1785471833300_41",
+      "title": "炬光科技：公司将光通信和消费电子作为未来重点成长方向",
+      "content": "炬光科技(存储芯片)：炬光科技：公司将光通信和消费电子作为未来重点成长方向",
       "tag": "news",
-      "stockCode": "605599",
+      "stockCode": "688167",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_82",
-      "title": "菜百股份：公司始终注重经营管理能力的持续提升",
-      "content": "菜百股份(高股息精选)：菜百股份：公司始终注重经营管理能力的持续提升",
+      "id": "logic_1785471833300_42",
+      "title": "强一股份：拟使用10.27亿元超募资金投资在建项目并延期部分募投项目",
+      "content": "强一股份(科创次新股)：强一股份：拟使用10.27亿元超募资金投资在建项目并延期部分募投项目",
       "tag": "news",
-      "stockCode": "605599",
+      "stockCode": "688809",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_83",
-      "title": "菜百股份：公司在电商领域已形成较为稳固的渠道格局",
-      "content": "菜百股份(高股息精选)：菜百股份：公司在电商领域已形成较为稳固的渠道格局",
+      "id": "logic_1785471833300_43",
+      "title": "强一股份斥资超10亿元超募资金投资探针卡研发生产，顺客户高要求延期一募投项目",
+      "content": "强一股份(科创次新股)：强一股份斥资超10亿元超募资金投资探针卡研发生产，顺客户高要求延期一募投项目",
       "tag": "news",
-      "stockCode": "605599",
+      "stockCode": "688809",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_84",
-      "title": "亿利达：控股股东、实控人变更事项获反垄断审查通过",
-      "content": "亿利达(化债概念(AMC概念))：亿利达：控股股东、实控人变更事项获反垄断审查通过",
+      "id": "logic_1785471833300_44",
+      "title": "强一股份实控人离婚 公司称股份分割后仍合并计算大股东身份",
+      "content": "强一股份(科创次新股)：强一股份实控人离婚 公司称股份分割后仍合并计算大股东身份",
       "tag": "news",
-      "stockCode": "002686",
+      "stockCode": "688809",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_85",
-      "title": "亿利达：公司不存在逾期担保",
-      "content": "亿利达(化债概念(AMC概念))：亿利达：公司不存在逾期担保",
+      "id": "logic_1785471833300_45",
+      "title": "CPO概念集体反弹 联讯仪器涨超15%",
+      "content": "联讯仪器(科创次新股)：CPO概念集体反弹 联讯仪器涨超15%",
       "tag": "news",
-      "stockCode": "002686",
+      "stockCode": "688808",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_86",
-      "title": "亿利达：2026年上半年净利同比预降96.25%-97.5%",
-      "content": "亿利达(化债概念(AMC概念))：亿利达：2026年上半年净利同比预降96.25%-97.5%",
+      "id": "logic_1785471833300_46",
+      "title": "CPO概念盘初集体反弹，新易盛、联讯仪器涨超15%",
+      "content": "联讯仪器(科创次新股)：CPO概念盘初集体反弹，新易盛、联讯仪器涨超15%",
       "tag": "news",
-      "stockCode": "002686",
+      "stockCode": "688808",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_87",
-      "title": "金桥信息(603918)龙虎榜数据(07-28)",
-      "content": "金桥信息(化债概念(AMC概念))：金桥信息(603918)龙虎榜数据(07-28)",
-      "tag": "news",
-      "stockCode": "603918",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_88",
-      "title": "金桥信息涨停，沪股通龙虎榜上买入987.11万元，卖出717.11万元",
-      "content": "金桥信息(化债概念(AMC概念))：金桥信息涨停，沪股通龙虎榜上买入987.11万元，卖出717.11万元",
-      "tag": "news",
-      "stockCode": "603918",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_89",
-      "title": "金桥信息：预计2026年上半年亏损3090万元-4610万元",
-      "content": "金桥信息(化债概念(AMC概念))：金桥信息：预计2026年上半年亏损3090万元-4610万元",
-      "tag": "news",
-      "stockCode": "603918",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_90",
-      "title": "ST龙大：公司股票交易可能被实施退市风险警示",
-      "content": "ST龙大(猪肉)：ST龙大：公司股票交易可能被实施退市风险警示",
-      "tag": "news",
-      "stockCode": "002726",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_91",
-      "title": "ST龙大(002726)龙虎榜数据(07-30)",
-      "content": "ST龙大(猪肉)：ST龙大(002726)龙虎榜数据(07-30)",
-      "tag": "news",
-      "stockCode": "002726",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_92",
-      "title": "ST龙大：连续3个交易日收盘价涨幅偏离值累超20%",
-      "content": "ST龙大(猪肉)：ST龙大：连续3个交易日收盘价涨幅偏离值累超20%",
-      "tag": "news",
-      "stockCode": "002726",
-      "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_93",
-      "title": "克明食品：回购股份注销完成，总股本减少2.79%",
-      "content": "克明食品(猪肉)：克明食品：回购股份注销完成，总股本减少2.79%",
-      "tag": "reduction",
-      "stockCode": "002661",
-      "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
-    },
-    {
-      "id": "logic_1785469886277_94",
-      "title": "克明食品：关于回购股份注销完成暨控股股东及其一致行动人权益变动被动触及1%整数倍的公告",
-      "content": "克明食品(猪肉)：克明食品：关于回购股份注销完成暨控股股东及其一致行动人权益变动被动触及1%整数倍的公告",
+      "id": "logic_1785471833300_47",
+      "title": "联讯仪器：关于更换持续督导保荐代表人的公告",
+      "content": "联讯仪器(科创次新股)：联讯仪器：关于更换持续督导保荐代表人的公告",
       "tag": "announcement",
-      "stockCode": "002661",
+      "stockCode": "688808",
       "confidence": 0.8,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_95",
-      "title": "克明食品：截至2026年7月20日公司股东总户数为24516户",
-      "content": "克明食品(猪肉)：克明食品：截至2026年7月20日公司股东总户数为24516户",
+      "id": "logic_1785471833300_48",
+      "title": "港股硬件设备股持续走高 芯碁微装涨超16%",
+      "content": "芯碁微装(光刻机)：港股硬件设备股持续走高 芯碁微装涨超16%",
       "tag": "news",
-      "stockCode": "002661",
+      "stockCode": "688630",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_96",
-      "title": "食品ETF华夏（159151）涨幅领先全市场，持仓股伊利股份、海天味业、双汇发展高股息优势突显",
-      "content": "双汇发展(猪肉)：食品ETF华夏（159151）涨幅领先全市场，持仓股伊利股份、海天味业、双汇发展高股息优势突显",
+      "id": "logic_1785471833300_49",
+      "title": "港股硬件设备股持续走高，芯碁微装涨超17%",
+      "content": "芯碁微装(光刻机)：港股硬件设备股持续走高，芯碁微装涨超17%",
       "tag": "news",
-      "stockCode": "000895",
+      "stockCode": "688630",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_97",
-      "title": "食品ETF华夏连续6个交易日获资金净流入，权重股伊利股份、双汇发展股息率超5%",
-      "content": "双汇发展(猪肉)：食品ETF华夏连续6个交易日获资金净流入，权重股伊利股份、双汇发展股息率超5%",
+      "id": "logic_1785471833300_50",
+      "title": "港股PCB概念股午后集体冲高 芯碁微装大涨超14%",
+      "content": "芯碁微装(光刻机)：港股PCB概念股午后集体冲高 芯碁微装大涨超14%",
       "tag": "news",
-      "stockCode": "000895",
+      "stockCode": "688630",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_98",
-      "title": "双汇发展首批捐赠1.5万箱肉制品支援广西抗洪救灾",
-      "content": "双汇发展(猪肉)：双汇发展首批捐赠1.5万箱肉制品支援广西抗洪救灾",
+      "id": "logic_1785471833300_51",
+      "title": "先锋精科股价又创新高，今日涨10.04%",
+      "content": "先锋精科(光刻机)：先锋精科股价又创新高，今日涨10.04%",
       "tag": "news",
-      "stockCode": "000895",
+      "stockCode": "688605",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_99",
-      "title": "洋河股份成立文化发展公司",
-      "content": "洋河股份(超级品牌)：洋河股份成立文化发展公司",
+      "id": "logic_1785471833300_52",
+      "title": "先锋精科持续走强，股价再创新高",
+      "content": "先锋精科(光刻机)：先锋精科持续走强，股价再创新高",
       "tag": "news",
-      "stockCode": "002304",
+      "stockCode": "688605",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_100",
-      "title": "洋河股份：田某某捏造900多条虚假言论 被判向洋河道歉并赔15万元",
-      "content": "洋河股份(超级品牌)：洋河股份：田某某捏造900多条虚假言论 被判向洋河道歉并赔15万元",
+      "id": "logic_1785471833300_53",
+      "title": "先锋精科涨15.22% 二机构合计净买入5800.50万元",
+      "content": "先锋精科(光刻机)：先锋精科涨15.22% 二机构合计净买入5800.50万元",
       "tag": "news",
-      "stockCode": "002304",
+      "stockCode": "688605",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_101",
-      "title": "洋河股份牵头建设“企业主导省重点实验室”",
-      "content": "洋河股份(超级品牌)：洋河股份牵头建设“企业主导省重点实验室”",
+      "id": "logic_1785471833300_54",
+      "title": "鸿仕达：公司半年度利润增长主要有两点原因",
+      "content": "鸿仕达(先进封装)：鸿仕达：公司半年度利润增长主要有两点原因",
       "tag": "news",
-      "stockCode": "002304",
+      "stockCode": "920125",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_102",
-      "title": "五粮液换董秘了｜董秘沙龙",
-      "content": "五粮液(超级品牌)：五粮液换董秘了｜董秘沙龙",
+      "id": "logic_1785471833300_55",
+      "title": "鸿仕达：研发中心和装备扩产均按照募投项目规划在推进",
+      "content": "鸿仕达(先进封装)：鸿仕达：研发中心和装备扩产均按照募投项目规划在推进",
       "tag": "news",
-      "stockCode": "000858",
+      "stockCode": "920125",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_103",
-      "title": "五粮液密集人事调整：宜宾纸业董事长出任五粮液董秘",
-      "content": "五粮液(超级品牌)：五粮液密集人事调整：宜宾纸业董事长出任五粮液董秘",
+      "id": "logic_1785471833300_56",
+      "title": "【调研快报】鸿仕达接待中金公司等12家机构调研",
+      "content": "鸿仕达(先进封装)：【调研快报】鸿仕达接待中金公司等12家机构调研",
       "tag": "news",
-      "stockCode": "000858",
+      "stockCode": "920125",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_104",
-      "title": "五粮液：董事会秘书变更",
-      "content": "五粮液(超级品牌)：五粮液：董事会秘书变更",
+      "id": "logic_1785471833300_57",
+      "title": "方邦股份涨停 86只科创板股涨超10%",
+      "content": "方邦股份(先进封装)：方邦股份涨停 86只科创板股涨超10%",
       "tag": "news",
-      "stockCode": "000858",
+      "stockCode": "688020",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_105",
-      "title": "上汽集团四大核心板块迎来人事变动",
-      "content": "上汽集团(超级品牌)：上汽集团四大核心板块迎来人事变动",
+      "id": "logic_1785471833300_58",
+      "title": "方邦股份7月2日龙虎榜数据",
+      "content": "方邦股份(先进封装)：方邦股份7月2日龙虎榜数据",
       "tag": "news",
-      "stockCode": "600104",
+      "stockCode": "688020",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_106",
-      "title": "AI深入研产供销服 上汽集团与飞书达成合作",
-      "content": "上汽集团(超级品牌)：AI深入研产供销服 上汽集团与飞书达成合作",
+      "id": "logic_1785471833300_59",
+      "title": "方邦股份：相关新产品占营收比例较小",
+      "content": "方邦股份(先进封装)：方邦股份：相关新产品占营收比例较小",
       "tag": "news",
-      "stockCode": "600104",
+      "stockCode": "688020",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
     },
     {
-      "id": "logic_1785469886277_107",
-      "title": "上汽集团排名2026世界500强第125位 较去年上升13位",
-      "content": "上汽集团(超级品牌)：上汽集团排名2026世界500强第125位 较去年上升13位",
+      "id": "logic_1785471833300_60",
+      "title": "光智科技：控股股东自愿承诺不减持公司股票",
+      "content": "光智科技(先进封装)：光智科技：控股股东自愿承诺不减持公司股票",
+      "tag": "reduction",
+      "stockCode": "300489",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_61",
+      "title": "光智科技：部分董事、高管及核心人员拟增持公司股份",
+      "content": "光智科技(先进封装)：光智科技：部分董事、高管及核心人员拟增持公司股份",
+      "tag": "reduction",
+      "stockCode": "300489",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_62",
+      "title": "光智科技龙虎榜数据（7月30日）",
+      "content": "光智科技(先进封装)：光智科技龙虎榜数据（7月30日）",
       "tag": "news",
-      "stockCode": "600104",
+      "stockCode": "300489",
       "confidence": 0.65,
-      "createdAt": "2026-07-31T03:51:26.277Z"
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_63",
+      "title": "兴福电子子公司年产4万吨超高纯电子化学品项目投产",
+      "content": "兴福电子(中芯国际概念)：兴福电子子公司年产4万吨超高纯电子化学品项目投产",
+      "tag": "news",
+      "stockCode": "688545",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_64",
+      "title": "科创板晚报|容百科技Q2净利预计环比增662%-834% 大基金减持德邦科技、兴福电子",
+      "content": "兴福电子(中芯国际概念)：科创板晚报|容百科技Q2净利预计环比增662%-834% 大基金减持德邦科技、兴福电子",
+      "tag": "reduction",
+      "stockCode": "688545",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_65",
+      "title": "兴福电子：国家集成电路基金二期6月17日至7月6日减持360万股 持股比例降至5.94%",
+      "content": "兴福电子(中芯国际概念)：兴福电子：国家集成电路基金二期6月17日至7月6日减持360万股 持股比例降至5.94%",
+      "tag": "reduction",
+      "stockCode": "688545",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_66",
+      "title": "大族数控大涨6.55% 预计上半年净利润暴增",
+      "content": "大族数控(玻璃基板)：大族数控大涨6.55% 预计上半年净利润暴增",
+      "tag": "earnings",
+      "stockCode": "301200",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_67",
+      "title": "大族数控上半年净利润预计增长241.85%~279.84%",
+      "content": "大族数控(玻璃基板)：大族数控上半年净利润预计增长241.85%~279.84%",
+      "tag": "earnings",
+      "stockCode": "301200",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_68",
+      "title": "大族数控：预计2026年上半年净利同比增长241.85%-279.84%",
+      "content": "大族数控(玻璃基板)：大族数控：预计2026年上半年净利同比增长241.85%-279.84%",
+      "tag": "news",
+      "stockCode": "301200",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_69",
+      "title": "沃尔德：公司始终高度重视市值管理工作",
+      "content": "沃尔德(玻璃基板)：沃尔德：公司始终高度重视市值管理工作",
+      "tag": "news",
+      "stockCode": "688028",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_70",
+      "title": "沃尔德陈继锋：金刚石不只是“硬” 还有其他应用方向",
+      "content": "沃尔德(玻璃基板)：沃尔德陈继锋：金刚石不只是“硬” 还有其他应用方向",
+      "tag": "news",
+      "stockCode": "688028",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_71",
+      "title": "【调研快报】沃尔德接待中信建投等14家机构调研",
+      "content": "沃尔德(玻璃基板)：【调研快报】沃尔德接待中信建投等14家机构调研",
+      "tag": "news",
+      "stockCode": "688028",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_72",
+      "title": "力诺药包：公司不存在逾期担保",
+      "content": "力诺药包(玻璃基板)：力诺药包：公司不存在逾期担保",
+      "tag": "news",
+      "stockCode": "301188",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_73",
+      "title": "力诺药包：多位股东减持完毕",
+      "content": "力诺药包(玻璃基板)：力诺药包：多位股东减持完毕",
+      "tag": "reduction",
+      "stockCode": "301188",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_74",
+      "title": "力诺药包：关于公司股东股份减持计划实施完成的公告",
+      "content": "力诺药包(玻璃基板)：力诺药包：关于公司股东股份减持计划实施完成的公告",
+      "tag": "announcement",
+      "stockCode": "301188",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_75",
+      "title": "罗博特科：关于签订日常经营重大合同的公告",
+      "content": "罗博特科(富士康概念)：罗博特科：关于签订日常经营重大合同的公告",
+      "tag": "announcement",
+      "stockCode": "300757",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_76",
+      "title": "罗博特科：子公司签订1.29亿元自动化制造设备合同",
+      "content": "罗博特科(富士康概念)：罗博特科：子公司签订1.29亿元自动化制造设备合同",
+      "tag": "announcement",
+      "stockCode": "300757",
+      "confidence": 0.8,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_77",
+      "title": "罗博特科：签订约1.29亿元自动化制造设备及服务订单",
+      "content": "罗博特科(富士康概念)：罗博特科：签订约1.29亿元自动化制造设备及服务订单",
+      "tag": "news",
+      "stockCode": "300757",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_78",
+      "title": "欧陆通：公司及子公司未发生逾期担保",
+      "content": "欧陆通(富士康概念)：欧陆通：公司及子公司未发生逾期担保",
+      "tag": "news",
+      "stockCode": "300870",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_79",
+      "title": "欧陆通：公司已陆续为浪潮信息、富士康等国内知名服务器系统厂商出货",
+      "content": "欧陆通(富士康概念)：欧陆通：公司已陆续为浪潮信息、富士康等国内知名服务器系统厂商出货",
+      "tag": "news",
+      "stockCode": "300870",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
+    },
+    {
+      "id": "logic_1785471833300_80",
+      "title": "欧陆通：公司目前生产经营情况正常",
+      "content": "欧陆通(富士康概念)：欧陆通：公司目前生产经营情况正常",
+      "tag": "news",
+      "stockCode": "300870",
+      "confidence": 0.65,
+      "createdAt": "2026-07-31T04:23:53.300Z"
     }
   ],
   "subjective": [],
-  "date": "2026-07-30",
-  "updatedAt": "2026-07-31T03:51:26.277Z"
+  "date": "2026-07-31",
+  "updatedAt": "2026-07-31T04:23:53.300Z"
 }

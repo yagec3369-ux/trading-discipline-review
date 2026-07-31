@@ -331,8 +331,29 @@ function generateLogicLibrary(data) {
     }
   }
 
-  function addNews(stock, title, tag, source) {
-    stock.news.push({ title: title || '', tag: tag || 'news', source: source || '' })
+  function addNews(stock, newsItem) {
+    if (!newsItem || !newsItem.title) return
+    stock.news.push({
+      title: newsItem.title,
+      link: newsItem.link || '',
+      source: newsItem.source || '',
+      time: newsItem.time || '',
+      tag: newsItem.tag || 'news'
+    })
+    // 同时把新闻关联到当天的 appearance（前端按 app.news 渲染）
+    const today = stock.appearances.find((a) => a.date === dateStr)
+    if (today) {
+      if (!today.newsList) today.newsList = []
+      // 去重（同一标题只保留一条）
+      if (!today.newsList.some((x) => x.title === newsItem.title)) {
+        today.newsList.push({
+          title: newsItem.title,
+          link: newsItem.link || '',
+          source: newsItem.source || '',
+          time: newsItem.time || ''
+        })
+      }
+    }
   }
 
   // 1) 从个股新闻收集股票 + 概念标签 + 新闻
@@ -341,7 +362,7 @@ function generateLogicLibrary(data) {
     if (!stock) return
     if (n.concept) addTag(stock, n.concept)
     addAppearance(stock, n.concept, null, n.change || null)
-    addNews(stock, n.title, 'announcement', n.source)
+    addNews(stock, n)
   })
 
   // 2) 从概念领涨股 Top3 收集

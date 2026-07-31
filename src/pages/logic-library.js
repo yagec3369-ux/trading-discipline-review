@@ -266,9 +266,24 @@ export function createLogicLibraryPage(root) {
                 <div style="display:flex; flex-wrap:wrap; align-items:center; gap:4px; margin-bottom:var(--s-1);">
                   ${conceptsHtml}
                 </div>
-                ${app.news ? `
+                ${(app.newsList && app.newsList.length > 0) ? `
+                  <div style="display:flex; flex-direction:column; gap:var(--s-1);">
+                    ${app.newsList.map((nw) => {
+                      const link = nw.link && nw.link !== '#' ? nw.link : ''
+                      return `
+                        <div style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body); display:flex; align-items:flex-start; gap:var(--s-1);">
+                          ${link
+                            ? `<a href="${escHtml(link)}" target="_blank" rel="noopener" style="color:var(--ink-2); text-decoration:none; transition:color var(--duration-hover) var(--ease-hover); flex:1;" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--ink-2)'">${escHtml(nw.title)} <i data-lucide="external-link" style="width:11px; height:11px; display:inline; vertical-align:middle;"></i></a>`
+                            : `<span style="color:var(--ink-2); flex:1;">${escHtml(nw.title)}</span>`
+                          }
+                          ${nw.source ? `<span style="font-size:var(--text-caption); color:var(--ink-3); white-space:nowrap;">— ${escHtml(nw.source)}</span>` : ''}
+                        </div>
+                      `
+                    }).join('')}
+                  </div>
+                ` : (app.news && app.news.title) ? `
                   <div style="font-size:var(--text-body); color:var(--ink-2); line-height:var(--leading-body);">
-                    <a href="${escHtml(app.news.link)}" target="_blank" rel="noopener" style="color:var(--ink-2); text-decoration:none; transition:color var(--duration-hover) var(--ease-hover);" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--ink-2)'">
+                    <a href="${escHtml(app.news.link || '#')}" target="_blank" rel="noopener" style="color:var(--ink-2); text-decoration:none; transition:color var(--duration-hover) var(--ease-hover);" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--ink-2)'">
                       ${escHtml(app.news.title)}
                     </a>
                     ${app.news.source ? `<span style="font-size:var(--text-caption); color:var(--ink-3); margin-left:var(--s-2);">— ${escHtml(app.news.source)}</span>` : ''}
