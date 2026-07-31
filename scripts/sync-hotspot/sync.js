@@ -14,25 +14,24 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
   return acc
 }, {})
 
-const REPORTS_DIR = args.reportsDir || process.env.HOTSPOT_REPORTS_DIR || path.resolve(process.cwd(), 'stock_hotspot/reports')
+// TRAE 自动化任务把 xlsx 推送到仓库根目录 reports/；
+// 旧路径 stock_hotspot/reports/ 作为回退。优先读 reports/。
+const REPORTS_DIRS = []
+if (args.reportsDir) {
+  REPORTS_DIRS.push(path.resolve(args.reportsDir))
+} else if (process.env.HOTSPOT_REPORTS_DIR) {
+  REPORTS_DIRS.push(path.resolve(process.env.HOTSPOT_REPORTS_DIR))
+} else {
+  REPORTS_DIRS.push(path.resolve(process.cwd(), 'reports'))
+  REPORTS_DIRS.push(path.resolve(process.cwd(), 'stock_hotspot/reports'))
+}
 const PUSH = args.push || false
 const DRY = args.dry || false
 const OUTPUT_PATH = path.resolve(process.cwd(), 'public/market-hot.json')
 const LOGIC_LIBRARY_PATH = path.resolve(process.cwd(), 'public/logic-library.json')
 const HISTORY_DIR = path.resolve(process.cwd(), 'public/hotspot-history')
 
-if (!REPORTS_DIR) {
-  console.error('错误: 请通过 --reportsDir 指定 workbuddy reports 文件夹路径')
-  console.error('示例: node scripts/sync-hotspot/sync.js --reportsDir="C:\\Users\\admin\\WorkBuddy\\2026-05-13-task-7\\stock_hotspot\\reports" --push')
-  process.exit(1)
-}
-
-console.log('使用 reports 目录:', REPORTS_DIR)
-
-if (!fs.existsSync(REPORTS_DIR)) {
-  console.error('错误: 文件夹不存在:', REPORTS_DIR)
-  process.exit(1)
-}
+console.log('候选 reports 目录:', REPORTS_DIRS.join(' | '))
 
 // 通用工具：取列值（兼容列名带尾空格）
 function col(row, ...names) {
@@ -50,17 +49,26 @@ function colInt(row, ...names) {
   return parseInt(v, 10) || 0
 }
 
-function findLatestHotFile(dir) {
-  const files = fs.readdirSync(dir)
-    .filter((f) => /[\d]{8}.*\.xlsx$/.test(f) || /热点.*\.xlsx$/.test(f))
-    .sort()
-    .reverse()
-  if (files.length === 0) {
-    // 没有 Excel → 返回 null，由 main 里走真实行情 fallback，不再 exit
-    console.log('[warn] 未找到热点数据 xlsx 文件，改用东方财富 push2 真实行情接口抓取')
+function findLatestHotFile(dirs) {
+  // 遍历所有候选目录，收集所有匹配的 xlsx，按文件名（含日期 YYYYMMDD）排序取最新
+  let allFiles = []
+  for (const dir of dirs) {
+    if (!fs.existsSync(dir)) continue
+    const files = fs.readdirSync(dir)
+      .filter((f) => /[\d]{8}.*\.xlsx$/.test(f) || /热点.*\.xlsx$/.test(f))
+      .map((f) => ({ file: path.join(dir, f), name: f }))
+    if (files.length > 0) {
+      console.log(`  [${dir}] 找到 ${files.length} 个 xlsx: ${files.map((f) => f.name).join(', ')}`)
+      allFiles = allFiles.concat(files)
+    }
+  }
+  if (allFiles.length === 0) {
+    console.log('[skip] 所有候选目录均未找到热点数据 xlsx，跳过同步（保留现有 public/market-hot.json）')
     return null
   }
-  return path.join(dir, files[0])
+  allFiles.sort((a, b) => b.name.localeCompare(a.name))
+  console.log('选用最新文件:', allFiles[0].name)
+  return allFiles[0].file
 }
 
 function parseExcel(filePath) {
@@ -365,10 +373,9 @@ function generateLogicLibrary(data) {
 }
 
 function main() {
-  const latestFile = findLatestHotFile(REPORTS_DIR)
+  const latestFile = findLatestHotFile(REPORTS_DIRS)
 
   if (!latestFile) {
-    console.log('[skip] 未找到 Excel，跳过热点数据同步（保留现有 public/market-hot.json）')
     return
   }
 
