@@ -197,6 +197,11 @@ export function renderShell(root) {
           <span style="font-size:var(--text-body-l); font-weight:var(--weight-semibold); color:var(--ink);">交易纪律复盘</span>
         </header>
 
+        <!-- Slogan banner -->
+        <div class="shrink-0 flex items-center justify-center px-4 py-2" style="border-bottom:1px solid var(--line); background:var(--surface);">
+          <span style="font-size:var(--text-body); color:var(--ink-2); font-weight:var(--weight-medium); letter-spacing:0.02em;">落地为安，保住本金；先不亏，再想赢；你不要总想最圆满</span>
+        </div>
+
         <!-- Sub-tab bar (hidden for single-tab groups) -->
         <nav id="subtab-bar" class="shrink-0 flex items-center gap-1 px-4 sm:px-6 md:px-8 h-11 overflow-x-auto no-scrollbar flex-nowrap" style="border-bottom:1px solid var(--line); background:var(--bg);"></nav>
 

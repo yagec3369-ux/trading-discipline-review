@@ -250,7 +250,7 @@ export function createLogicLibraryPage(root) {
       const tagName = typeof tag === 'string' ? tag : tag.name
       const tagCount = typeof tag === 'object' && tag.count ? tag.count : 1
       const c = getTagColor(tagName)
-      return `<span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; margin-right:4px; margin-bottom:4px; display:inline-block;">${escHtml(tagName)}${tagCount > 1 ? ' <span style="font-weight:var(--weight-semibold); opacity:0.7;">×' + tagCount + '</span>' : ''}</span>`
+      return `<span style="font-size:var(--text-caption); color:${c.color}; background:${c.bg}; border-radius:var(--r-pill); padding:2px 8px; white-space:nowrap; margin-right:4px; margin-bottom:4px; display:inline-block;">${escHtml(tagName)} <span style="font-weight:var(--weight-semibold); opacity:0.7;">×${tagCount}</span></span>`
     }).join('')
 
     const stockUrl = getStockUrl(stock.code, stock.name)

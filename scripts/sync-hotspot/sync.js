@@ -320,7 +320,19 @@ function generateLogicLibrary(data) {
       stockMap.set(s.code, {
         name: s.name || s.code,
         code: s.code,
-        tags: (s.tags || []).map((t) => ({ name: t.name, count: t.count || 1 })),
+        // 继承历史标签的 dates 数组（用于按天数去重计数）；移除当天的日期，准备用新数据覆盖
+        tags: (s.tags || []).map((t) => {
+          if (Array.isArray(t.dates)) {
+            // 已有 dates 数组：移除当天日期
+            const filteredDates = t.dates.filter((d) => d !== dateStr)
+            return { name: t.name, count: filteredDates.length || 1, dates: filteredDates }
+          }
+          // 旧版无 dates 数据：从 processedDates 推断历史出现天数
+          // 取 min(count, processedDates.length) 个日期作为近似
+          const historicalCount = t.count || 1
+          const inferredDates = processedDates.slice(-historicalCount).filter((d) => d !== dateStr)
+          return { name: t.name, count: inferredDates.length || 1, dates: inferredDates }
+        }),
         appearances: historicalAppearances,
         news: historicalNews
       })
@@ -346,9 +358,17 @@ function generateLogicLibrary(data) {
 
   function addTag(stock, tagName) {
     if (!tagName) return
+    // 按出现的天数计算：同一天同一概念只算 1 次
     const existing = stock.tags.find((t) => t.name === tagName)
-    if (existing) existing.count = (existing.count || 1) + 1
-    else stock.tags.push({ name: tagName, count: 1 })
+    if (existing) {
+      if (!existing.dates) existing.dates = []
+      if (!existing.dates.includes(dateStr)) {
+        existing.dates.push(dateStr)
+        existing.count = existing.dates.length
+      }
+    } else {
+      stock.tags.push({ name: tagName, count: 1, dates: [dateStr] })
+    }
   }
 
   function addAppearance(stock, conceptName, conceptChange, changePct) {
@@ -373,27 +393,32 @@ function generateLogicLibrary(data) {
 
   function addNews(stock, newsItem) {
     if (!newsItem || !newsItem.title) return
-    // 全局 news 去重（跨日期，同一标题只保留一条）
-    if (stock.news.some((n) => n.title === newsItem.title)) return
-    stock.news.push({
-      title: newsItem.title,
-      link: newsItem.link || '',
-      source: newsItem.source || '',
-      time: newsItem.time || '',
-      tag: newsItem.tag || 'news'
-    })
+    // 全局 news 去重：如果已存在则不重复添加到 stock.news
+    // 但仍需更新 today.newsList（因为是今天重新处理的数据）
+    const existingNews = stock.news.find((n) => n.title === newsItem.title)
+    if (!existingNews) {
+      stock.news.push({
+        title: newsItem.title,
+        link: newsItem.link || '',
+        source: newsItem.source || '',
+        time: newsItem.time || '',
+        tag: newsItem.tag || 'news'
+      })
+    }
     // 同时把新闻关联到当天的 appearance（前端按 app.newsList 渲染）
-    const today = stock.appearances.find((a) => a.date === dateStr)
-    if (today) {
-      if (!today.newsList) today.newsList = []
-      if (!today.newsList.some((x) => x.title === newsItem.title)) {
-        today.newsList.push({
-          title: newsItem.title,
-          link: newsItem.link || '',
-          source: newsItem.source || '',
-          time: newsItem.time || ''
-        })
-      }
+    let today = stock.appearances.find((a) => a.date === dateStr)
+    if (!today) {
+      today = { date: dateStr, concepts: [] }
+      stock.appearances.push(today)
+    }
+    if (!today.newsList) today.newsList = []
+    if (!today.newsList.some((x) => x.title === newsItem.title)) {
+      today.newsList.push({
+        title: newsItem.title,
+        link: newsItem.link || '',
+        source: newsItem.source || '',
+        time: newsItem.time || ''
+      })
     }
   }
 
@@ -428,10 +453,10 @@ function generateLogicLibrary(data) {
     const stock = getStock(r.code, r.name)
     if (!stock) return
     if (r.industry) addTag(stock, r.industry)
+    addAppearance(stock, r.industry, null, r.change || null)
     if (r.reason) {
       addNews(stock, { title: `${r.name}涨停：${r.reason}`, link: '', source: '涨停', time: dateStr, tag: 'announcement' })
     }
-    addAppearance(stock, r.industry, null, r.change || null)
   })
 
   // 5) 从跌停明细收集
