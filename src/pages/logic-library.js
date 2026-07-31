@@ -98,7 +98,13 @@ export function createLogicLibraryPage(root) {
           <div class="flex items-center gap-2">
             ${logicLibraryData ? `
               <span style="font-size:var(--text-caption); color:var(--ink-3);">
-                共 <span style="color:var(--brand); font-weight:var(--weight-semibold);">${logicLibraryData.totalStocks}</span> 只关注股票
+                共 <span style="color:var(--brand); font-weight:var(--weight-semibold);">${logicLibraryData.totalStocks}</span> 只股票
+                ${logicLibraryData.processedDates && logicLibraryData.processedDates.length > 0 ? `
+                  <span style="color:var(--ink-3); margin-left:var(--s-2);">·</span>
+                  <span style="margin-left:var(--s-2);">累积 <span style="color:var(--brand); font-weight:var(--weight-semibold);">${logicLibraryData.processedDates.length}</span> 天</span>
+                  <span style="color:var(--ink-3); margin-left:var(--s-2);">·</span>
+                  <span style="margin-left:var(--s-2);">${logicLibraryData.processedDates[logicLibraryData.processedDates.length - 1] || ''} ~ ${logicLibraryData.processedDates[0] || ''}</span>
+                ` : ''}
               </span>
               <button id="refresh-btn" style="background:none; border:none; cursor:pointer; color:var(--ink-3); padding:4px; border-radius:var(--r-sm);" title="刷新">
                 <i data-lucide="refresh-cw" style="width:16px; height:16px;"></i>

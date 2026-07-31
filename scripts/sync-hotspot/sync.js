@@ -283,10 +283,50 @@ function parseIndustryFlow(r) {
 }
 
 // 生成逻辑库数据：按股票聚合，供前端「消息逻辑库」使用
-// 输出结构: { stocks: [{name, code, tags, appearances, news}], totalStocks, date, updatedAt }
+// 增量更新：读取已有 logic-library.json，合并当天新数据，保留历史所有上榜记录和新闻
+// 输出结构: { stocks: [{name, code, tags, appearances, news}], totalStocks, date, updatedAt, processedDates }
 function generateLogicLibrary(data) {
   const dateStr = data.date || new Date().toISOString().slice(0, 10)
+
+  // 读取已有的逻辑库（增量合并的基础）
+  let existing = null
+  let processedDates = []
+  try {
+    if (fs.existsSync(LOGIC_LIBRARY_PATH)) {
+      existing = JSON.parse(fs.readFileSync(LOGIC_LIBRARY_PATH, 'utf-8'))
+      processedDates = Array.isArray(existing.processedDates) ? existing.processedDates : []
+    }
+  } catch (e) {
+    console.log('[warn] 读取已有逻辑库失败，将从头生成:', e.message)
+  }
+
+  // 如果当天已处理过，先清除当天的旧数据（支持重复运行覆盖当天）
+  if (processedDates.includes(dateStr)) {
+    console.log(`[增量] 当天 ${dateStr} 已处理过，将覆盖当天数据`)
+  }
+
+  // 初始化 stockMap：优先从已有逻辑库继承历史数据
   const stockMap = new Map() // code -> stockRecord
+  if (existing && Array.isArray(existing.stocks)) {
+    for (const s of existing.stocks) {
+      if (!s.code) continue
+      // 过滤掉当天的旧 appearance（准备用新数据覆盖）
+      const historicalAppearances = (s.appearances || []).filter((a) => a.date !== dateStr)
+      // 过滤掉当天旧 news（按 time 字段日期判断；无 time 的保留）
+      const historicalNews = (s.news || []).filter((n) => {
+        if (!n.time) return true
+        return !n.time.startsWith(dateStr.replace(/-/g, '')) && !n.time.startsWith(dateStr)
+      })
+      stockMap.set(s.code, {
+        name: s.name || s.code,
+        code: s.code,
+        tags: (s.tags || []).map((t) => ({ name: t.name, count: t.count || 1 })),
+        appearances: historicalAppearances,
+        news: historicalNews
+      })
+    }
+    console.log(`[增量] 继承历史 ${stockMap.size} 只股票，保留历史 appearances 和 news`)
+  }
 
   function getStock(code, name) {
     if (!code || !/^\d{6}$/.test(code)) return null
@@ -333,6 +373,8 @@ function generateLogicLibrary(data) {
 
   function addNews(stock, newsItem) {
     if (!newsItem || !newsItem.title) return
+    // 全局 news 去重（跨日期，同一标题只保留一条）
+    if (stock.news.some((n) => n.title === newsItem.title)) return
     stock.news.push({
       title: newsItem.title,
       link: newsItem.link || '',
@@ -340,11 +382,10 @@ function generateLogicLibrary(data) {
       time: newsItem.time || '',
       tag: newsItem.tag || 'news'
     })
-    // 同时把新闻关联到当天的 appearance（前端按 app.news 渲染）
+    // 同时把新闻关联到当天的 appearance（前端按 app.newsList 渲染）
     const today = stock.appearances.find((a) => a.date === dateStr)
     if (today) {
       if (!today.newsList) today.newsList = []
-      // 去重（同一标题只保留一条）
       if (!today.newsList.some((x) => x.title === newsItem.title)) {
         today.newsList.push({
           title: newsItem.title,
@@ -387,7 +428,9 @@ function generateLogicLibrary(data) {
     const stock = getStock(r.code, r.name)
     if (!stock) return
     if (r.industry) addTag(stock, r.industry)
-    if (r.reason) addNews(stock, `${r.name}涨停：${r.reason}`, 'announcement', '涨停')
+    if (r.reason) {
+      addNews(stock, { title: `${r.name}涨停：${r.reason}`, link: '', source: '涨停', time: dateStr, tag: 'announcement' })
+    }
     addAppearance(stock, r.industry, null, r.change || null)
   })
 
@@ -399,22 +442,24 @@ function generateLogicLibrary(data) {
     addAppearance(stock, r.industry, null, r.change || null)
   })
 
-  // 6) 从行业资金流收集领涨股
-  data.industryFlow?.forEach((f) => {
-    if (!f.leadingStock) return
-    // 行业资金流里的领涨股可能没有代码，跳过（无法聚合）
-  })
-
-  // 转换为数组，按标签数量排序
+  // 转换为数组：合并历史+当天，appearances 按日期倒序，news 按时间倒序
   const stocks = Array.from(stockMap.values())
     .map((s) => ({
       ...s,
       tags: s.tags.sort((a, b) => (b.count || 1) - (a.count || 1)),
       appearances: s.appearances.sort((a, b) => b.date.localeCompare(a.date)),
-      news: s.news.slice(0, 10) // 最多保留10条新闻
+      news: s.news
+        .slice()
+        .sort((a, b) => (b.time || '').localeCompare(a.time || ''))
+        .slice(0, 30) // 最多保留30条新闻（历史累积）
     }))
-    .filter((s) => s.tags.length > 0 || s.news.length > 0) // 至少有一个标签或新闻
-    .sort((a, b) => b.tags.length - a.tags.length)
+    .filter((s) => s.tags.length > 0 || s.news.length > 0 || s.appearances.length > 0)
+    .sort((a, b) => {
+      // 按上榜次数（appearances 数量）降序，再按标签数降序
+      const aScore = (a.appearances?.length || 0) * 10 + (a.tags?.length || 0)
+      const bScore = (b.appearances?.length || 0) * 10 + (b.tags?.length || 0)
+      return bScore - aScore
+    })
 
   // 额外生成一个扁平的 auto 列表（保留旧格式供将来扩展）
   const autoLogic = []
@@ -458,13 +503,24 @@ function generateLogicLibrary(data) {
     })
   })
 
+  // 更新已处理日期列表（去重）
+  if (!processedDates.includes(dateStr)) {
+    processedDates.push(dateStr)
+    processedDates.sort().reverse()
+  }
+
+  const totalAppearances = stocks.reduce((sum, s) => sum + (s.appearances?.length || 0), 0)
+  const totalNews = stocks.reduce((sum, s) => sum + (s.news?.length || 0), 0)
+  console.log(`[增量] 当前共 ${stocks.length} 只股票, ${totalAppearances} 条上榜记录, ${totalNews} 条新闻, 已处理 ${processedDates.length} 个日期`)
+
   return {
     stocks,
     totalStocks: stocks.length,
     auto: autoLogic,
     subjective: [],
     date: dateStr,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    processedDates
   }
 }
 
