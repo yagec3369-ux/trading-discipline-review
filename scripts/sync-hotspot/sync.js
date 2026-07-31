@@ -282,92 +282,167 @@ function parseIndustryFlow(r) {
   }
 }
 
-// 生成逻辑库数据：从热点新闻和概念中提取自动逻辑
+// 生成逻辑库数据：按股票聚合，供前端「消息逻辑库」使用
+// 输出结构: { stocks: [{name, code, tags, appearances, news}], totalStocks, date, updatedAt }
 function generateLogicLibrary(data) {
+  const dateStr = data.date || new Date().toISOString().slice(0, 10)
+  const stockMap = new Map() // code -> stockRecord
+
+  function getStock(code, name) {
+    if (!code || !/^\d{6}$/.test(code)) return null
+    if (!stockMap.has(code)) {
+      stockMap.set(code, {
+        name: name || code,
+        code,
+        tags: [],
+        appearances: [],
+        news: []
+      })
+    } else if (name && stockMap.get(code).name === code) {
+      stockMap.get(code).name = name
+    }
+    return stockMap.get(code)
+  }
+
+  function addTag(stock, tagName) {
+    if (!tagName) return
+    const existing = stock.tags.find((t) => t.name === tagName)
+    if (existing) existing.count = (existing.count || 1) + 1
+    else stock.tags.push({ name: tagName, count: 1 })
+  }
+
+  function addAppearance(stock, conceptName, conceptChange, changePct) {
+    // 当天同一股票的多条记录合并到一个 appearance
+    const today = stock.appearances.find((a) => a.date === dateStr)
+    if (today) {
+      if (conceptName) {
+        const existing = today.concepts.find((c) => c.name === conceptName)
+        if (existing) existing.conceptChange = conceptChange || existing.conceptChange
+        else today.concepts.push({ name: conceptName, conceptChange: conceptChange || null })
+      }
+      if (changePct != null && !today.change) today.change = changePct
+    } else {
+      const concepts = conceptName ? [{ name: conceptName, conceptChange: conceptChange || null }] : []
+      stock.appearances.push({
+        date: dateStr,
+        change: changePct != null ? changePct : null,
+        concepts
+      })
+    }
+  }
+
+  function addNews(stock, title, tag, source) {
+    stock.news.push({ title: title || '', tag: tag || 'news', source: source || '' })
+  }
+
+  // 1) 从个股新闻收集股票 + 概念标签 + 新闻
+  data.stockNews?.forEach((n) => {
+    const stock = getStock(n.stockCode, n.stockName)
+    if (!stock) return
+    if (n.concept) addTag(stock, n.concept)
+    addAppearance(stock, n.concept, null, n.change || null)
+    addNews(stock, n.title, 'announcement', n.source)
+  })
+
+  // 2) 从概念领涨股 Top3 收集
+  data.conceptStocks?.forEach((cs) => {
+    const stock = getStock(cs.code, cs.name)
+    if (!stock) return
+    addTag(stock, cs.concept)
+    addAppearance(stock, cs.concept, null, cs.changePercent || null)
+  })
+
+  // 3) 从概念榜收集领涨股
+  data.concepts?.forEach((c) => {
+    if (!c.leadingCode) return
+    const stock = getStock(c.leadingCode, c.leadingStock)
+    if (!stock) return
+    addTag(stock, c.name)
+    addAppearance(stock, c.name, c.changePercent, c.leadingChange || null)
+  })
+
+  // 4) 从涨停明细收集
+  data.limitUp?.forEach((r) => {
+    const stock = getStock(r.code, r.name)
+    if (!stock) return
+    if (r.industry) addTag(stock, r.industry)
+    if (r.reason) addNews(stock, `${r.name}涨停：${r.reason}`, 'announcement', '涨停')
+    addAppearance(stock, r.industry, null, r.change || null)
+  })
+
+  // 5) 从跌停明细收集
+  data.limitDown?.forEach((r) => {
+    const stock = getStock(r.code, r.name)
+    if (!stock) return
+    if (r.industry) addTag(stock, r.industry)
+    addAppearance(stock, r.industry, null, r.change || null)
+  })
+
+  // 6) 从行业资金流收集领涨股
+  data.industryFlow?.forEach((f) => {
+    if (!f.leadingStock) return
+    // 行业资金流里的领涨股可能没有代码，跳过（无法聚合）
+  })
+
+  // 转换为数组，按标签数量排序
+  const stocks = Array.from(stockMap.values())
+    .map((s) => ({
+      ...s,
+      tags: s.tags.sort((a, b) => (b.count || 1) - (a.count || 1)),
+      appearances: s.appearances.sort((a, b) => b.date.localeCompare(a.date)),
+      news: s.news.slice(0, 10) // 最多保留10条新闻
+    }))
+    .filter((s) => s.tags.length > 0 || s.news.length > 0) // 至少有一个标签或新闻
+    .sort((a, b) => b.tags.length - a.tags.length)
+
+  // 额外生成一个扁平的 auto 列表（保留旧格式供将来扩展）
   const autoLogic = []
   let idCounter = 0
   const genId = () => 'logic_' + Date.now() + '_' + (++idCounter)
 
-  // 从财经新闻生成 auto 逻辑（标签：news/policy/earnings/industry/market）
   data.financeNews?.forEach((n) => {
     let tag = 'news'
     const title = (n.title || '').toLowerCase()
-    const summary = (n.summary || '').toLowerCase()
-    const text = title + ' ' + summary
-    if (/政策|国务院|央行|证监会|监管|通知|措施/.test(text)) tag = 'policy'
-    else if (/财报|业绩|净利润|营收|半年报|年报|季报/.test(text)) tag = 'earnings'
-    else if (/行业|板块|产业|赛道/.test(text)) tag = 'industry'
-    else if (/大盘|市场|a股|指数|北向|外资|流动性/.test(text)) tag = 'market'
-    const confidence = tag !== 'news' ? 0.85 : 0.7
+    const text = title + ((n.summary || '').toLowerCase())
+    if (/政策|国务院|央行|证监会|监管/.test(text)) tag = 'policy'
+    else if (/财报|业绩|净利润|营收/.test(text)) tag = 'earnings'
+    else if (/行业|板块|产业/.test(text)) tag = 'industry'
+    else if (/大盘|市场|a股|指数/.test(text)) tag = 'market'
     autoLogic.push({
       id: genId(),
       title: n.title || '',
       content: (n.summary || n.title || '').replace(/\s+/g, ' ').trim(),
       tag,
       stockCode: '',
-      confidence,
+      confidence: tag !== 'news' ? 0.85 : 0.7,
       createdAt: new Date().toISOString()
     })
   })
 
-  // 从个股新闻生成 auto 逻辑（标签：news/announcement/reduction/rotation/earnings）
   data.stockNews?.forEach((n) => {
     let tag = 'news'
     const title = (n.title || '').toLowerCase()
-    if (/公告|重大|中标|合同|协议|重组|收购|合并/.test(title)) tag = 'announcement'
-    else if (/减持|增持|回购|股东|高管/.test(title)) tag = 'reduction'
-    else if (/轮动|切换|领涨|领跌|板块/.test(title)) tag = 'rotation'
-    else if (/财报|业绩|净利润|营收|半年报|年报|季报/.test(title)) tag = 'earnings'
-    else if (/行业|产业|赛道/.test(title)) tag = 'industry'
-    const confidence = tag !== 'news' ? 0.8 : 0.65
+    if (/公告|重大|中标|合同/.test(title)) tag = 'announcement'
+    else if (/减持|增持|回购/.test(title)) tag = 'reduction'
+    else if (/轮动|切换|领涨/.test(title)) tag = 'rotation'
+    else if (/财报|业绩|净利润/.test(title)) tag = 'earnings'
     autoLogic.push({
       id: genId(),
       title: n.title || '',
       content: (n.stockName ? n.stockName + (n.concept ? '(' + n.concept + ')' : '') + '：' : '') + (n.title || ''),
       tag,
       stockCode: n.stockCode || '',
-      confidence,
-      createdAt: new Date().toISOString()
-    })
-  })
-
-  // 从涨停明细提取公告/行业类逻辑
-  data.limitUp?.slice(0, 10).forEach((r) => {
-    if (!r.reason) return
-    let tag = 'industry'
-    const reason = String(r.reason)
-    if (/公告|重大|中标|合同/.test(reason)) tag = 'announcement'
-    else if (/业绩|财报|净利润/.test(reason)) tag = 'earnings'
-    else if (/政策|利好|扶持/.test(reason)) tag = 'policy'
-    autoLogic.push({
-      id: genId(),
-      title: `${r.name}涨停：${reason}`,
-      content: `${r.name}(${r.code}) 涨停${r.industry ? '，所属行业：' + r.industry : ''}。涨停原因：${reason}${r.times ? '，连板数：' + r.times : ''}`,
-      tag,
-      stockCode: r.code || '',
-      confidence: 0.75,
-      createdAt: new Date().toISOString()
-    })
-  })
-
-  // 从概念榜提取行业/轮动类主观逻辑（放入 auto 里也可以）
-  data.concepts?.slice(0, 5).forEach((c) => {
-    if (!c.name || c.changePercent <= 0) return
-    autoLogic.push({
-      id: genId(),
-      title: `${c.name}板块走强，${c.leadingStock || ''}领涨`,
-      content: `${c.name}板块涨幅 ${c.changePercent.toFixed(2)}%，净流入 ${c.netAmount}。领涨股：${c.leadingStock || '-'}(${c.leadingCode || '-'}) 涨幅 ${(c.leadingChange || 0).toFixed(2)}%，成分股 ${c.stockCount || 0} 只。`,
-      tag: 'rotation',
-      stockCode: c.leadingCode || '',
-      confidence: 0.7,
+      confidence: tag !== 'news' ? 0.8 : 0.65,
       createdAt: new Date().toISOString()
     })
   })
 
   return {
-    subjective: [],
+    stocks,
+    totalStocks: stocks.length,
     auto: autoLogic,
-    date: data.date,
+    subjective: [],
+    date: dateStr,
     updatedAt: new Date().toISOString()
   }
 }
